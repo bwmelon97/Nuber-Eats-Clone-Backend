@@ -5,3 +5,9 @@ Nuber Eats Clone Coding Project
 ```bash
 $ npx localtunnel --port 3000 --subdomain soogeun 
 ```
+
+### mysql server start
+```bash
+$ sudo service mysql start
+$ mysql -u root -p
+```
