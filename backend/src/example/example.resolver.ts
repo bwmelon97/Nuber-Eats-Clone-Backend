@@ -13,7 +13,7 @@ export class ExampleResolver {
     restaurants(
         @Args('isVegan') isVegan: boolean = false
     ): Restaurant[] {
-        return [{name: 'first'}]
+        return [ {id: 1, name: 'first', address: 'init', isVeganOnly: false, ownerName: 'hi'} ]
     }
 
     @Mutation(returns => Boolean)

@@ -1,4 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
 export class Example {
@@ -10,16 +11,25 @@ export class Example {
 }
 
 @ObjectType()
+@Entity()
 export class Restaurant {
+    @Field(type => Number)
+    @PrimaryGeneratedColumn()
+    id: number;
+    
     @Field(type => String)
+    @Column()
     name: string;
 
     @Field(type => String)
-    address?: string;
+    @Column()
+    address: string;
 
     @Field(type => String)
-    ownerName?: string;
+    @Column()
+    ownerName: string;
 
     @Field(type => Boolean, {nullable: true})
-    isVeganOnly?: Boolean;
+    @Column()
+    isVeganOnly: Boolean;
 }
