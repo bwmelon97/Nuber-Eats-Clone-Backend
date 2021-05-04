@@ -1,5 +1,10 @@
 import { Episode } from "./entities/episode.entity";
 import { Podcast } from "./entities/podcast.entity";
 
-export const podcasts: Podcast[] = []
-export const episodes: Episode[] = []
+export class PodcastDB {
+    curPcID: number = 1;
+    podcasts: Podcast[] = [];
+    
+    curEpID: number = 1;
+    episodes: Episode[] = [];
+}
