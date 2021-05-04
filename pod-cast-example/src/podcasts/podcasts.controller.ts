@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreatePodcastDTO } from './dtos/create-pod-cast.dto';
 import { CreateEpisodeDTO } from './dtos/createEpisodeDTO';
+import { UpdateEpisodeDTO } from './dtos/updateEpisodeDTO';
 import { UpdatePodcastDTO } from './dtos/updatePodcastDTO';
 import { PodcastsService } from './podcasts.service';
 
@@ -53,9 +54,13 @@ export class PodcastsController {
     }
 
     // PATCH /podcasts/:id/episodes/:episodeId
-    @Patch(':id/episodes')
-    updateEpisode( @Param('id') id: string) {
-
+    @Patch(':id/episodes/:episodeId')
+    updateEpisode( 
+        @Param('id')        pcID: string, 
+        @Param('episodeId') epID: string,
+        @Body() updateEpisodeData: UpdateEpisodeDTO
+    ) {
+        return this.podcastService.updateEpisode( +pcID, +epID, updateEpisodeData )
     }
 
     // DELETE /podcasts/:id/episodes/:episodeId

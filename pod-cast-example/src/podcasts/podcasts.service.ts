@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePodcastDTO } from './dtos/create-pod-cast.dto';
 import { CreateEpisodeDTO } from './dtos/createEpisodeDTO';
+import { UpdateEpisodeDTO } from './dtos/updateEpisodeDTO';
 import { UpdatePodcastDTO } from './dtos/updatePodcastDTO';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
@@ -38,10 +39,10 @@ export class PodcastsService {
         const selectedID = this.findPodCastIndexByID(pcID);
         const updatedPodcast = this.db.podcasts[selectedID]
 
-        if ( title ) { updatedPodcast.title = title }
+        if ( title )    { updatedPodcast.title = title }
         if ( category ) { updatedPodcast.category = category }
         if ( episodes ) { updatedPodcast.episodes = episodes }
-        if ( rating ) { updatedPodcast.rating = rating }
+        if ( rating )   { updatedPodcast.rating = rating }
 
         this.db.podcasts = [
             ...this.db.podcasts.slice(0, selectedID),
@@ -77,6 +78,25 @@ export class PodcastsService {
         this.db.podcasts[selectedPcIndex].episodes = this.db.podcasts[selectedPcIndex].episodes.filter(e => e.id !== epID);
         this.db.episodes.splice(selectedEpIndex, 1);
         
+        return true;
+    }
+
+    updateEpisode = (pcID: number, epID: number, { name }: UpdateEpisodeDTO ) => {
+        const selectedPcIndex = this.findPodCastIndexByID(pcID);
+        const selectedEpIndex = this.findEpisodeIndexByID(epID);
+
+        const updatedEp: Episode = this.db.episodes[selectedEpIndex]
+
+        if ( name )    { updatedEp.name = name }
+
+        const indexOfEpInPc = this.db.podcasts[selectedPcIndex].episodes.findIndex(e => e.id === epID)
+
+        this.db.podcasts[selectedPcIndex].episodes = [
+            ...this.db.podcasts[selectedPcIndex].episodes.slice(0, indexOfEpInPc),
+            updatedEp,
+            ...this.db.podcasts[selectedPcIndex].episodes.slice(indexOfEpInPc + 1),
+        ]
+
         return true;
     }
 
