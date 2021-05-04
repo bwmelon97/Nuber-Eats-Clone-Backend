@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePodcastDTO } from './dtos/create-pod-cast.dto';
+import { CreateEpisodeDTO } from './dtos/createEpisodeDTO';
 import { UpdatePodcastDTO } from './dtos/updatePodcastDTO';
+import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
 import { PodcastDB } from './podcasts.db';
 
@@ -49,6 +51,19 @@ export class PodcastsService {
         return true;
     }
 
+    createEpisode = (pcID: number, {name}: CreateEpisodeDTO ): boolean => {
+        const selectedID = this.findPodCastIndexByID(pcID);
+
+        const newEpisode: Episode = {
+            pid: pcID,
+            id: this.db.curEpID++,
+            name
+        }
+
+        this.db.episodes = this.db.episodes.concat(newEpisode);
+        this.db.podcasts[selectedID].episodes.push(newEpisode);
+        return true;
+    }
 
 
     findPodCastIndexByID = (pcID: number): number => {

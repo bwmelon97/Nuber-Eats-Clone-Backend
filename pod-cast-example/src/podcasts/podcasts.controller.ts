@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreatePodcastDTO } from './dtos/create-pod-cast.dto';
+import { CreateEpisodeDTO } from './dtos/createEpisodeDTO';
 import { UpdatePodcastDTO } from './dtos/updatePodcastDTO';
 import { PodcastsService } from './podcasts.service';
 
@@ -47,8 +48,8 @@ export class PodcastsController {
 
     // POST /podcasts/:id/episodes
     @Post(':id/episodes')
-    createEpisode( @Param('id') id: number) {
-
+    createEpisode( @Param('id') id: string, @Body() createEpisodeData: CreateEpisodeDTO ) {
+        return this.podcastService.createEpisode(+id, createEpisodeData)
     }
 
     // PATCH /podcasts/:id/episodes/:episodeId
