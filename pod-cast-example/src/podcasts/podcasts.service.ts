@@ -70,11 +70,28 @@ export class PodcastsService {
         return true;
     }
 
+    deleteEpisode = (pcID: number, epID: number): boolean => {
+        const selectedPcIndex = this.findPodCastIndexByID(pcID);
+        const selectedEpIndex = this.findEpisodeIndexByID(epID);
+
+        this.db.podcasts[selectedPcIndex].episodes = this.db.podcasts[selectedPcIndex].episodes.filter(e => e.id !== epID);
+        this.db.episodes.splice(selectedEpIndex, 1);
+        
+        return true;
+    }
+
 
     findPodCastIndexByID = (pcID: number): number => {
         const selectedID = this.db.podcasts.findIndex( pc => pc.id === pcID );
         if (selectedID === -1) 
             throw new NotFoundException(`Podcast which has id number of ${pcID} is not found.`)
+        return selectedID
+    }
+    
+    findEpisodeIndexByID = (epID: number): number => {
+        const selectedID = this.db.episodes.findIndex( ep => ep.id === epID );
+        if (selectedID === -1) 
+            throw new NotFoundException(`Episode which has id number of ${epID} is not found.`)
         return selectedID
     }
 }

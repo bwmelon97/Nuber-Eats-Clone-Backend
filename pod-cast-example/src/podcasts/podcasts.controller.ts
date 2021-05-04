@@ -59,8 +59,11 @@ export class PodcastsController {
     }
 
     // DELETE /podcasts/:id/episodes/:episodeId
-    @Delete(':id/episodes')
-    deleteEpisode( @Param('id') id: string) {
-
+    @Delete(':id/episodes/:episodeId')
+    deleteEpisode( 
+        @Param('id') pcID: string, 
+        @Param('episodeId') epID: string
+    ) {
+        return this.podcastService.deleteEpisode(+pcID, +epID)
     }
 }
