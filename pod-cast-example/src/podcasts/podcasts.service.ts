@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePodcastDTO } from './dtos/create-pod-cast.dto';
+import { CreatePodcastDTO } from './dtos/createPodcastDTO';
 import { CreateEpisodeDTO } from './dtos/createEpisodeDTO';
 import { UpdateEpisodeDTO } from './dtos/updateEpisodeDTO';
 import { UpdatePodcastDTO } from './dtos/updatePodcastDTO';
