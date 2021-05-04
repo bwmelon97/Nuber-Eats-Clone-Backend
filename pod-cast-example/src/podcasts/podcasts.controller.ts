@@ -1,4 +1,5 @@
-import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { CreatePodcastDTO } from './dtos/create-pod-cast.dto';
 import { PodcastsService } from './podcasts.service';
 
 
@@ -21,8 +22,8 @@ export class PodcastsController {
 
     // POST /podcasts
     @Post()
-    createPodCast() {
-
+    createPodCast( @Body() createPodcastData: CreatePodcastDTO ) {
+        return this.podcastService.createPostCast(createPodcastData)
     }
 
     // PATCH /podcasts/:id
