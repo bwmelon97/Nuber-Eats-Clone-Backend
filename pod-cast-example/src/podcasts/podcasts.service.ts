@@ -51,6 +51,11 @@ export class PodcastsService {
         return true;
     }
 
+    getEpisodes = (pcID: number): Episode[] => {
+        const selectedID = this.findPodCastIndexByID(pcID);
+        return this.db.podcasts[selectedID].episodes
+    }
+
     createEpisode = (pcID: number, {name}: CreateEpisodeDTO ): boolean => {
         const selectedID = this.findPodCastIndexByID(pcID);
 

@@ -42,8 +42,8 @@ export class PodcastsController {
 
     // GET /podcasts/:id/episodes
     @Get(':id/episodes')
-    getEpisodes( @Param('id') id: number) {
-
+    getEpisodes( @Param('id') id: string) {
+        return this.podcastService.getEpisodes(+id)
     }
 
     // POST /podcasts/:id/episodes
@@ -54,13 +54,13 @@ export class PodcastsController {
 
     // PATCH /podcasts/:id/episodes/:episodeId
     @Patch(':id/episodes')
-    updateEpisode( @Param('id') id: number) {
+    updateEpisode( @Param('id') id: string) {
 
     }
 
     // DELETE /podcasts/:id/episodes/:episodeId
     @Delete(':id/episodes')
-    deleteEpisode( @Param('id') id: number) {
+    deleteEpisode( @Param('id') id: string) {
 
     }
 }
