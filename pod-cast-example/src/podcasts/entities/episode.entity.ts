@@ -1,4 +1,5 @@
 export class Episode {
-    pid: number;    // Parrent(PodCats) ID
-    name: string;
+    pid:    number;     // Parrent(PodCats) ID
+    id:     number;     // Episode ID
+    name:   string;
 }
