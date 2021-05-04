@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePodcastDTO } from './dtos/create-pod-cast.dto';
+import { UpdatePodcastDTO } from './dtos/updatePodcastDTO';
 import { Podcast } from './entities/podcast.entity';
 import { PodcastDB } from './podcasts.db';
 
@@ -31,7 +32,22 @@ export class PodcastsService {
         return true;
     }
 
+    updatePodCast = (pcID: number, { title, category, episodes, rating }: UpdatePodcastDTO ): boolean => {
+        const selectedID = this.findPodCastIndexByID(pcID);
+        const updatedPodcast = this.db.podcasts[selectedID]
 
+        if ( title ) { updatedPodcast.title = title }
+        if ( category ) { updatedPodcast.category = category }
+        if ( episodes ) { updatedPodcast.episodes = episodes }
+        if ( rating ) { updatedPodcast.rating = rating }
+
+        this.db.podcasts = [
+            ...this.db.podcasts.slice(0, selectedID),
+            updatedPodcast,
+            ...this.db.podcasts.slice(selectedID + 1)
+        ]
+        return true;
+    }
 
 
 
