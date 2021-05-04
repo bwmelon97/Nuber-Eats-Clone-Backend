@@ -1,24 +1,27 @@
 import { Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { PodcastsService } from './podcasts.service';
 
 
 @Controller('podcasts')
 export class PodcastsController {
 
+    constructor ( private readonly podcastService: PodcastsService ) {}
+
     // GET /podcasts
     @Get()
     getAllPodCasts() {
-        
+        return this.podcastService.getAllPodCasts()
+    }
+
+    // GET /podcasts/:id
+    @Get(':id')
+    getPodCastbyID( @Param('id') id: string ) {
+        return this.podcastService.getOnePodCastByID(+id)
     }
 
     // POST /podcasts
     @Post()
     createPodCast() {
-
-    }
-
-    // GET /podcasts/:id
-    @Get(':id')
-    getPodCastbyID( @Param('id') id: number ) {
 
     }
 
