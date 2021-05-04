@@ -10,15 +10,10 @@ export class PodcastsService {
 
     getAllPodCasts = (): Podcast[] => this.db.podcasts ;
     
-    getOnePodCastByID = (pcID: number): Podcast => {
-        const podcast = this.db.podcasts.find( pc => pc.id === pcID );
-        if (!podcast) 
-            throw new NotFoundException(`Podcast which has id number of ${pcID} is not found.`)
-        return podcast
-    }
+    getOnePodCastByID = (pcID: number): Podcast => this.db.podcasts[this.findPodCastIndexByID(pcID)] 
 
     /* Lack of Safty (if params doesn't pass) */
-    createPostCast = ( { title, category }: CreatePodcastDTO ): boolean => {
+    createPodCast = ( { title, category }: CreatePodcastDTO ): boolean => {
         const newPodcast: Podcast = {
             id: this.db.curPcID++,
             episodes: [],
@@ -28,5 +23,22 @@ export class PodcastsService {
 
         this.db.podcasts = this.db.podcasts.concat(newPodcast)
         return true
+    }
+
+    deletePodCast = (pcID: number): boolean => {
+        const selectedID = this.findPodCastIndexByID(pcID);
+        this.db.podcasts.splice(selectedID, 1)
+        return true;
+    }
+
+
+
+
+
+    findPodCastIndexByID = (pcID: number): number => {
+        const selectedID = this.db.podcasts.findIndex( pc => pc.id === pcID );
+        if (selectedID === -1) 
+            throw new NotFoundException(`Podcast which has id number of ${pcID} is not found.`)
+        return selectedID
     }
 }

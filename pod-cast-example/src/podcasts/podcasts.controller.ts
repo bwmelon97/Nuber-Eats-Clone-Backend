@@ -23,7 +23,13 @@ export class PodcastsController {
     // POST /podcasts
     @Post()
     createPodCast( @Body() createPodcastData: CreatePodcastDTO ) {
-        return this.podcastService.createPostCast(createPodcastData)
+        return this.podcastService.createPodCast(createPodcastData)
+    }
+
+    // DELETE /podcasts/:id
+    @Delete(':id')
+    deletePodCast( @Param('id') id: string ) {
+        return this.podcastService.deletePodCast(+id)
     }
 
     // PATCH /podcasts/:id
@@ -32,14 +38,7 @@ export class PodcastsController {
 
     }
 
-    // DELETE /podcasts/:id
-    @Delete(':id')
-    deletePodCast( @Param('id') id: number ) {
-
-    }
-
     // GET /podcasts/:id/episodes
-    
     @Get(':id/episodes')
     getEpisodes( @Param('id') id: number) {
 
