@@ -1,6 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateEpisodeDTO } from './dtos/createEpisodeDTO';
 import { CreatePodcastDTO } from './dtos/createPodcastDTO';
+import { UpdateEpisodeDTO } from './dtos/updateEpisodeDTO';
 import { UpdatePodcastDTO } from './dtos/updatePodcastDTO';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
@@ -48,5 +49,22 @@ export class PodcastsResolver {
         @Args('createEpisodeDTO') createEpisodeDTO: CreateEpisodeDTO    
     ) {
         return this.podcastService.createEpisode(id, createEpisodeDTO)
+    }
+
+    @Mutation ( returns => Boolean )
+    updateEpisode (
+        @Args('pcID') pcID: number,
+        @Args('epID') epID: number,
+        @Args('updateEpisodeDTO') updateEpisodeDTO: UpdateEpisodeDTO
+    ) {
+        return this.podcastService.updateEpisode(pcID, epID, updateEpisodeDTO)
+    }
+
+    @Mutation ( returns => Boolean )
+    deleteEpisode(
+        @Args('pcID') pcID: number,
+        @Args('epID') epID: number,
+    ) {
+        return this.podcastService.deleteEpisode(pcID, epID)
     }
 }
