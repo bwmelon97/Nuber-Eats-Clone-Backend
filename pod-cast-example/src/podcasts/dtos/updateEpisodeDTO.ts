@@ -1,6 +1,11 @@
-import { PartialType } from "@nestjs/mapped-types";
+import { Field, InputType, IntersectionType, PartialType } from "@nestjs/graphql";
 import { CreateEpisodeDTO } from "./createEpisodeDTO";
 
-export class UpdateEpisodeDTO extends PartialType(CreateEpisodeDTO) {
+@InputType()
+class AddFeildClass {
+    @Field( is => Number )
     readonly rating?: number;
 }
+
+@InputType()
+export class UpdateEpisodeDTO extends PartialType( IntersectionType(CreateEpisodeDTO, AddFeildClass) ) {}
