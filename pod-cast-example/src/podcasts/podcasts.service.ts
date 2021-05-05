@@ -35,13 +35,12 @@ export class PodcastsService {
         return true;
     }
 
-    updatePodCast = (pcID: number, { title, category, episodes, rating }: UpdatePodcastDTO ): boolean => {
+    updatePodCast = (pcID: number, { title, category, rating }: UpdatePodcastDTO ): boolean => {
         const selectedID = this.findPodCastIndexByID(pcID);
         const updatedPodcast = this.db.podcasts[selectedID]
 
         if ( title )    { updatedPodcast.title = title }
         if ( category ) { updatedPodcast.category = category }
-        if ( episodes ) { updatedPodcast.episodes = episodes }
         if ( rating )   { updatedPodcast.rating = rating }
 
         this.db.podcasts = [
