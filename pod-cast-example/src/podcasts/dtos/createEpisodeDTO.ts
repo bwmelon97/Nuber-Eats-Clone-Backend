@@ -1,3 +1,3 @@
-export class CreateEpisodeDTO {
-    readonly name:  string;
-}
+import { CreatePodcastDTO } from "./createPodcastDTO";
+
+export class CreateEpisodeDTO extends CreatePodcastDTO {}

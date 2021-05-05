@@ -57,13 +57,14 @@ export class PodcastsService {
         return this.db.podcasts[selectedID].episodes
     }
 
-    createEpisode = (pcID: number, {name}: CreateEpisodeDTO ): boolean => {
+    createEpisode = (pcID: number, {title, category}: CreateEpisodeDTO ): boolean => {
         const selectedID = this.findPodCastIndexByID(pcID);
 
         const newEpisode: Episode = {
             pid: pcID,
             id: this.db.curEpID++,
-            name
+            title, category,
+            rating: 0
         }
 
         this.db.episodes = this.db.episodes.concat(newEpisode);
@@ -81,13 +82,15 @@ export class PodcastsService {
         return true;
     }
 
-    updateEpisode = (pcID: number, epID: number, { name }: UpdateEpisodeDTO ) => {
+    updateEpisode = (pcID: number, epID: number, { title, category, rating }: UpdateEpisodeDTO ) => {
         const selectedPcIndex = this.findPodCastIndexByID(pcID);
         const selectedEpIndex = this.findEpisodeIndexByID(epID);
 
         const updatedEp: Episode = this.db.episodes[selectedEpIndex]
 
-        if ( name )    { updatedEp.name = name }
+        if ( title )    { updatedEp.title = title }
+        if ( category ) { updatedEp.category = category }
+        if ( rating )   { updatedEp.rating = rating }
 
         const indexOfEpInPc = this.db.podcasts[selectedPcIndex].episodes.findIndex(e => e.id === epID)
 
