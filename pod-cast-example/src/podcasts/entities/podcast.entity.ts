@@ -21,7 +21,7 @@ export class Podcast {
     @Column()
     rating: number;
 
-    @Field( type => [Episode] )
-    @Column()
-    episodes: Episode[];
+    // @Field( type => [Episode] )
+    // @Column()
+    // episodes: Episode[];
 }
