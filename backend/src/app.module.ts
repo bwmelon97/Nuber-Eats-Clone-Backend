@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
 import { User } from './user/entities/user.entity';
@@ -22,6 +23,9 @@ import { User } from './user/entities/user.entity';
       entities: [User],
       synchronize: true,
       logging: true
+    }),
+    GraphQLModule.forRoot({
+      autoSchemaFile: true
     }),
     UserModule,
     CommonModule
