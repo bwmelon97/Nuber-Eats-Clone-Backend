@@ -23,8 +23,8 @@ export class UserService {
             }
             return {
                 ok: false,
-                error: 'User has this email already exist.'
+                error: 'There is a user with that email already'
             }
-        } catch (error) { return { ok: false, error } }
+        } catch (error) { return { ok: false, error: "Couldn't create an accoutn" } }
     }
 }

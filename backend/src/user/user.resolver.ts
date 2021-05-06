@@ -15,6 +15,7 @@ export class UserResolver {
     async createUser( 
         @Args('input') createUserInput: CreateUserInput
     ): Promise<CreateUserOutput> {
-        return this.userService.createUser(createUserInput)
+        try { return this.userService.createUser(createUserInput) } 
+        catch (error) { return { ok: false, error } }
     }
 }
