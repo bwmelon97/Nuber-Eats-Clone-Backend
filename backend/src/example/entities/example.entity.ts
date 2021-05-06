@@ -26,7 +26,7 @@ export class Restaurant {
     @IsString()
     ownerName: string;
 
-    @Field(type => Boolean, {nullable: true})
+    @Field(type => Boolean, { defaultValue: false })
     @Column()
     @IsBoolean()
     isVeganOnly: Boolean;
