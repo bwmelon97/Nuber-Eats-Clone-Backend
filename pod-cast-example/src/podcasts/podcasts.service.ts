@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePodcastDTO } from './dtos/createPodcastDTO';
-import { CreateEpisodeDTO } from './dtos/createEpisodeDTO';
-import { UpdateEpisodeDTO } from './dtos/updateEpisodeDTO';
-import { UpdatePodcastDTO } from './dtos/updatePodcastDTO';
+import { CreatePodcastInput } from './dtos/create-podcast.dto';
+import { CreateEpisodeDTO } from './dtos/create-episode.dto';
+import { UpdateEpisodeDTO } from './dtos/update-episode.dto';
+import { UpdatePodcastDTO } from './dtos/update-podcast.dto';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
-import { PodcastDB } from './podcasts.db';
 
 @Injectable()
 export class PodcastsService {
@@ -17,7 +16,7 @@ export class PodcastsService {
     getOnePodCastByID = (pcID: number): Podcast => this.db.podcasts[this.findPodCastIndexByID(pcID)] 
 
     /* Lack of Safty (if params doesn't pass) */
-    createPodCast = ( { title, category }: CreatePodcastDTO ): boolean => {
+    createPodCast = ( { title, category }: CreatePodcastInput ): boolean => {
         const newPodcast: Podcast = {
             id: this.db.curPcID++,
             episodes: [],
@@ -35,19 +34,19 @@ export class PodcastsService {
         return true;
     }
 
-    updatePodCast = (pcID: number, { title, category, rating }: UpdatePodcastDTO ): boolean => {
-        const selectedID = this.findPodCastIndexByID(pcID);
-        const updatedPodcast = this.db.podcasts[selectedID]
+    updatePodCast = ({ id, data }: UpdatePodcastDTO ): boolean => {
+        // const selectedID = this.findPodCastIndexByID(pcID);
+        // const updatedPodcast = this.db.podcasts[selectedID]
 
-        if ( title )    { updatedPodcast.title = title }
-        if ( category ) { updatedPodcast.category = category }
-        if ( rating )   { updatedPodcast.rating = rating }
+        // if ( title )    { updatedPodcast.title = title }
+        // if ( category ) { updatedPodcast.category = category }
+        // if ( rating )   { updatedPodcast.rating = rating }
 
-        this.db.podcasts = [
-            ...this.db.podcasts.slice(0, selectedID),
-            updatedPodcast,
-            ...this.db.podcasts.slice(selectedID + 1)
-        ]
+        // this.db.podcasts = [
+        //     ...this.db.podcasts.slice(0, selectedID),
+        //     updatedPodcast,
+        //     ...this.db.podcasts.slice(selectedID + 1)
+        // ]
         return true;
     }
 
@@ -56,19 +55,40 @@ export class PodcastsService {
         return this.db.podcasts[selectedID].episodes
     }
 
-    createEpisode = (pcID: number, {title, category}: CreateEpisodeDTO ): boolean => {
-        const selectedID = this.findPodCastIndexByID(pcID);
+    createEpisode = ( {pcID, data}: CreateEpisodeDTO ): boolean => {
+        // const selectedID = this.findPodCastIndexByID(pcID);
 
-        const newEpisode: Episode = {
-            pid: pcID,
-            id: this.db.curEpID++,
-            title, category,
-            rating: 0
-        }
+        // const newEpisode: Episode = {
+        //     pid: pcID,
+        //     id: this.db.curEpID++,
+        //     title, category,
+        //     rating: 0
+        // }
 
-        this.db.episodes = this.db.episodes.concat(newEpisode);
-        this.db.podcasts[selectedID].episodes.push(newEpisode);
+        // this.db.episodes = this.db.episodes.concat(newEpisode);
+        // this.db.podcasts[selectedID].episodes.push(newEpisode);
         return true;
+    }
+
+    updateEpisode = ( { pcID, epID, data }: UpdateEpisodeDTO ) => {
+        // const selectedPcIndex = this.findPodCastIndexByID(pcID);
+        // const selectedEpIndex = this.findEpisodeIndexByID(epID);
+
+        // const updatedEp: Episode = this.db.episodes[selectedEpIndex]
+
+        // if ( title )    { updatedEp.title = title }
+        // if ( category ) { updatedEp.category = category }
+        // if ( rating )   { updatedEp.rating = rating }
+
+        // const indexOfEpInPc = this.db.podcasts[selectedPcIndex].episodes.findIndex(e => e.id === epID)
+
+        // this.db.podcasts[selectedPcIndex].episodes = [
+        //     ...this.db.podcasts[selectedPcIndex].episodes.slice(0, indexOfEpInPc),
+        //     updatedEp,
+        //     ...this.db.podcasts[selectedPcIndex].episodes.slice(indexOfEpInPc + 1),
+        // ]
+
+        // return true;
     }
 
     deleteEpisode = (pcID: number, epID: number): boolean => {
@@ -80,28 +100,6 @@ export class PodcastsService {
         
         return true;
     }
-
-    updateEpisode = (pcID: number, epID: number, { title, category, rating }: UpdateEpisodeDTO ) => {
-        const selectedPcIndex = this.findPodCastIndexByID(pcID);
-        const selectedEpIndex = this.findEpisodeIndexByID(epID);
-
-        const updatedEp: Episode = this.db.episodes[selectedEpIndex]
-
-        if ( title )    { updatedEp.title = title }
-        if ( category ) { updatedEp.category = category }
-        if ( rating )   { updatedEp.rating = rating }
-
-        const indexOfEpInPc = this.db.podcasts[selectedPcIndex].episodes.findIndex(e => e.id === epID)
-
-        this.db.podcasts[selectedPcIndex].episodes = [
-            ...this.db.podcasts[selectedPcIndex].episodes.slice(0, indexOfEpInPc),
-            updatedEp,
-            ...this.db.podcasts[selectedPcIndex].episodes.slice(indexOfEpInPc + 1),
-        ]
-
-        return true;
-    }
-
 
     findPodCastIndexByID = (pcID: number): number => {
         const selectedID = this.db.podcasts.findIndex( pc => pc.id === pcID );

@@ -1,15 +1,15 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreateEpisodeDTO } from './dtos/createEpisodeDTO';
-import { CreatePodcastDTO } from './dtos/createPodcastDTO';
-import { UpdateEpisodeDTO } from './dtos/updateEpisodeDTO';
-import { UpdatePodcastDTO } from './dtos/updatePodcastDTO';
+import { CoreOutput } from 'src/common/dtos/core-output.dto';
+import { CreateEpisodeDTO } from './dtos/create-episode.dto';
+import { CreatePodcastInput } from './dtos/create-podcast.dto';
+import { UpdateEpisodeDTO } from './dtos/update-episode.dto';
+import { UpdatePodcastDTO } from './dtos/update-podcast.dto';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
 import { PodcastsService } from './podcasts.service';
 
-@Resolver()
+@Resolver(of => Podcast)
 export class PodcastsResolver {
-
     constructor(private readonly podcastService: PodcastsService) {}
 
     @Query( returns => [Podcast] )
@@ -20,47 +20,48 @@ export class PodcastsResolver {
         return this.podcastService.getOnePodCastByID(id)
     }
 
-    @Mutation( returns => Boolean )
+    @Mutation( returns => CoreOutput )
     createPodcast( 
-        @Args('createPodcastDTO') createPodcastDto: CreatePodcastDTO 
+        @Args('input') createPodcastInput: CreatePodcastInput 
     ) {
-        return this.podcastService.createPodCast(createPodcastDto)
+        return this.podcastService.createPodCast(createPodcastInput)
     }
 
-    @Mutation ( returns => Boolean )
+    @Mutation ( returns => CoreOutput )
     updatePodcast (
-        @Args('id') id: number,
-        @Args('updatePodcastDTO') updatePodcastDTO: UpdatePodcastDTO
+        @Args() updatePodcastDTO: UpdatePodcastDTO
     ) {
-        return this.podcastService.updatePodCast(id, updatePodcastDTO)
+        return this.podcastService.updatePodCast(updatePodcastDTO)
     }
  
-    @Mutation ( returns => Boolean )
+    @Mutation ( returns => CoreOutput )
     deletePodcast( @Args('id') id: number ) { return this.podcastService.deletePodCast(id) }
+}
+
+@Resolver(of => Episode)
+export class EpisodeResolver {
+    constructor(private readonly podcastService: PodcastsService) {}
 
     @Query ( returns => [Episode] )
-    getEpisodesOfPodcast ( @Args('id') id: number ) {
+    episodesOfPodcast ( @Args('id') id: number ) {
         return this.podcastService.getEpisodes(id)
     }
 
-    @Mutation ( returns => Boolean )
+    @Mutation ( returns => CoreOutput )
     createEpisode ( 
-        @Args('id') id: number ,
-        @Args('createEpisodeDTO') createEpisodeDTO: CreateEpisodeDTO    
+        @Args() createEpisodeDTO: CreateEpisodeDTO
     ) {
-        return this.podcastService.createEpisode(id, createEpisodeDTO)
+        return this.podcastService.createEpisode(createEpisodeDTO)
     }
 
-    @Mutation ( returns => Boolean )
+    @Mutation ( returns => CoreOutput )
     updateEpisode (
-        @Args('pcID') pcID: number,
-        @Args('epID') epID: number,
-        @Args('updateEpisodeDTO') updateEpisodeDTO: UpdateEpisodeDTO
+        @Args() updateEpisodeDTO
     ) {
-        return this.podcastService.updateEpisode(pcID, epID, updateEpisodeDTO)
+        return this.podcastService.updateEpisode(updateEpisodeDTO)
     }
 
-    @Mutation ( returns => Boolean )
+    @Mutation ( returns => CoreOutput )
     deleteEpisode(
         @Args('pcID') pcID: number,
         @Args('epID') epID: number,

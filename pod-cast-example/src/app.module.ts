@@ -1,19 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PodcastsController } from './podcasts/podcasts.controller';
-import { PodcastsService } from './podcasts/podcasts.service';
 import { PodcastsModule } from './podcasts/podcasts.module';
 import { GraphQLModule } from '@nestjs/graphql';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
       autoSchemaFile: true
     }),
-    PodcastsModule
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db.sqlite',
+      logging: true,
+      synchronize: true,
+    }),
+    PodcastsModule,
+    CommonModule
   ],
-  controllers: [AppController, PodcastsController],
-  providers: [AppService, PodcastsService],
 })
 export class AppModule {}
