@@ -15,45 +15,20 @@ export class PodcastsService {
         @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>
     ) {}
 
-    getAllPodCasts = async (): Promise<Podcast[]> => this.podcasts.find();   
-    
-    getOnePodCastByID = async (pcID: number): Promise<Podcast> => this.podcasts.findOne(pcID) 
+    getAllPodCasts = (): Promise<Podcast[]> => this.podcasts.find();   
+    getOnePodCastByID = (pcID: number): Promise<Podcast> => this.podcasts.findOne(pcID) 
 
-    async createPodCast ( 
+    createPodCast ( 
         { title, category }: CreatePodcastInput 
-    ): Promise<[boolean, string?]> {
-        try {
-            const initalData = {title, category, rating: 0}
-            const newPodcast = this.podcasts.create( initalData )
-            this.podcasts.save(newPodcast)
-            return [true]            
-        } catch (error) {
-            return [false, 'Fail to create podcast...']
-        }
+    ): Promise<Podcast> {
+        const initalData = {title, category, rating: 0}
+        const newPodcast = this.podcasts.create( initalData )
+        return this.podcasts.save(newPodcast)
     }
 
-    // deletePodCast = (pcID: number): boolean => {
-    //     const selectedID = this.findPodCastIndexByID(pcID);
-    //     this.db.podcasts.splice(selectedID, 1)
-    //     return true;
-    // }
-
-    // updatePodCast = ({ id, data }: UpdatePodcastDTO ): boolean => {
-    //     // const selectedID = this.findPodCastIndexByID(pcID);
-    //     // const updatedPodcast = this.db.podcasts[selectedID]
-
-    //     // if ( title )    { updatedPodcast.title = title }
-    //     // if ( category ) { updatedPodcast.category = category }
-    //     // if ( rating )   { updatedPodcast.rating = rating }
-
-    //     // this.db.podcasts = [
-    //     //     ...this.db.podcasts.slice(0, selectedID),
-    //     //     updatedPodcast,
-    //     //     ...this.db.podcasts.slice(selectedID + 1)
-    //     // ]
-    //     return true;
-    // }
-
+    updatePodCast = ({ id, data }: UpdatePodcastDTO ) =>  this.podcasts.update( id, { ...data } )
+    deletePodCast = (pcID: number) => this.podcasts.delete(pcID)
+        
     // getEpisodes = (pcID: number): Episode[] => {
     //     const selectedID = this.findPodCastIndexByID(pcID);
     //     return this.db.podcasts[selectedID].episodes

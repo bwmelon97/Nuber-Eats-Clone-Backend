@@ -25,20 +25,28 @@ export class PodcastsResolver {
         @Args('input') createPodcastInput: CreatePodcastInput 
     ): Promise<CoreOutput> {
         try {
-            const  [ ok, error ] = await this.podcastService.createPodCast(createPodcastInput)
-            return { ok, error }
+            await this.podcastService.createPodCast(createPodcastInput)
+            return { ok: true }
         } catch (error) { return { ok: false, error } }
     }
 
-    // @Mutation ( returns => CoreOutput )
-    // updatePodcast (
-    //     @Args() updatePodcastDTO: UpdatePodcastDTO
-    // ) {
-    //     return this.podcastService.updatePodCast(updatePodcastDTO)
-    // }
+    @Mutation ( returns => CoreOutput )
+    async updatePodcast (
+        @Args() updatePodcastDTO: UpdatePodcastDTO
+    ): Promise<CoreOutput> {
+        try {
+            await this.podcastService.updatePodCast(updatePodcastDTO)
+            return { ok: true }       
+        } catch (error) { return { ok: false, error } }
+    }
  
-    // @Mutation ( returns => CoreOutput )
-    // deletePodcast( @Args('id') id: number ) { return this.podcastService.deletePodCast(id) }
+    @Mutation ( returns => CoreOutput )
+    async deletePodcast( @Args('id') id: number ): Promise<CoreOutput> { 
+        try {
+            await this.podcastService.deletePodCast(id)
+            return { ok: true }
+        } catch (error) { return { ok:false, error } }
+    }
 }
 
 // @Resolver(of => Episode)

@@ -3,7 +3,8 @@ import { Podcast } from "../entities/podcast.entity";
 
 @InputType()
 class UpdatePodcastInput extends PartialType( 
-    PickType(Podcast, ['title', 'category', 'rating']) 
+    PickType(Podcast, ['title', 'category', 'rating']),
+    InputType
 ) { }
 
 @ArgsType()
