@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Episode } from "./episode.entity";
 
 @ObjectType()
@@ -21,7 +21,7 @@ export class Podcast {
     @Column()
     rating: number;
 
-    // @Field( type => [Episode] )
-    // @Column()
-    // episodes: Episode[];
+    @Field( type => [Episode], { defaultValue: [] } )
+    @OneToMany(type => Episode, entity => entity.podcast)
+    episodes: Episode[];
 }

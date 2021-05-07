@@ -21,8 +21,10 @@ export class PodcastsService {
     createPodCast ( 
         { title, category }: CreatePodcastInput 
     ): Promise<Podcast> {
-        const initalData = {title, category, rating: 0}
+        const initalData = { title, category, rating: 0, episodes: [] }
         const newPodcast = this.podcasts.create( initalData )
+        /* newPodcast의 데이터가 유효한 지 확인하고 싶음 */
+        /* 현재 Podcast entity에서 Default value가 없는 경우에러 발생 */
         return this.podcasts.save(newPodcast)
     }
 

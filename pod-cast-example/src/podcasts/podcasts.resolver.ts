@@ -49,14 +49,15 @@ export class PodcastsResolver {
     }
 }
 
-// @Resolver(of => Episode)
-// export class EpisodeResolver {
-//     constructor(private readonly podcastService: PodcastsService) {}
+@Resolver(of => Episode)
+export class EpisodeResolver {
+    constructor(private readonly podcastService: PodcastsService) {}
 
-    // @Query ( returns => [Episode] )
-    // episodesOfPodcast ( @Args('id') id: number ) {
-    //     return this.podcastService.getEpisodes(id)
-    // }
+    @Query ( returns => [Episode] )
+    episodesOfPodcast ( @Args('id') id: number ) {
+        // return this.podcastService.getEpisodes(id)
+        return 'hi'
+    }
 
     // @Mutation ( returns => CoreOutput )
     // createEpisode ( 
@@ -79,4 +80,4 @@ export class PodcastsResolver {
     // ) {
     //     return this.podcastService.deleteEpisode(pcID, epID)
     // }
-// }
+}
