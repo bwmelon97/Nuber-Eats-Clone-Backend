@@ -2,6 +2,8 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { CreateEpisodeDTO } from './dtos/create-episode.dto';
 import { CreatePodcastInput } from './dtos/create-podcast.dto';
+import { EpisodesOutput } from './dtos/get-episodes.dto';
+import { PodcastOutput } from './dtos/get-podcast.dto';
 import { UpdateEpisodeDTO } from './dtos/update-episode.dto';
 import { UpdatePodcastDTO } from './dtos/update-podcast.dto';
 import { Episode } from './entities/episode.entity';
@@ -15,9 +17,12 @@ export class PodcastsResolver {
     @Query( returns => [Podcast] )
     async podcasts(): Promise<Podcast[]> { return this.podcastService.getAllPodCasts() }
 
-    @Query( returns => Podcast )
-    async podcastByID( @Args('id') id: number ): Promise<Podcast> {
-        return this.podcastService.getOnePodCastByID(id)
+    @Query( returns => PodcastOutput )
+    async podcastByID( @Args('id') id: number ): Promise<PodcastOutput> {
+        try {
+            const { ok, error, podcast } = await this.podcastService.getPodCastByID(id);
+            return { ok, error, podcast }
+        } catch (error) { return { ok: false, error} }
     }
 
     @Mutation( returns => CoreOutput )
@@ -45,7 +50,7 @@ export class PodcastsResolver {
         try {
             await this.podcastService.deletePodCast(id)
             return { ok: true }
-        } catch (error) { return { ok:false, error } }
+        } catch (error) { return { ok: false, error } }
     }
 }
 
@@ -53,10 +58,12 @@ export class PodcastsResolver {
 export class EpisodeResolver {
     constructor(private readonly podcastService: PodcastsService) {}
 
-    @Query ( returns => [Episode] )
-    episodesOfPodcast ( @Args('id') id: number ) {
-        // return this.podcastService.getEpisodes(id)
-        return 'hi'
+    @Query ( returns => EpisodesOutput )
+    async episodesOfPodcast ( @Args('id') id: number ): Promise<EpisodesOutput> {
+        try {
+            const { ok, error, episodes } = await this.podcastService.getEpisodes(id)
+            return { ok, error, episodes }
+        } catch (error) { return { ok: false, error } }
     }
 
     // @Mutation ( returns => CoreOutput )

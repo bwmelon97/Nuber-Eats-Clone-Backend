@@ -21,7 +21,7 @@ export class Podcast {
     @Column()
     rating: number;
 
-    @Field( type => [Episode], { defaultValue: [] } )
+    @Field( type => [Episode], { defaultValue: []} )
     @OneToMany(type => Episode, entity => entity.podcast)
     episodes: Episode[];
 }
