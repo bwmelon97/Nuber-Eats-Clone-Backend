@@ -72,12 +72,13 @@ export class EpisodeResolver {
         catch (error) { return { ok: false, error } }
     }
 
-    // @Mutation ( returns => CoreOutput )
-    // updateEpisode (
-    //     @Args() updateEpisodeDTO
-    // ) {
-    //     return this.podcastService.updateEpisode(updateEpisodeDTO)
-    // }
+    @Mutation ( returns => CoreOutput )
+    async updateEpisode ( 
+        @Args() updateEpisodeDTO: UpdateEpisodeDTO 
+    ): Promise<CoreOutput> {
+        try { return this.podcastService.updateEpisode(updateEpisodeDTO) } 
+        catch (error) { return { ok: false, error } }
+    }
 
     // @Mutation ( returns => CoreOutput )
     // deleteEpisode(

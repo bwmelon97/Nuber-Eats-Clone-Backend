@@ -60,7 +60,7 @@ export class PodcastsService {
             return { ok: true, episodes: podcast.episodes }
         } catch (error) { return { ok: false, error } }
     }
-
+    
     async createEpisode ( {pcID, data}: CreateEpisodeDTO ): Promise<CoreOutput> {
         const { ok, error, podcast } = await this.getPodCastByID(pcID);
         if ( !ok )  return { ok, error }
@@ -73,26 +73,27 @@ export class PodcastsService {
         return { ok: true };
     }
 
-    // updateEpisode = ( { pcID, epID, data }: UpdateEpisodeDTO ) => {
-    //     // const selectedPcIndex = this.findPodCastIndexByID(pcID);
-    //     // const selectedEpIndex = this.findEpisodeIndexByID(epID);
+    async doesEpisodeExist (pcID: number, epID: number): Promise<CoreOutput> {
+        try {
+            const {ok, error} = await this.getPodCastByID(pcID);
+            if ( !ok )  return { ok, error } 
+            const foundEpisode = await this.episodes.findOne(epID);
+            if ( !foundEpisode ) return {
+                ok: false,
+                error: `Episode id: ${epID} does not exist.`
+            }
+            return { ok: true }
+        } catch (error) { return { ok: false, error } }
+    }
 
-    //     // const updatedEp: Episode = this.db.episodes[selectedEpIndex]
-
-    //     // if ( title )    { updatedEp.title = title }
-    //     // if ( category ) { updatedEp.category = category }
-    //     // if ( rating )   { updatedEp.rating = rating }
-
-    //     // const indexOfEpInPc = this.db.podcasts[selectedPcIndex].episodes.findIndex(e => e.id === epID)
-
-    //     // this.db.podcasts[selectedPcIndex].episodes = [
-    //     //     ...this.db.podcasts[selectedPcIndex].episodes.slice(0, indexOfEpInPc),
-    //     //     updatedEp,
-    //     //     ...this.db.podcasts[selectedPcIndex].episodes.slice(indexOfEpInPc + 1),
-    //     // ]
-
-    //     // return true;
-    // }
+    async updateEpisode ( { pcID, epID, data }: UpdateEpisodeDTO ): Promise<CoreOutput> {
+        try {
+            const { ok, error } = await this.doesEpisodeExist(pcID, epID);
+            if ( !ok )  return { ok, error }  
+            await this.episodes.update(epID, {...data})
+            return { ok: true }
+        } catch (error) { return { ok: false, error } }
+    }
 
     // deleteEpisode = (pcID: number, epID: number): boolean => {
     //     const selectedPcIndex = this.findPodCastIndexByID(pcID);
