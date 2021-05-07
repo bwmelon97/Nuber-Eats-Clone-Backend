@@ -80,11 +80,12 @@ export class EpisodeResolver {
         catch (error) { return { ok: false, error } }
     }
 
-    // @Mutation ( returns => CoreOutput )
-    // deleteEpisode(
-    //     @Args('pcID') pcID: number,
-    //     @Args('epID') epID: number,
-    // ) {
-    //     return this.podcastService.deleteEpisode(pcID, epID)
-    // }
+    @Mutation ( returns => CoreOutput )
+    async deleteEpisode(
+        @Args('pcID') pcID: number,
+        @Args('epID') epID: number,
+    ): Promise<CoreOutput> {
+        try { return this.podcastService.deleteEpisode(pcID, epID) } 
+        catch (error) { return { ok: false, error } }
+    }
 }

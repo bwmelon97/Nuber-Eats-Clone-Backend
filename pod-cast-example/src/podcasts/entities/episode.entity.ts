@@ -23,6 +23,6 @@ export class Episode {
     rating: number;
     
     @Field( type => Podcast )
-    @ManyToOne( type => Podcast, podcast => podcast.episodes )
+    @ManyToOne( type => Podcast, podcast => podcast.episodes, { onDelete: 'CASCADE' } )
     podcast: Podcast;
 }

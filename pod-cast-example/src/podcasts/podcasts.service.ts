@@ -95,13 +95,12 @@ export class PodcastsService {
         } catch (error) { return { ok: false, error } }
     }
 
-    // deleteEpisode = (pcID: number, epID: number): boolean => {
-    //     const selectedPcIndex = this.findPodCastIndexByID(pcID);
-    //     const selectedEpIndex = this.findEpisodeIndexByID(epID);
-
-    //     this.db.podcasts[selectedPcIndex].episodes = this.db.podcasts[selectedPcIndex].episodes.filter(e => e.id !== epID);
-    //     this.db.episodes.splice(selectedEpIndex, 1);
-        
-    //     return true;
-    // }
+    async deleteEpisode (pcID: number, epID: number): Promise<CoreOutput> {
+        try {
+            const { ok, error } = await this.doesEpisodeExist(pcID, epID)
+            if ( !ok ) return { ok, error}
+            await this.episodes.delete(epID)
+            return { ok: true }
+        } catch (error) { return { ok: false, error } }
+    }
 }
