@@ -60,18 +60,17 @@ export class EpisodeResolver {
 
     @Query ( returns => EpisodesOutput )
     async episodesOfPodcast ( @Args('id') id: number ): Promise<EpisodesOutput> {
-        try {
-            const { ok, error, episodes } = await this.podcastService.getEpisodes(id)
-            return { ok, error, episodes }
-        } catch (error) { return { ok: false, error } }
+        try { return this.podcastService.getEpisodes(id) }
+        catch (error) { return { ok: false, error } }
     }
 
-    // @Mutation ( returns => CoreOutput )
-    // createEpisode ( 
-    //     @Args() createEpisodeDTO: CreateEpisodeDTO
-    // ) {
-    //     return this.podcastService.createEpisode(createEpisodeDTO)
-    // }
+    @Mutation ( returns => CoreOutput )
+    async createEpisode ( 
+        @Args() createEpisodeDTO: CreateEpisodeDTO
+    ): Promise<CoreOutput> {
+        try { return this.podcastService.createEpisode(createEpisodeDTO) } 
+        catch (error) { return { ok: false, error } }
+    }
 
     // @Mutation ( returns => CoreOutput )
     // updateEpisode (

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreatePodcastInput } from './dtos/create-podcast.dto';
 import { CreateEpisodeDTO } from './dtos/create-episode.dto';
 import { UpdateEpisodeDTO } from './dtos/update-episode.dto';
@@ -9,20 +9,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EpisodesOutput } from './dtos/get-episodes.dto';
 import { PodcastOutput } from "./dtos/get-podcast.dto";
+import { CoreOutput } from 'src/common/dtos/core-output.dto';
 
 
 @Injectable()
 export class PodcastsService {
 
     constructor( 
-        @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>
+        @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>,
+        @InjectRepository(Episode) private readonly episodes: Repository<Episode>
     ) {}
 
-    getAllPodCasts = (): Promise<Podcast[]> => this.podcasts.find();   
+    /* Find => Relation Option */
+    getAllPodCasts = (): Promise<Podcast[]> => this.podcasts.find( {relations: ['episodes']} );   
     
     async getPodCastByID (pcID: number): Promise<PodcastOutput> {
         try {
-            const foundPodcast = await this.podcasts.findOne(pcID);
+            const foundPodcast = await this.podcasts.findOne(pcID, {relations: ['episodes']});
             if (!foundPodcast) 
                 return {
                     ok: false,
@@ -58,22 +61,17 @@ export class PodcastsService {
         } catch (error) { return { ok: false, error } }
     }
 
-    // async createEpisode ( {pcID, data}: CreateEpisodeDTO ) {
-    //     const foundPodcast = await this.podcasts.findOne(pcID);
-        
-        // const selectedID = this.findPodCastIndexByID(pcID);
+    async createEpisode ( {pcID, data}: CreateEpisodeDTO ): Promise<CoreOutput> {
+        const { ok, error, podcast } = await this.getPodCastByID(pcID);
+        if ( !ok )  return { ok, error }
 
-        // const newEpisode: Episode = {
-        //     pid: pcID,
-        //     id: this.db.curEpID++,
-        //     title, category,
-        //     rating: 0
-        // }
+        const newEpisode: Episode = this.episodes.create({
+            ...data, rating: 0, podcast
+        })
 
-        // this.db.episodes = this.db.episodes.concat(newEpisode);
-        // this.db.podcasts[selectedID].episodes.push(newEpisode);
-    //     return true;
-    // }
+        this.episodes.save(newEpisode);
+        return { ok: true };
+    }
 
     // updateEpisode = ( { pcID, epID, data }: UpdateEpisodeDTO ) => {
     //     // const selectedPcIndex = this.findPodCastIndexByID(pcID);
@@ -104,19 +102,5 @@ export class PodcastsService {
     //     this.db.episodes.splice(selectedEpIndex, 1);
         
     //     return true;
-    // }
-
-    // findPodCastIndexByID = (pcID: number): number => {
-    //     const selectedID = this.db.podcasts.findIndex( pc => pc.id === pcID );
-    //     if (selectedID === -1) 
-    //         throw new NotFoundException(`Podcast which has id number of ${pcID} is not found.`)
-    //     return selectedID
-    // }
-    
-    // findEpisodeIndexByID = (epID: number): number => {
-    //     const selectedID = this.db.episodes.findIndex( ep => ep.id === epID );
-    //     if (selectedID === -1) 
-    //         throw new NotFoundException(`Episode which has id number of ${epID} is not found.`)
-    //     return selectedID
     // }
 }
