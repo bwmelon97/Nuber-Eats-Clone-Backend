@@ -66,12 +66,7 @@ export class PodcastsService {
     async getEpisodes (pcID: number): Promise<EpisodesOutput> {
         try {
             const { podcast, ok, error } = await this.getPodCastByID(pcID);
-            if ( !ok ) return { ok, error } // podcast를 찾는 과정에서 에러 생기면 리턴
-            
-            /* episodes에 값이 들어있지 않으면 null을 리턴해서 빈 배열을 리턴하도록 함;; */
-            if ( !podcast.episodes ) return { ok: true, episodes: [] }
-            /* ***************************************************************** */
-            
+            if ( !ok ) return { ok, error }     // podcast를 찾는 과정에서 에러 생기면 리턴
             return { ok: true, episodes: podcast.episodes }
         } catch (error) { return { ok: false, error } }
     }
@@ -97,6 +92,8 @@ export class PodcastsService {
                 ok: false,
                 error: `Episode id: ${epID} does not exist.`
             }
+            /* ep id가 존재할 때, 다른 pc 아이디를 넣어도 true를 리턴
+               근데 굳이 pc id 확인이 필요할까... (graphql 에서) */
             return { ok: true }
         } catch (error) { return { ok: false, error } }
     }
