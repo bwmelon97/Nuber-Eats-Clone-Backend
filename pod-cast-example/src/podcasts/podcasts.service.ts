@@ -45,8 +45,23 @@ export class PodcastsService {
         return this.podcasts.save(newPodcast)
     }
 
-    updatePodCast = ({ id, data }: UpdatePodcastDTO ) => this.podcasts.update( id, { ...data } )
-    deletePodCast = (pcID: number) => this.podcasts.delete(pcID)
+    async updatePodCast ({ id, data }: UpdatePodcastDTO ): Promise<CoreOutput> {
+        try {
+            const { ok, error } = await this.getPodCastByID(id)
+            if ( !ok )  return { ok, error }
+            await this.podcasts.update( id, { ...data } )
+            return { ok: true }
+        } catch (error) { return { ok: false, error } }
+    }
+
+    async deletePodCast (pcID: number) { 
+        try {
+            const { ok, error } = await this.getPodCastByID(pcID)
+            if ( !ok )  return { ok, error }
+            await this.podcasts.delete(pcID)
+            return { ok: true }
+        } catch (error) { return { ok: false, error } }
+    }
         
     async getEpisodes (pcID: number): Promise<EpisodesOutput> {
         try {

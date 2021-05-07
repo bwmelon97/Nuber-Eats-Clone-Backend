@@ -39,18 +39,14 @@ export class PodcastsResolver {
     async updatePodcast (
         @Args() updatePodcastDTO: UpdatePodcastDTO
     ): Promise<CoreOutput> {
-        try {
-            await this.podcastService.updatePodCast(updatePodcastDTO)
-            return { ok: true }       
-        } catch (error) { return { ok: false, error } }
+        try { return this.podcastService.updatePodCast(updatePodcastDTO) } 
+        catch (error) { return { ok: false, error } }
     }
  
     @Mutation ( returns => CoreOutput )
     async deletePodcast( @Args('id') id: number ): Promise<CoreOutput> { 
-        try {
-            await this.podcastService.deletePodCast(id)
-            return { ok: true }
-        } catch (error) { return { ok: false, error } }
+        try { return this.podcastService.deletePodCast(id) } 
+        catch (error) { return { ok: false, error } }
     }
 }
 
