@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
+import * as Joi from "joi";
 import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
 import { User } from './user/entities/user.entity';
@@ -11,7 +12,16 @@ import { User } from './user/entities/user.entity';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
-      ignoreEnvFile: process.env.NODE_ENV === 'prod' 
+      ignoreEnvFile: process.env.NODE_ENV === 'prod',
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid('dev', 'prod').default('dev'),
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.string().required(),
+        DB_USERNAME: Joi.string().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_NAME: Joi.string().required(),
+        PRIVATE_KEY: Joi.string().required(),
+      }) 
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
