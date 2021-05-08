@@ -16,7 +16,7 @@ export class JwtModule {
                     useValue: options
                 }
             ],
-            exports: [JwtService],
+            exports: [JwtService, CONFIG_OPTIONS],
         }
     }
 }
