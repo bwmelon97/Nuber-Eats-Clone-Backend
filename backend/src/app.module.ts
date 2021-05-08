@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import * as Joi from "joi";
 import { UserModule } from './user/user.module';
-import { CommonModule } from './common/common.module';
 import { User } from './user/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
@@ -37,20 +36,20 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
       logging: true
     }),
     GraphQLModule.forRoot({
-      autoSchemaFile: true
+      autoSchemaFile: true,
+      context: ({ req }) => ({ user: req['user'] })
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
     }),
     UserModule,
-    CommonModule,
   ],
 })
 export class AppModule implements NestModule {
   configure( consumer: MiddlewareConsumer ) {
     consumer.apply(JwtMiddleware).forRoutes({
-      path: "/graphql",
-      method: RequestMethod.ALL
+      path: "/graphql",           // Middleware가 실행되는 path
+      method: RequestMethod.ALL,  // Middleware를 실행시킬 req method (GET, POST...)   
     })
   }
 }
