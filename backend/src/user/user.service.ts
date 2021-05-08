@@ -5,7 +5,7 @@ import { CreateUserInput, CreateUserOutput } from './dtos/create-user.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
-import { UserOutput } from './dtos/user.dto';
+import { UserProfileOutput } from './dtos/user-profile.dto';
 
 @Injectable()
 export class UserService {
@@ -17,7 +17,7 @@ export class UserService {
 
     getUser = () => this.users.find()
 
-    async findUserByID (id: number): Promise<UserOutput> {
+    async findUserByID (id: number): Promise<UserProfileOutput> {
         try {
             const user = await this.users.findOne(id);
             if ( !user ) {
