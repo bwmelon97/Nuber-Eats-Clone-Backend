@@ -5,6 +5,7 @@ import { CreateUserInput, CreateUserOutput } from './dtos/create-user.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
+import { UserOutput } from './dtos/user.dto';
 
 @Injectable()
 export class UserService {
@@ -15,6 +16,19 @@ export class UserService {
     ) { }
 
     getUser = () => this.users.find()
+
+    async findUserByID (id: number): Promise<UserOutput> {
+        try {
+            const user = await this.users.findOne(id);
+            if ( !user ) {
+                return {
+                    ok: false,
+                    error: `User id: ${id} doesn't exist.`
+                }
+            }
+            return { ok: true, user }
+        } catch (error) { return { ok: false, error } }        
+    }
 
     async createUser( 
         { email, password, role }: CreateUserInput 
