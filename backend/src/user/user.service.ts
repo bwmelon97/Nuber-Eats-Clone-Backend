@@ -94,13 +94,20 @@ export class UserService {
 
     async editProfile ( 
         userID: number, { email, password }: EditProfileInput     
-    ): Promise<User> {
-        const { user } = await this.findUserByID(userID);
-        
-        if ( email ) { user.email = email }
-        if ( password ) { user.password = password }
-        
-        return this.users.save(user)
+    ): Promise<CoreOutput> {
+        try {
+            const { user } = await this.findUserByID(userID);
+            if ( email ) { user.email = email }
+            if ( password ) { user.password = password }
+            this.users.save(user)
+            return { ok: true }
+        }
+        catch (error) {
+            return {
+                ok: false,
+                error: 'Fail to update user profile...'
+            }
+        }
     }
 
     async verifyEmail (code: string): Promise<CoreOutput> {

@@ -28,41 +28,33 @@ export class UserResolver {
 
     @Query(returns => UserProfileOutput)
     @UseGuards(AuthGuard)
-    async userProfile(
+    userProfile(
         @Args() userProfileInput: UserProfileInput
     ): Promise<UserProfileOutput> {
-        try { return this.userService.findUserByID(userProfileInput.id) } 
-        catch (error) { return { ok: false, error } }
+        return this.userService.findUserByID(userProfileInput.id)
     }
 
     @Mutation(returns => CreateUserOutput)
-    async createUser( 
+    createUser( 
         @Args('input') createUserInput: CreateUserInput
     ): Promise<CreateUserOutput> {
-        try { return this.userService.createUser(createUserInput) } 
-        catch (error) { return { ok: false, error } }
+        return this.userService.createUser(createUserInput)
     }
 
     @Mutation(returns => LoginOutput)
-    async login (
+    login (
         @Args('input') loginInput: LoginInput
     ): Promise<LoginOutput> {
-        try { return this.userService.login(loginInput) } 
-        catch (error) { return { ok: false, error } }
+        return this.userService.login(loginInput)
     }
 
     @UseGuards(AuthGuard)
     @Mutation(returns => CoreOutput)
-    async editProfile( 
+    editProfile( 
         @AuthUser() authUser: User,
         @Args('input') editProfileInput: EditProfileInput
     ): Promise<CoreOutput> {
-        try { 
-            const editedUser = await this.userService.editProfile( authUser.id, editProfileInput ) 
-            if ( !editedUser ) throw Error
-            return { ok: true }
-        } 
-        catch (error) { return { ok: false, error } }
+        return this.userService.editProfile( authUser.id, editProfileInput ) 
     }
 }
 
@@ -71,10 +63,9 @@ export class VerificationResolver {
     constructor( private readonly userService: UserService ) {}
 
     @Mutation(returns => CoreOutput)
-    async verifyEmail(
+    verifyEmail(
         @Args('input') { code }: VerifyEmailInput
     ): Promise<CoreOutput> {
-        try { return this.userService.verifyEmail(code) } 
-        catch (error) { return { ok: false, error } }
+        return this.userService.verifyEmail(code) 
     }
 }
