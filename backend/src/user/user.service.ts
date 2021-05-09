@@ -7,12 +7,15 @@ import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { UserProfileOutput } from './dtos/user-profile.dto';
 import { EditProfileInput } from './dtos/edit-profile.dto';
+import { Verification } from './entities/verification.entity';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User) 
         private readonly users: Repository<User>,
+        @InjectRepository(Verification) 
+        private readonly verifications: Repository<Verification>,
         private readonly jwtService: JwtService
     ) { }
 
@@ -41,16 +44,20 @@ export class UserService {
     ): Promise<CreateUserOutput> {
         try {
             const existUser = await this.users.findOne( { email } );
-            if ( !existUser ) {
-                const createdUser = this.users.create({email, password, role})
-                this.users.save(createdUser);
-                return { ok: true };
+            if ( existUser ) {
+                return {
+                    ok: false,
+                    error: 'There is a user with that email already'
+                }
             }
-            return {
-                ok: false,
-                error: 'There is a user with that email already'
-            }
-        } catch (error) { return { ok: false, error: "Couldn't create an accoutn" } }
+            const createdUser = this.users.create({email, password, role})
+            console.log(createdUser)
+            await this.users.save(createdUser);
+            await this.verifications.save(
+                this.verifications.create({ user: createdUser })
+            )
+            return { ok: true };
+        } catch (error) { return { ok: false, error: "Couldn't create an account" } }
     }
 
     async login (

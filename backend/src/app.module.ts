@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
+import { Verification } from './user/entities/verification.entity';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
 			username: process.env.DB_USERNAME,
 			password: process.env.DB_PASSWORD,
 			database: process.env.DB_NAME,
-      entities: [User],
+      entities: [User, Verification],
       synchronize: true,
       logging: true
     }),
