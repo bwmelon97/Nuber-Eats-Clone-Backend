@@ -16,8 +16,13 @@ export class UserService {
         private readonly jwtService: JwtService
     ) { }
 
-    getUser = () => this.users.find()
+    getUser = () => this.users.query('select * from user')
 
+    /**
+     * This Method returns User Data without Password Column.
+     * @param id 
+     * @returns 
+     */
     async findUserByID (id: number): Promise<UserProfileOutput> {
         try {
             const user = await this.users.findOne(id);
@@ -53,7 +58,10 @@ export class UserService {
     ): Promise<LoginOutput> {
         try {
             /* 1. 이메일 확인 */
-            const user = await this.users.findOne( { email } );
+            const user = await this.users.findOne( 
+                { email }, 
+                { select: ['password', 'id'] } 
+            );
             if ( !user ) {
                 return { 
                     ok: false,
