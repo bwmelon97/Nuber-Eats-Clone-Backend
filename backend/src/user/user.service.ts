@@ -8,6 +8,7 @@ import { JwtService } from 'src/jwt/jwt.service';
 import { UserProfileOutput } from './dtos/user-profile.dto';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
+import { CoreOutput } from 'src/common/dtos/core-output.dto';
 
 @Injectable()
 export class UserService {
@@ -51,7 +52,6 @@ export class UserService {
                 }
             }
             const createdUser = this.users.create({email, password, role})
-            console.log(createdUser)
             await this.users.save(createdUser);
             await this.verifications.save(
                 this.verifications.create({ user: createdUser })
@@ -103,4 +103,20 @@ export class UserService {
         return this.users.save(user)
     }
 
+    async verifyEmail (code: string): Promise<CoreOutput> {
+        try {
+            const verification = await this.verifications.findOne(
+                { code }, { loadRelationIds: true }
+            );
+            if ( !verification ) { throw Error }
+            const verifiedUserId = verification.user;
+            this.users.update(verifiedUserId, { verified: true })
+            return { ok: true }
+        } catch (error) {
+            return { 
+                ok: false, 
+                error: 'Fail to verify Email...'
+            }
+        }
+    }
 }

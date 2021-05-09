@@ -7,6 +7,7 @@ import { CreateUserInput, CreateUserOutput } from './dtos/create-user.dto';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
+import { VerifyEmailInput } from './dtos/verify-email.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 
@@ -61,6 +62,19 @@ export class UserResolver {
             if ( !editedUser ) throw Error
             return { ok: true }
         } 
+        catch (error) { return { ok: false, error } }
+    }
+}
+
+@Resolver()
+export class VerificationResolver {
+    constructor( private readonly userService: UserService ) {}
+
+    @Mutation(returns => CoreOutput)
+    async verifyEmail(
+        @Args('input') { code }: VerifyEmailInput
+    ): Promise<CoreOutput> {
+        try { return this.userService.verifyEmail(code) } 
         catch (error) { return { ok: false, error } }
     }
 }
