@@ -19,6 +19,7 @@ Try this command. Then it works !
 
 ```bash
 $ nvm install 14.15.1  # upgrade Node Version
+$ yarn install
 $ yarn start:dev
 ```
 
