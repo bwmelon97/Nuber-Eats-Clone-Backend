@@ -47,10 +47,10 @@ $ yarn start:dev
 
 Resolver에 들어갈 Mutation & Quary
 ```
-- createAccount
-- login
-- editProfile
-- seeProfile
+- createAccount [o]
+- login         [ ]
+- editProfile   [ ]
+- seeProfile    [ ]
 ```
 
 패스워드는 반드시 bcrypt를 이용하여 hash화 /
