@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { PodcastsModule } from './podcasts/podcasts.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CommonModule } from './common/common.module';
 import { Podcast } from './podcasts/entities/podcast.entity';
 import { Episode } from './podcasts/entities/episode.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { Episode } from './podcasts/entities/episode.entity';
       synchronize: true,
     }),
     PodcastsModule,
-    CommonModule
+    UsersModule
   ],
 })
 export class AppModule {}
