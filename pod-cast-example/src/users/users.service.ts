@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { Repository } from 'typeorm';
 import { CreateAccountInput } from './dtos/create-account.dto';
+import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -29,8 +30,31 @@ export class UsersService {
         } catch ( error ) { 
             return { 
                 ok: false, 
-                error: error ? error : 'Fail to create Account...' 
+                error: error ? error.message : 'Fail to create Account...' 
             } 
+        }
+    }
+
+
+    async login ( {email, password}: LoginInput ): Promise<LoginOutput> {
+        try {
+            /* 1. email 확인 */
+            const user = await this.users.findOne({ email })
+            if ( !user ) throw Error("Couldn't find user with input email...")
+
+            /* 2. password 확인 */
+            const confirmed = await user.confirmPassword(password)
+            if ( !confirmed ) throw Error("Receive wrong password !!")
+
+            /* 3. Generate Token */
+            const token = 'hehe'
+
+            return { ok: true, token }
+        } catch (error) {
+            return { 
+                ok: false, 
+                error: error ? error.message : 'Fail to login...'
+            }
         }
     }
 }
