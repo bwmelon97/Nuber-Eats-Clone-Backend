@@ -49,7 +49,7 @@ $ yarn start:dev
 Resolver에 들어갈 Mutation & Quary
 ```
 - createAccount [o]
-- login         [ ]
+- login         [o]
 - editProfile   [ ]
 - seeProfile    [ ]
 ```

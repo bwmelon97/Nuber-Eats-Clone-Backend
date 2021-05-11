@@ -6,9 +6,20 @@ import { Podcast } from './podcasts/entities/podcast.entity';
 import { Episode } from './podcasts/entities/episode.entity';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
+import { JwtModule } from './jwt/jwt.module';
+import { ConfigModule } from '@nestjs/config';
+import * as Joi from "joi";
+
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+      validationSchema: Joi.object({
+        PRIVATE_KEY: Joi.string().required()
+      })
+    }),
     GraphQLModule.forRoot({
       autoSchemaFile: true
     }),
@@ -19,8 +30,9 @@ import { User } from './users/entities/user.entity';
       logging: true,
       synchronize: true,
     }),
+    JwtModule.forRoot(),
     PodcastsModule,
-    UsersModule
+    UsersModule,
   ],
 })
 export class AppModule {}

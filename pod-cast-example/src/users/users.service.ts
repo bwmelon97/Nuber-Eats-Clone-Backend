@@ -5,11 +5,15 @@ import { Repository } from 'typeorm';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
+import * as jwt from 'jsonwebtoken';
+import { JwtService } from 'src/jwt/jwt.service';
+
 
 @Injectable()
 export class UsersService {
     constructor(
-        @InjectRepository(User) private readonly users: Repository<User> 
+        @InjectRepository(User) private readonly users: Repository<User>, 
+        private readonly jwtService: JwtService
     ) {}
 
     getUsers = (): Promise<User[]> => this.users.find();
@@ -47,7 +51,7 @@ export class UsersService {
             if ( !confirmed ) throw Error("Receive wrong password !!")
 
             /* 3. Generate Token */
-            const token = 'hehe'
+            const token = jwt.sign({id: user.id}, process.env.PRIVATE_KEY)
 
             return { ok: true, token }
         } catch (error) {
