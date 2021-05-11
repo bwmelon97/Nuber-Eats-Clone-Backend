@@ -21,3 +21,40 @@ Try this command. Then it works !
 $ nvm install 14.15.1  # upgrade Node Version
 $ yarn start:dev
 ```
+
+.
+
+---
+
+.
+
+# Today's Objects
+유저 인증과 유저 CRUD
+
+호스트(Host) 역할의 유저는 Podcast를 만들어서 Episode를 업로드 /
+리스너(Listener) 유저들이 팟캐스트를 구독하여 에피소드를 듣기
+
+`users` module with entities, services and resolvers
+
+```
+- Users should be able to login with a password.
+- There should be only oneuser entity 
+- but your entity should support two roles 'Host' and 'Listener'.
+- Create Guards to protect private resolvers.
+- Use JWT as authentication method.
+- Create a decorator to get the logged in user.
+```
+
+Resolver에 들어갈 Mutation & Quary
+```
+- createAccount
+- login
+- editProfile
+- seeProfile
+```
+
+패스워드는 반드시 bcrypt를 이용하여 hash화 /
+EditProfile에서 패스워드를 변경할 경우 꼭 다시 hashing을 해야 
+
+JwtModule을 만들어서 구현하시면 보너스 점수
+
