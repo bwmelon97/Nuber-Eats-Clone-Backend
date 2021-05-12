@@ -51,7 +51,7 @@ Resolver에 들어갈 Mutation & Quary
 - createAccount [o]
 - login         [o]
 - editProfile   [o]
-- seeProfile    [ ]
+- seeProfile    [o]
 ```
 
 패스워드는 반드시 bcrypt를 이용하여 hash화 /
