@@ -50,7 +50,7 @@ Resolver에 들어갈 Mutation & Quary
 ```
 - createAccount [o]
 - login         [o]
-- editProfile   [ ]
+- editProfile   [o]
 - seeProfile    [ ]
 ```
 

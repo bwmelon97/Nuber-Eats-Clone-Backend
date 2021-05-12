@@ -1,9 +1,9 @@
 import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { CoreEntity } from "src/common/entities/core.entity";
-import { BeforeInsert, Column, Entity } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
 import * as bcrypt from 'bcrypt';
 
-enum UserRole {
+export enum UserRole {
     Host,
     Listener
 }
@@ -17,7 +17,7 @@ export class User extends CoreEntity {
     email: string;
 
     @Field(type => String)
-    @Column()
+    @Column( {select: false} )
     password: string;
 
     @Field(type => UserRole)
@@ -25,8 +25,11 @@ export class User extends CoreEntity {
     role: UserRole
 
     @BeforeInsert()
+    @BeforeUpdate()
     async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 10);
+        if( this.password ) {
+            this.password = await bcrypt.hash(this.password, 10);
+        }
     }
 
     confirmPassword(aPassword: string): Promise<boolean> {

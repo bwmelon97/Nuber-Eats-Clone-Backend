@@ -5,8 +5,9 @@ import { Repository } from 'typeorm';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
-import * as jwt from 'jsonwebtoken';
 import { JwtService } from 'src/jwt/jwt.service';
+import { UserOutput } from './dtos/user.dto';
+import { EditProfileInput } from './dtos/edit-profile.dto';
 
 
 @Injectable()
@@ -16,7 +17,22 @@ export class UsersService {
         private readonly jwtService: JwtService
     ) {}
 
-    getUsers = (): Promise<User[]> => this.users.find();
+    getUsers = (): Promise<User[]> => this.users.find({
+        select: ['id', 'email', 'password' ,'role', 'updatedAt', 'createdAt']
+    })
+
+    async findUserById ( id: number ): Promise<UserOutput> {
+        try {
+            const user = await this.users.findOne(id)
+            if ( !user ) throw Error
+            return { ok: true, user }
+        } catch (error) {
+            return {
+                ok: false,
+                error: "Couldn't find a user..."
+            }
+        }
+    }
 
     async createAccount ( 
         { email, password, role }: CreateAccountInput 
@@ -43,7 +59,10 @@ export class UsersService {
     async login ( {email, password}: LoginInput ): Promise<LoginOutput> {
         try {
             /* 1. email 확인 */
-            const user = await this.users.findOne({ email })
+            const user = await this.users.findOne(
+                { email },
+                { select: ['id', 'password'] }    
+            )
             if ( !user ) throw Error("Couldn't find user with input email...")
 
             /* 2. password 확인 */
@@ -51,13 +70,31 @@ export class UsersService {
             if ( !confirmed ) throw Error("Receive wrong password !!")
 
             /* 3. Generate Token */
-            const token = jwt.sign({id: user.id}, process.env.PRIVATE_KEY)
+            const token = this.jwtService.sign({id: user.id})
 
             return { ok: true, token }
         } catch (error) {
             return { 
                 ok: false, 
                 error: error ? error.message : 'Fail to login...'
+            }
+        }
+    }
+
+    async editProfile ( 
+        authUser: User, {email, password, role}: EditProfileInput )     
+    {
+        try {
+            const user = await this.users.findOne( authUser.id );
+            if ( email )    { user.email = email }
+            if ( password ) { user.password = password }
+            // if ( role )     { user.role = role }  <- 안 바뀌는 이유를 모르겠음..
+            this.users.save(user)
+            return { ok: true }
+        } catch(error) {
+            return {
+                ok: false,
+                error: 'Could not update User Profile...'
             }
         }
     }
