@@ -6,7 +6,7 @@ import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
-import { UserOutput } from './dtos/user.dto';
+import { SeeProfileOutput } from './dtos/see-profile.dto';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 
 
@@ -21,7 +21,7 @@ export class UsersService {
         select: ['id', 'email', 'password' ,'role', 'updatedAt', 'createdAt']
     })
 
-    async findUserById ( id: number ): Promise<UserOutput> {
+    async findUserById ( id: number ): Promise<SeeProfileOutput> {
         try {
             const user = await this.users.findOne(id)
             if ( !user ) throw Error

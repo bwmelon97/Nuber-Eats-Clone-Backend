@@ -7,6 +7,7 @@ import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
+import { SeeProfileOutput } from './dtos/see-profile.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
@@ -41,5 +42,11 @@ export class UsersResolver {
         @Args('input') editProfileInput: EditProfileInput
     ): Promise<CoreOutput> {
         return this.usersSerive.editProfile(authUser, editProfileInput)
+    }
+
+    @UseGuards(AuthGuard)
+    @Query(returns => SeeProfileOutput)
+    seeProfile( @AuthUser() authUser: User ): Promise<SeeProfileOutput> {
+        return this.usersSerive.findUserById( authUser.id )
     }
 }
