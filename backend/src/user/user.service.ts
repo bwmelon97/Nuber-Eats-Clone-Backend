@@ -37,7 +37,7 @@ export class UserService {
                 }
             }
             return { ok: true, user }
-        } catch (error) { return { ok: false, error } }        
+        } catch (error) { return { ok: false, error: error.message } }        
     }
 
     async createUser( 

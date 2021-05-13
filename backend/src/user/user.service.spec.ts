@@ -27,6 +27,12 @@ describe("UserService", () => {
     let service: UserService;
     let userRepository: MockRepository<User>;
     let verificationRepository: MockRepository<Verification>;
+    
+    const sampleUser: CreateUserInput = {
+        email: "sample@naver.com",
+        password: "sample",
+        role: 0
+    }
 
     beforeAll( async () => {
         const module = await Test.createTestingModule({
@@ -46,12 +52,38 @@ describe("UserService", () => {
         expect(service).toBeDefined();
     })
 
+    describe('findUserByID', () => {
+
+        it('should fail if couldn\'t find user', async () => {
+            userRepository.findOne.mockResolvedValue(undefined)
+            const result = await service.findUserByID(1)
+            expect(result).toMatchObject({
+                ok: false,
+                error: 'User id: 1 doesn\'t exist.'
+            })
+        })
+
+        it('should return user if it finds', async () => {
+            userRepository.findOne.mockResolvedValue(sampleUser)
+            const result = await service.findUserByID(1)
+            expect(result).toMatchObject({
+                ok: true,
+                user: sampleUser
+            })
+        })
+
+        it('should return error if it rejects', async () => {
+            const errorMsg = 'fail to find user'
+            userRepository.findOne.mockRejectedValue(new Error(errorMsg))
+            const result = await service.findUserByID(1)
+            expect(result).toMatchObject({
+                ok: false,
+                error: errorMsg
+            })
+        })
+    })
+
     describe('createUser', () => {
-        const sampleUser: CreateUserInput = {
-            email: "sample@naver.com",
-            password: "sample",
-            role: 0
-        }
         
         it('should be failed if user exists', async () => {
             userRepository.findOne.mockResolvedValue(sampleUser)
@@ -96,7 +128,6 @@ describe("UserService", () => {
         })
     })
 
-    it.todo('findUserByID')
     it.todo('login')
     it.todo('editProfile')
     it.todo('verifyEmail')
