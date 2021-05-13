@@ -205,5 +205,36 @@ describe("UserService", () => {
         })
     })
 
-    it.todo('verifyEmail')
+    describe('verifyEmail', () => {
+        const verifyEmailArgs = 'code'
+
+        it('should fail if verification not found', async () => {
+            verificationRepository.findOne.mockResolvedValue(null)
+            const result = await service.verifyEmail(verifyEmailArgs)
+            expect(result).toEqual({
+                ok: false, 
+                error: 'Fail to verify Email...'
+            })
+        })
+
+        it('should verify user', async () => {
+            verificationRepository.findOne.mockResolvedValue({
+                code: verifyEmailArgs,
+                user: 1
+            })
+            
+            const result = await service.verifyEmail(verifyEmailArgs)
+            expect(userRepository.update).toHaveBeenCalledWith( expect.any(Number), { verified: true } )
+            expect(result).toEqual({ ok: true })
+        })
+
+        it('should fail on exception', async () => {
+            verificationRepository.findOne.mockRejectedValue(new Error())
+            const result = await service.verifyEmail(verifyEmailArgs)
+            expect(result).toEqual({
+                ok: false, 
+                error: 'Fail to verify Email...'
+            })
+        })
+    })
 })
