@@ -30,6 +30,26 @@ $ yarn start:dev
 .
 
 # Today's Objects
+Unit test
+
+아래 테스트 파일들에서 Stmts(statements)가 전부 100%가 나오도록
+```
+- podcasts.service.spec.ts  [ ]
+- jwt.service.spec.ts       [ ]
+- users.service.spec.ts     [ ]
+```
+
+```bash
+$ npm run test:cov
+```
+
+
+
+---
+
+## Assignment log
+
+### 5.12.
 유저 인증과 유저 CRUD
 
 호스트(Host) 역할의 유저는 Podcast를 만들어서 Episode를 업로드 /
@@ -58,4 +78,3 @@ Resolver에 들어갈 Mutation & Quary
 EditProfile에서 패스워드를 변경할 경우 꼭 다시 hashing을 해야 
 
 JwtModule을 만들어서 구현하시면 보너스 점수
-
