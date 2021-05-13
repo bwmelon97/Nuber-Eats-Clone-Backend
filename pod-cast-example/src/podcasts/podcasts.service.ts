@@ -8,7 +8,7 @@ import { Podcast } from './entities/podcast.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EpisodesOutput } from './dtos/get-episodes.dto';
-import { PodcastOutput } from "./dtos/get-podcast.dto";
+import { PodcastOutput, PodcastsOutput } from "./dtos/get-podcast.dto";
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
 
 
@@ -20,8 +20,24 @@ export class PodcastsService {
         @InjectRepository(Episode) private readonly episodes: Repository<Episode>
     ) {}
 
+    private readonly InternalServerErrorOutput = {
+        ok: false,
+        error: 'Internal server error occurred.',
+    };
+
     /* Find => Relation Option */
-    getAllPodCasts = (): Promise<Podcast[]> => this.podcasts.find( {relations: ['episodes']} );   
+    async getAllPodCasts (): Promise<PodcastsOutput> {
+        try {
+            const podcastList = await this.podcasts.find( {relations: ['episodes']} );   
+            return { ok: true, podcasts: podcastList }
+        }
+        catch {
+            return {
+                ok: false,
+                error: 'Fail to get podcasts'
+            }
+        }
+    }
     
     async getPodCastByID (pcID: number): Promise<PodcastOutput> {
         try {

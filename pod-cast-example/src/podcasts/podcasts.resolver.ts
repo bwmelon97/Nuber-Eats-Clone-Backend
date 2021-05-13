@@ -3,7 +3,7 @@ import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { CreateEpisodeDTO } from './dtos/create-episode.dto';
 import { CreatePodcastInput } from './dtos/create-podcast.dto';
 import { EpisodesOutput } from './dtos/get-episodes.dto';
-import { PodcastOutput } from './dtos/get-podcast.dto';
+import { PodcastOutput, PodcastsOutput } from './dtos/get-podcast.dto';
 import { UpdateEpisodeDTO } from './dtos/update-episode.dto';
 import { UpdatePodcastDTO } from './dtos/update-podcast.dto';
 import { Episode } from './entities/episode.entity';
@@ -15,7 +15,7 @@ export class PodcastsResolver {
     constructor(private readonly podcastService: PodcastsService) {}
 
     @Query( returns => [Podcast] )
-    async podcasts(): Promise<Podcast[]> { return this.podcastService.getAllPodCasts() }
+    async podcasts(): Promise<PodcastsOutput> { return this.podcastService.getAllPodCasts() }
 
     @Query( returns => PodcastOutput )
     async podcastByID( @Args('id') id: number ): Promise<PodcastOutput> {

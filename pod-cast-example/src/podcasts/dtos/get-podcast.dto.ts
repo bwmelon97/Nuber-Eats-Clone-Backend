@@ -7,3 +7,8 @@ export class PodcastOutput extends CoreOutput {
     @Field(type => Podcast, { nullable: true })
     podcast?: Podcast;
 }
+
+export class PodcastsOutput extends CoreOutput {
+    @Field(type => [Podcast], { nullable: true })
+    podcasts?: Podcast[];
+}
