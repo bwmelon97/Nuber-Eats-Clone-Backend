@@ -45,19 +45,20 @@ export class UserService {
     ): Promise<CreateUserOutput> {
         try {
             const existUser = await this.users.findOne( { email } );
-            if ( existUser ) {
-                return {
-                    ok: false,
-                    error: 'There is a user with that email already'
-                }
-            }
+            if ( existUser ) throw Error('There is a user with that email already')
+
             const createdUser = this.users.create({email, password, role})
             await this.users.save(createdUser);
             await this.verifications.save(
                 this.verifications.create({ user: createdUser })
             )
             return { ok: true };
-        } catch (error) { return { ok: false, error: "Couldn't create an account" } }
+        } catch (error) { 
+            return { 
+                ok: false, 
+                error: error ? error.message : "Couldn't create an account" 
+            } 
+        }
     }
 
     async login (
