@@ -17,9 +17,9 @@ const mockRepository = () => ({
     update: jest.fn(),
 })
 
-const mockJwtService = {
+const mockJwtService = () => ({
     sign: jest.fn(() => 'signed-token-hello')
-}
+})
 
 type MockRepository<T = any> = Partial< Record< keyof Repository<T>, jest.Mock > >
 
@@ -42,7 +42,7 @@ describe("UserService", () => {
                 UserService,
                 { provide: getRepositoryToken(User), useValue: mockRepository() },
                 { provide: getRepositoryToken(Verification), useValue: mockRepository() },
-                { provide: JwtService, useValue: mockJwtService }
+                { provide: JwtService, useValue: mockJwtService() }
             ]
         }).compile();
         service = module.get<UserService>(UserService)
@@ -181,6 +181,29 @@ describe("UserService", () => {
         })
     })
 
-    it.todo('editProfile')
+    describe('editProfile', () => {
+        const editProfileArgs = {
+            id: 1, newUser: { email: 'sample@new.com', password: 'sample' }
+        }
+        
+        it('should change email & password', async () => {
+            const oldUser = { email: 'sample@old.com', password: 'old' }
+            userRepository.findOne.mockResolvedValue(oldUser)
+
+            const result = await service.editProfile( editProfileArgs.id, editProfileArgs.newUser )
+            expect(userRepository.save).toHaveBeenCalledWith( editProfileArgs.newUser );
+            expect(result).toEqual({ ok: true })
+        })
+
+        it('should fail on exception', async () => {
+            userRepository.findOne.mockRejectedValue(new Error())
+            const result = await service.editProfile( editProfileArgs.id, editProfileArgs.newUser )
+            expect(result).toEqual({
+                ok: false,
+                error: 'Fail to update user profile...'
+            })
+        })
+    })
+
     it.todo('verifyEmail')
 })
