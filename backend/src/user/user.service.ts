@@ -90,7 +90,7 @@ export class UserService {
             const token = this.jwtService.sign( {id: user.id} )
 
             return { ok: true, token }
-        } catch (error) { return { ok: false, error } }
+        } catch (error) { return { ok: false, error: error.message } }
     }
 
     async editProfile ( 

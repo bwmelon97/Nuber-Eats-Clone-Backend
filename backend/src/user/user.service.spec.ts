@@ -3,6 +3,7 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { JwtService } from "src/jwt/jwt.service";
 import { Repository } from "typeorm";
 import { CreateUserInput } from "./dtos/create-user.dto";
+import { LoginInput } from "./dtos/login.dto";
 import { User } from "./entities/user.entity";
 import { Verification } from "./entities/verification.entity";
 import { UserService } from "./user.service"
@@ -17,7 +18,7 @@ const mockRepository = () => ({
 })
 
 const mockJwtService = {
-    sign: jest.fn()
+    sign: jest.fn(() => 'signed-token-hello')
 }
 
 type MockRepository<T = any> = Partial< Record< keyof Repository<T>, jest.Mock > >
@@ -25,6 +26,7 @@ type MockRepository<T = any> = Partial< Record< keyof Repository<T>, jest.Mock >
 describe("UserService", () => {
 
     let service: UserService;
+    let jwtService: JwtService;
     let userRepository: MockRepository<User>;
     let verificationRepository: MockRepository<Verification>;
     
@@ -34,7 +36,7 @@ describe("UserService", () => {
         role: 0
     }
 
-    beforeAll( async () => {
+    beforeEach( async () => {
         const module = await Test.createTestingModule({
             providers: [
                 UserService,
@@ -44,6 +46,7 @@ describe("UserService", () => {
             ]
         }).compile();
         service = module.get<UserService>(UserService)
+        jwtService = module.get<JwtService>(JwtService)
         userRepository = module.get(getRepositoryToken(User))
         verificationRepository = module.get(getRepositoryToken(Verification))
     } )
@@ -128,7 +131,56 @@ describe("UserService", () => {
         })
     })
 
-    it.todo('login')
+    describe('login', () => {
+        const loginArgs: LoginInput = {
+            email: 'sample@naver.com',
+            password: "sample"
+        }
+
+        
+        it('should fail if user does not exist', async () => {
+            userRepository.findOne.mockResolvedValue(null);
+            const result = await service.login(loginArgs)
+            expect(result).toEqual({
+                ok: false,
+                error: `User email: sample@naver.com does not exist...`
+            })
+        })
+        
+        it('should fail if wrong password', async () => {
+            const mockUser = { confirmPassword: jest.fn(() => Promise.resolve(false)) }
+            userRepository.findOne.mockResolvedValue(mockUser);
+            const result = await service.login(loginArgs)
+            expect(mockUser.confirmPassword).toBeCalledTimes(1)
+            expect(mockUser.confirmPassword).toBeCalledWith( expect.any(String) )
+            expect(result).toEqual({
+                ok: false,
+                error: 'Recieve wrong password...'
+            })
+        })
+
+        it('should return token if password is correct', async () => {
+            const mockUser = { 
+                id: 1,
+                confirmPassword: jest.fn(() => Promise.resolve(true)) 
+            }
+            userRepository.findOne.mockResolvedValue(mockUser);
+            const result = await service.login(loginArgs);
+            expect(jwtService.sign).toBeCalledTimes(1);
+            expect(jwtService.sign).toBeCalledWith( expect.any( Object ) );
+            expect(result).toEqual({ ok: true, token: 'signed-token-hello' })
+        })
+
+        it('should fail on exception', async () => {
+            userRepository.findOne.mockRejectedValue(new Error('fail to login'));
+            const result = await service.login(loginArgs);
+            expect(result).toEqual({
+                ok: false,
+                error: 'fail to login'
+            })
+        })
+    })
+
     it.todo('editProfile')
     it.todo('verifyEmail')
 })
