@@ -63,7 +63,7 @@ export class UsersService {
                 { email },
                 { select: ['id', 'password'] }    
             )
-            if ( !user ) throw Error("Couldn't find user with input email...")
+            if ( !user ) throw Error("Couldn't find a user...")
 
             /* 2. password 확인 */
             const confirmed = await user.confirmPassword(password)
@@ -86,15 +86,17 @@ export class UsersService {
     {
         try {
             const user = await this.users.findOne( authUser.id );
+            if ( !user ) throw Error('Couldn\'t find a user...')
+
             if ( email )    { user.email = email }
             if ( password ) { user.password = password }
             // if ( role )     { user.role = role }  <- 안 바뀌는 이유를 모르겠음..
-            this.users.save(user)
+            await this.users.save(user)
             return { ok: true }
         } catch(error) {
             return {
                 ok: false,
-                error: 'Could not update User Profile...'
+                error: error ? error.message : 'Could not update User Profile...'
             }
         }
     }
