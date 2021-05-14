@@ -3,10 +3,11 @@ import { getRepositoryToken } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreatePodcastInput } from "./dtos/create-podcast.dto";
 import { CreateEpisodeDTO } from "./dtos/create-episode.dto";
-import { UpdatePodcastDTO, UpdatePodcastInput } from "./dtos/update-podcast.dto";
+import { UpdatePodcastDTO } from "./dtos/update-podcast.dto";
 import { Episode } from "./entities/episode.entity";
 import { Podcast } from "./entities/podcast.entity";
 import { PodcastsService } from "./podcasts.service";
+import { UpdateEpisodeDTO } from "./dtos/update-episode.dto";
 
 
 const mockRepository = () => ({
@@ -158,15 +159,8 @@ describe('PodcastsService', () => {
             expect(result).toEqual({ ok: true })
         })
 
-        it('should failed if could not find podcast', async () => {
-            // podcasts.findOne.mockResolvedValue(null)
-            // const result = await service.updatePodCast(updatePodcastArgs)
-            // expect(result).toEqual({ 
-            //     ok: false,
-            //     error: `Podcast id: 1 doesn't exist.`
-            // })
-
-            await couldNotFindPodcast( 'updatePodCast', updatePodcastArgs )
+        it('should failed if could not find podcast',  () => {
+            couldNotFindPodcast( 'updatePodCast', updatePodcastArgs )
         })
 
         it('should failed on exception', async () => {
@@ -183,15 +177,8 @@ describe('PodcastsService', () => {
     describe('deletePodCast', () => {
         const mockPodcast = { id: 1 }
 
-        it('should failed if could not find podcast', async () => {
-            // podcasts.findOne.mockResolvedValue(null)
-            // const result = await service.deletePodCast(1);
-            // expect(result).toEqual({
-            //     ok: false,
-            //     error: `Podcast id: 1 doesn't exist.`
-            // })
-
-            await couldNotFindPodcast( 'deletePodCast', 1 )
+        it('should failed if could not find podcast',  () => {
+            couldNotFindPodcast( 'deletePodCast', 1 )
         })
 
         it('should return ok true if deleting success', async () => {
@@ -216,15 +203,8 @@ describe('PodcastsService', () => {
 
 
     describe('getEpisodes', () => {
-        it('should failed if could not find podcast', async () => {
-            // podcasts.findOne.mockResolvedValue(null)
-            // const result = await service.getEpisodes(1)
-            // expect(result).toEqual({
-            //     ok: false,
-            //     error: `Podcast id: 1 doesn't exist.`
-            // })
-
-            await couldNotFindPodcast( 'getEpisodes', 1 )
+        it('should failed if could not find podcast',  () => {
+            couldNotFindPodcast( 'getEpisodes', 1 )
         })
 
         it('should return true & episodes if find podcast', async () => {
@@ -317,10 +297,50 @@ describe('PodcastsService', () => {
                 ok: true
             })
         })
-        it.todo('should failed on exception')
+        // it.todo('should failed on exception')
     })
 
-    it.todo('updateEpisode');
-    it.todo('deleteEpisode');
+    describe('updateEpisode', () => {
+        const mockUpdateEpisodeDTO: UpdateEpisodeDTO = {
+            pcID: 1,
+            epID: 1,
+            data: {
+                title: 'mock'
+            }
+        }
+
+        it('should failed if episode does not exist', () => {
+            couldNotFindPodcast( 'updateEpisode', mockUpdateEpisodeDTO )
+        })
+        it('should update episode & return true', async () => {
+            const mockUser = {
+                id: 1,
+                episodes: [{id: 1}]
+            }
+            podcasts.findOne.mockResolvedValue(mockUser)
+
+            const result = await service.updateEpisode(mockUpdateEpisodeDTO)
+            expect(episodes.update).toHaveBeenCalledWith( expect.any(Number), mockUpdateEpisodeDTO.data )
+            expect(result).toEqual({ ok: true })
+        })
+        // it.todo('should failed on exception')
+    })
+
+    describe('deleteEpisode', () => {
+        it('should failed if episode does not exist', () => {
+            couldNotFindPodcast( 'deleteEpisode', 1, 1 )
+        })
+        it('should delete episode & return true', async () => {
+            const mockUser = {
+                id: 1,
+                episodes: [{id: 1}]
+            }
+            podcasts.findOne.mockResolvedValue(mockUser)
+
+            const result = await service.deleteEpisode(1, 1)
+            expect(episodes.delete).toHaveBeenCalledWith( expect.any(Number) )
+            expect(result).toEqual({ ok: true })
+        })
+    })
 });
   
