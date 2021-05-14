@@ -51,14 +51,20 @@ export class PodcastsService {
         } catch (error) { return { ok: false, error } }
     }
 
-    createPodCast ( 
+    async createPodCast ( 
         { title, category }: CreatePodcastInput 
-    ): Promise<Podcast> {
-        const initalData = { title, category, rating: 0, episodes: [] }
-        const newPodcast = this.podcasts.create( initalData )
-        /* newPodcast의 데이터가 유효한 지 확인하고 싶음 */
-        /* 현재 Podcast entity에서 episodes 필드에 Default value가 없는 경우에러 발생 */
-        return this.podcasts.save(newPodcast)
+    ): Promise<CoreOutput> {
+        try {
+            const initalData = { title, category, rating: 0, episodes: [] }
+            const newPodcast = this.podcasts.create( initalData )
+            await this.podcasts.save(newPodcast)
+            return { ok: true }  
+        } catch (error) {
+            return {
+                ok: false,
+                error: 'Fail to create podcast'
+            }
+        }
     }
 
     async updatePodCast ({ id, data }: UpdatePodcastDTO ): Promise<CoreOutput> {

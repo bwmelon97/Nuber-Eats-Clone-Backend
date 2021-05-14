@@ -1,11 +1,12 @@
 import { Field, InputType, ObjectType } from "@nestjs/graphql";
+import { CoreEntity } from "src/common/entities/core.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Podcast } from "./podcast.entity";
 
 @InputType({ isAbstract: true, description: 'EpisodeInput' })
 @ObjectType()
 @Entity()
-export class Episode {
+export class Episode extends CoreEntity {
     @Field( type => Number )
     @PrimaryGeneratedColumn()
     id: number;

@@ -14,25 +14,19 @@ import { PodcastsService } from './podcasts.service';
 export class PodcastsResolver {
     constructor(private readonly podcastService: PodcastsService) {}
 
-    @Query( returns => [Podcast] )
-    async podcasts(): Promise<PodcastsOutput> { return this.podcastService.getAllPodCasts() }
+    @Query( returns => PodcastsOutput )
+    podcasts(): Promise<PodcastsOutput> { return this.podcastService.getAllPodCasts() }
 
     @Query( returns => PodcastOutput )
-    async podcastByID( @Args('id') id: number ): Promise<PodcastOutput> {
-        try {
-            const { ok, error, podcast } = await this.podcastService.getPodCastByID(id);
-            return { ok, error, podcast }
-        } catch (error) { return { ok: false, error} }
+    podcastByID( @Args('id') id: number ): Promise<PodcastOutput> {
+        return this.podcastService.getPodCastByID(id); 
     }
 
     @Mutation( returns => CoreOutput )
-    async createPodcast( 
+    createPodcast( 
         @Args('input') createPodcastInput: CreatePodcastInput 
     ): Promise<CoreOutput> {
-        try {
-            await this.podcastService.createPodCast(createPodcastInput)
-            return { ok: true }
-        } catch (error) { return { ok: false, error } }
+        return this.podcastService.createPodCast(createPodcastInput)
     }
 
     @Mutation ( returns => CoreOutput )
