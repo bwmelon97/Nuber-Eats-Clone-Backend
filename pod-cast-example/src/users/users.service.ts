@@ -17,9 +17,9 @@ export class UsersService {
         private readonly jwtService: JwtService
     ) {}
 
-    getUsers = (): Promise<User[]> => this.users.find({
-        select: ['id', 'email', 'password' ,'role', 'updatedAt', 'createdAt']
-    })
+    // getUsers = (): Promise<User[]> => this.users.find({
+    //     select: ['id', 'email', 'password' ,'role', 'updatedAt', 'createdAt']
+    // })
 
     async findUserById ( id: number ): Promise<SeeProfileOutput> {
         try {

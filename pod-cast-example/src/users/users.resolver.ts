@@ -16,10 +16,10 @@ export class UsersResolver {
     constructor( private readonly usersSerive: UsersService ) {}
 
     /* only for dev: User DB 확인용 */
-    @Query(returns => [User])
-    users(): Promise<User[]> {
-        return this.usersSerive.getUsers()
-    }
+    // @Query(returns => [User])
+    // users(): Promise<User[]> {
+    //     return this.usersSerive.getUsers()
+    // }
 
     @Mutation(returns => CoreOutput)
     createAccount(
