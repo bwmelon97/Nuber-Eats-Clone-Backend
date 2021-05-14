@@ -81,13 +81,18 @@ export class PodcastsService {
         }
     }
 
-    async deletePodCast (pcID: number) { 
+    async deletePodCast (pcID: number): Promise<CoreOutput> { 
         try {
             const { ok, error } = await this.getPodCastByID(pcID)
-            if ( !ok )  return { ok, error }
+            if ( !ok )  throw Error(error.toString())
             await this.podcasts.delete(pcID)
             return { ok: true }
-        } catch (error) { return { ok: false, error } }
+        } catch (error) { 
+            return { 
+                ok: false, 
+                error: error ? error.message : 'Fail to delete podcast' 
+            } 
+        }
     }
         
     async getEpisodes (pcID: number): Promise<EpisodesOutput> {

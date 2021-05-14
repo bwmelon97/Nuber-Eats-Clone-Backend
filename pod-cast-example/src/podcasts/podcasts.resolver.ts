@@ -37,9 +37,8 @@ export class PodcastsResolver {
     }
  
     @Mutation ( returns => CoreOutput )
-    async deletePodcast( @Args('id') id: number ): Promise<CoreOutput> { 
-        try { return this.podcastService.deletePodCast(id) } 
-        catch (error) { return { ok: false, error } }
+    deletePodcast( @Args('id') id: number ): Promise<CoreOutput> { 
+        return this.podcastService.deletePodCast(id)
     }
 }
 
