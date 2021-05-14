@@ -238,55 +238,55 @@ describe('PodcastsService', () => {
         })
     })
 
-    // describe('createEpisode', () => {
-    //     const mockCreateEpisodeData: CreateEpisodeDTO = {
-    //         pcID: 1,
-    //         data: {
-    //             title: 'mock',
-    //             category: 'mock'
-    //         }
-    //     }
+    describe('createEpisode', () => {
+        const mockCreateEpisodeData: CreateEpisodeDTO = {
+            pcID: 1,
+            data: {
+                title: 'mock',
+                category: 'mock'
+            }
+        }
 
-    //     it('should failed if could not find podcast', async () => {
-    //         couldNotFindPodcast('createEpisode', mockCreateEpisodeData)
-    //     })
+        it('should failed if could not find podcast', async () => {
+            couldNotFindPodcast('createEpisode', mockCreateEpisodeData)
+        })
 
-    //     it('should create Episode & return true', async () => {
-    //         const mockPodcast = { id: 1 }
-    //         const mockEpisode = {
-    //             title: 'mock',
-    //             category: 'mock',
-    //             rating: 0, 
-    //             podcast: mockPodcast
-    //         }
-    //         podcasts.findOne.mockResolvedValue(mockPodcast)
-    //         episodes.create.mockReturnValue(mockEpisode)
+        it('should create Episode & return true', async () => {
+            const mockPodcast = { id: 1 }
+            const mockEpisode = {
+                title: 'mock',
+                category: 'mock',
+                rating: 0, 
+                podcast: mockPodcast
+            }
+            podcasts.findOne.mockResolvedValue(mockPodcast)
+            episodes.create.mockReturnValue(mockEpisode)
 
-    //         const result = await service.createEpisode(mockCreateEpisodeData)
-    //         expect(episodes.create).toHaveBeenCalledWith(mockEpisode)
-    //         expect(episodes.save).toHaveBeenCalledWith(mockEpisode)
-    //         expect(result).toEqual({ ok: true })
-    //     })
+            const result = await service.createEpisode(mockCreateEpisodeData)
+            expect(episodes.create).toHaveBeenCalledWith(mockEpisode)
+            expect(episodes.save).toHaveBeenCalledWith(mockEpisode)
+            expect(result).toEqual({ ok: true })
+        })
 
-    //     it('should failed on exception', async () => {
-    //         const mockPodcast = { id: 1 }
-    //         const mockEpisode = {
-    //             title: 'mock',
-    //             category: 'mock',
-    //             rating: 0, 
-    //             podcast: mockPodcast
-    //         }
-    //         podcasts.findOne.mockResolvedValue(mockPodcast)
-    //         episodes.create.mockReturnValue(mockEpisode)
-    //         episodes.save.mockRejectedValue(new Error(':('))
+        it('should failed on exception', async () => {
+            const mockPodcast = { id: 1 }
+            const mockEpisode = {
+                title: 'mock',
+                category: 'mock',
+                rating: 0, 
+                podcast: mockPodcast
+            }
+            podcasts.findOne.mockResolvedValue(mockPodcast)
+            episodes.create.mockReturnValue(mockEpisode)
+            episodes.save.mockRejectedValue(new Error(':('))
 
-    //         const result = await service.createEpisode(mockCreateEpisodeData)
-    //         expect(result).toEqual({ 
-    //             ok: false,
-    //             error: ':('
-    //         })
-    //     })
-    // })
+            const result = await service.createEpisode(mockCreateEpisodeData)
+            expect(result).toEqual({ 
+                ok: false,
+                error: ':('
+            })
+        })
+    })
 
     it.todo('doesEpisodeExist');
     it.todo('updateEpisode');
