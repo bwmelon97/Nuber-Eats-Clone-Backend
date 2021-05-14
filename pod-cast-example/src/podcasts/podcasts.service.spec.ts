@@ -2,6 +2,7 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreatePodcastInput } from "./dtos/create-podcast.dto";
+import { UpdatePodcastDTO, UpdatePodcastInput } from "./dtos/update-podcast.dto";
 import { Episode } from "./entities/episode.entity";
 import { Podcast } from "./entities/podcast.entity";
 import { PodcastsService } from "./podcasts.service";
@@ -126,8 +127,44 @@ describe('PodcastsService', () => {
         })
     })
 
+    describe('updatePodCast', () => {
+        const updatePodcastArgs: UpdatePodcastDTO = {
+            id: 1,
+            data: {
+                title: 'updated'
+            }
+        }
+        const mockPodcast = { id: 1 }
+        
+        it('should return ok true if updating success', async () => {
+            podcasts.findOne.mockResolvedValue(mockPodcast)
+            podcasts.update.mockResolvedValue(mockPodcast)
 
-    it.todo('updatePodCast');
+            const result = await service.updatePodCast(updatePodcastArgs)
+            expect(podcasts.update).toHaveBeenCalledWith( expect.any(Number), { title: 'updated' } )
+            expect(result).toEqual({ ok: true })
+        })
+
+        it('should failed if could not find podcast', async () => {
+            podcasts.findOne.mockResolvedValue(null)
+            const result = await service.updatePodCast(updatePodcastArgs)
+            expect(result).toEqual({ 
+                ok: false,
+                error: `Podcast id: 1 doesn't exist.`
+            })
+        })
+
+        it('should failed on exception', async () => {
+            podcasts.findOne.mockResolvedValue(mockPodcast)
+            podcasts.update.mockRejectedValue(new Error(':)'))
+            const result = await service.updatePodCast(updatePodcastArgs)
+            expect(result).toEqual({ 
+                ok: false,
+                error: `:)`
+            })
+        })
+    })
+
     it.todo('deletePodCast');
     it.todo('getEpisodes');
     it.todo('createEpisode');
