@@ -32,7 +32,9 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
       logging: true,
       synchronize: true,
     }),
-    JwtModule.forRoot(),
+    JwtModule.forRoot({
+      privateKey: process.env.PRIVATE_KEY
+    }),
     PodcastsModule,
     UsersModule,
   ],
