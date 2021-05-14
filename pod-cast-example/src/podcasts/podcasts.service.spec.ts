@@ -1,6 +1,7 @@
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { CreatePodcastInput } from "./dtos/create-podcast.dto";
 import { Episode } from "./entities/episode.entity";
 import { Podcast } from "./entities/podcast.entity";
 import { PodcastsService } from "./podcasts.service";
@@ -96,7 +97,36 @@ describe('PodcastsService', () => {
         })
     })
 
-    it.todo('createPodCast');
+    describe('createPodCast', () => {
+        const createPodcastArgs: CreatePodcastInput = {
+            title: 'mock', category: 'mock'
+        }
+
+        it('should create a new user', async () => {
+            const mockUser = {
+                title: 'mock', category: 'mock', rating: 0, episodes: []
+            }
+            podcasts.create.mockReturnValue(mockUser)
+            podcasts.save.mockResolvedValue(mockUser)
+
+            const result = await service.createPodCast(createPodcastArgs)
+            expect(podcasts.create).toHaveBeenCalledWith(mockUser)
+            expect(podcasts.save).toHaveBeenCalledWith(mockUser)
+            expect(result).toEqual( { ok: true } )
+        })
+
+        it('should failed on exception', async () => {
+            podcasts.save.mockRejectedValue(new Error())
+
+            const result = await service.createPodCast(createPodcastArgs)
+            expect(result).toEqual({
+                ok: false,
+                error: 'Fail to create podcast'
+            })
+        })
+    })
+
+
     it.todo('updatePodCast');
     it.todo('deletePodCast');
     it.todo('getEpisodes');
