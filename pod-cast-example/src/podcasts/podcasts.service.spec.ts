@@ -65,7 +65,37 @@ describe('PodcastsService', () => {
 
     });
     
-    it.todo('getPodCastByID');
+    describe('getPodCastByID', () => {
+        it('should return a podcast', async () => {
+            const mockPodcast = {id: 1}
+            podcasts.findOne.mockResolvedValue(mockPodcast)
+
+            const result = await service.getPodCastByID(1);
+            expect(podcasts.findOne).toHaveBeenCalledWith( expect.any(Number), {relations: ['episodes']} )
+            expect(result).toEqual(
+                { ok: true, podcast: mockPodcast }
+            )
+        })
+
+        it('should failed if could not find podcast', async () => {
+            podcasts.findOne.mockResolvedValue(null)
+            const result = await service.getPodCastByID(1);
+            expect(result).toEqual({
+                ok: false,
+                error: `Podcast id: 1 doesn't exist.`
+            })
+        })
+
+        it('should failed on exception', async () => {
+            podcasts.findOne.mockRejectedValue(new Error())
+            const result = await service.getPodCastByID(1);
+            expect(result).toEqual({
+                ok: false,
+                error: new Error()
+            })
+        })
+    })
+
     it.todo('createPodCast');
     it.todo('updatePodCast');
     it.todo('deletePodCast');
