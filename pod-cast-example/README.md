@@ -36,7 +36,7 @@ Unit test
 ```
 - podcasts.service.spec.ts  [o]
 - jwt.service.spec.ts       [o]
-- users.service.spec.ts     [ ]
+- users.service.spec.ts     [o]
 ```
 
 ```bash
