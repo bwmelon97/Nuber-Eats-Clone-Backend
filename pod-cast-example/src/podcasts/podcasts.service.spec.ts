@@ -2,6 +2,7 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreatePodcastInput } from "./dtos/create-podcast.dto";
+import { CreateEpisodeDTO } from "./dtos/create-episode.dto";
 import { UpdatePodcastDTO, UpdatePodcastInput } from "./dtos/update-podcast.dto";
 import { Episode } from "./entities/episode.entity";
 import { Podcast } from "./entities/podcast.entity";
@@ -23,6 +24,7 @@ describe('PodcastsService', () => {
 
     let service: PodcastsService;
     let podcasts: MockRepository<Podcast>;
+    let episodes: MockRepository<Episode>;
 
     beforeEach( async () => {
         const module = await Test.createTestingModule({
@@ -35,8 +37,19 @@ describe('PodcastsService', () => {
 
         service = module.get<PodcastsService>(PodcastsService)
         podcasts = module.get(getRepositoryToken(Podcast))
+        episodes = module.get(getRepositoryToken(Episode))
     })
 
+    const couldNotFindPodcast = async ( key/* : keyof PodcastsService */, ...params ) => {
+        podcasts.findOne.mockResolvedValue(null)
+        const result = await service[key](...params)
+        expect(result).toEqual({
+            ok: false,
+            error: `Podcast id: 1 doesn't exist.`
+        })
+    }
+
+    
     it('should be defined', () => {
         expect(service).toBeDefined()
     });
@@ -146,12 +159,14 @@ describe('PodcastsService', () => {
         })
 
         it('should failed if could not find podcast', async () => {
-            podcasts.findOne.mockResolvedValue(null)
-            const result = await service.updatePodCast(updatePodcastArgs)
-            expect(result).toEqual({ 
-                ok: false,
-                error: `Podcast id: 1 doesn't exist.`
-            })
+            // podcasts.findOne.mockResolvedValue(null)
+            // const result = await service.updatePodCast(updatePodcastArgs)
+            // expect(result).toEqual({ 
+            //     ok: false,
+            //     error: `Podcast id: 1 doesn't exist.`
+            // })
+
+            await couldNotFindPodcast( 'updatePodCast', updatePodcastArgs )
         })
 
         it('should failed on exception', async () => {
@@ -169,12 +184,14 @@ describe('PodcastsService', () => {
         const mockPodcast = { id: 1 }
 
         it('should failed if could not find podcast', async () => {
-            podcasts.findOne.mockResolvedValue(null)
-            const result = await service.deletePodCast(1);
-            expect(result).toEqual({
-                ok: false,
-                error: `Podcast id: 1 doesn't exist.`
-            })
+            // podcasts.findOne.mockResolvedValue(null)
+            // const result = await service.deletePodCast(1);
+            // expect(result).toEqual({
+            //     ok: false,
+            //     error: `Podcast id: 1 doesn't exist.`
+            // })
+
+            await couldNotFindPodcast( 'deletePodCast', 1 )
         })
 
         it('should return ok true if deleting success', async () => {
@@ -196,8 +213,81 @@ describe('PodcastsService', () => {
         })
     })
 
-    it.todo('getEpisodes');
-    it.todo('createEpisode');
+
+
+    describe('getEpisodes', () => {
+        it('should failed if could not find podcast', async () => {
+            // podcasts.findOne.mockResolvedValue(null)
+            // const result = await service.getEpisodes(1)
+            // expect(result).toEqual({
+            //     ok: false,
+            //     error: `Podcast id: 1 doesn't exist.`
+            // })
+
+            await couldNotFindPodcast( 'getEpisodes', 1 )
+        })
+
+        it('should return true & episodes if find podcast', async () => {
+            const mockPodcast = { id: 1, episodes: [] }
+            podcasts.findOne.mockResolvedValue(mockPodcast)
+            const result = await service.getEpisodes(1)
+            expect(result).toEqual({
+                ok: true,
+                episodes: []
+            })
+        })
+    })
+
+    // describe('createEpisode', () => {
+    //     const mockCreateEpisodeData: CreateEpisodeDTO = {
+    //         pcID: 1,
+    //         data: {
+    //             title: 'mock',
+    //             category: 'mock'
+    //         }
+    //     }
+
+    //     it('should failed if could not find podcast', async () => {
+    //         couldNotFindPodcast('createEpisode', mockCreateEpisodeData)
+    //     })
+
+    //     it('should create Episode & return true', async () => {
+    //         const mockPodcast = { id: 1 }
+    //         const mockEpisode = {
+    //             title: 'mock',
+    //             category: 'mock',
+    //             rating: 0, 
+    //             podcast: mockPodcast
+    //         }
+    //         podcasts.findOne.mockResolvedValue(mockPodcast)
+    //         episodes.create.mockReturnValue(mockEpisode)
+
+    //         const result = await service.createEpisode(mockCreateEpisodeData)
+    //         expect(episodes.create).toHaveBeenCalledWith(mockEpisode)
+    //         expect(episodes.save).toHaveBeenCalledWith(mockEpisode)
+    //         expect(result).toEqual({ ok: true })
+    //     })
+
+    //     it('should failed on exception', async () => {
+    //         const mockPodcast = { id: 1 }
+    //         const mockEpisode = {
+    //             title: 'mock',
+    //             category: 'mock',
+    //             rating: 0, 
+    //             podcast: mockPodcast
+    //         }
+    //         podcasts.findOne.mockResolvedValue(mockPodcast)
+    //         episodes.create.mockReturnValue(mockEpisode)
+    //         episodes.save.mockRejectedValue(new Error(':('))
+
+    //         const result = await service.createEpisode(mockCreateEpisodeData)
+    //         expect(result).toEqual({ 
+    //             ok: false,
+    //             error: ':('
+    //         })
+    //     })
+    // })
+
     it.todo('doesEpisodeExist');
     it.todo('updateEpisode');
     it.todo('deleteEpisode');
