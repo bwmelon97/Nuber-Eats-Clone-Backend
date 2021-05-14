@@ -30,11 +30,10 @@ export class PodcastsResolver {
     }
 
     @Mutation ( returns => CoreOutput )
-    async updatePodcast (
+    updatePodcast (
         @Args() updatePodcastDTO: UpdatePodcastDTO
     ): Promise<CoreOutput> {
-        try { return this.podcastService.updatePodCast(updatePodcastDTO) } 
-        catch (error) { return { ok: false, error } }
+        return this.podcastService.updatePodCast(updatePodcastDTO)
     }
  
     @Mutation ( returns => CoreOutput )

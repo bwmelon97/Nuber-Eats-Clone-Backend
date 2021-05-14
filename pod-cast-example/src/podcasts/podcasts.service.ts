@@ -70,10 +70,15 @@ export class PodcastsService {
     async updatePodCast ({ id, data }: UpdatePodcastDTO ): Promise<CoreOutput> {
         try {
             const { ok, error } = await this.getPodCastByID(id)
-            if ( !ok )  return { ok, error }
+            if ( !ok ) throw Error(error.toString())
             await this.podcasts.update( id, { ...data } )
             return { ok: true }
-        } catch (error) { return { ok: false, error } }
+        } catch (error) { 
+            return { 
+                ok: false, 
+                error: error ? error.message : 'Fail to update podcast' 
+            } 
+        }
     }
 
     async deletePodCast (pcID: number) { 
