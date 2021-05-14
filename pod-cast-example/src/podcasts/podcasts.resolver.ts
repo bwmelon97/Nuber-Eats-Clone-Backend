@@ -47,17 +47,15 @@ export class EpisodeResolver {
     constructor(private readonly podcastService: PodcastsService) {}
 
     @Query ( returns => EpisodesOutput )
-    async episodesOfPodcast ( @Args('id') id: number ): Promise<EpisodesOutput> {
-        try { return this.podcastService.getEpisodes(id) }
-        catch (error) { return { ok: false, error } }
+    episodesOfPodcast ( @Args('id') id: number ): Promise<EpisodesOutput> {
+        return this.podcastService.getEpisodes(id) 
     }
 
     @Mutation ( returns => CoreOutput )
-    async createEpisode ( 
+    createEpisode ( 
         @Args() createEpisodeDTO: CreateEpisodeDTO
     ): Promise<CoreOutput> {
-        try { return this.podcastService.createEpisode(createEpisodeDTO) } 
-        catch (error) { return { ok: false, error } }
+        return this.podcastService.createEpisode(createEpisodeDTO)
     }
 
     @Mutation ( returns => CoreOutput )

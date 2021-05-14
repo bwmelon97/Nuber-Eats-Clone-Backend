@@ -98,21 +98,32 @@ export class PodcastsService {
     async getEpisodes (pcID: number): Promise<EpisodesOutput> {
         try {
             const { podcast, ok, error } = await this.getPodCastByID(pcID);
-            if ( !ok ) return { ok, error }     // podcast를 찾는 과정에서 에러 생기면 리턴
+            if ( !ok ) throw Error(error.toString())
             return { ok: true, episodes: podcast.episodes }
-        } catch (error) { return { ok: false, error } }
+        } catch (error) { 
+            return { 
+                ok: false, 
+                error: error ? error.message : 'Fail to get episodes' 
+            }  
+        }
     }
     
     async createEpisode ( {pcID, data}: CreateEpisodeDTO ): Promise<CoreOutput> {
-        const { ok, error, podcast } = await this.getPodCastByID(pcID);
-        if ( !ok )  return { ok, error }
-
-        const newEpisode: Episode = this.episodes.create({
-            ...data, rating: 0, podcast
-        })
-
-        this.episodes.save(newEpisode);
-        return { ok: true };
+        try {
+            const { ok, error, podcast } = await this.getPodCastByID(pcID);
+            if ( !ok ) throw Error(error.toString())
+    
+            const newEpisode: Episode = this.episodes.create({
+                ...data, rating: 0, podcast
+            })
+            await this.episodes.save(newEpisode);
+            return { ok: true };
+        } catch (error) {
+            return { 
+                ok: false, 
+                error: error ? error.message : 'Fail to create episode' 
+            }  
+        }
     }
 
     async doesEpisodeExist (pcID: number, epID: number): Promise<CoreOutput> {
