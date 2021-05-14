@@ -59,19 +59,17 @@ export class EpisodeResolver {
     }
 
     @Mutation ( returns => CoreOutput )
-    async updateEpisode ( 
+    updateEpisode ( 
         @Args() updateEpisodeDTO: UpdateEpisodeDTO 
     ): Promise<CoreOutput> {
-        try { return this.podcastService.updateEpisode(updateEpisodeDTO) } 
-        catch (error) { return { ok: false, error } }
+        return this.podcastService.updateEpisode(updateEpisodeDTO)
     }
 
     @Mutation ( returns => CoreOutput )
-    async deleteEpisode(
+    deleteEpisode(
         @Args('pcID') pcID: number,
         @Args('epID') epID: number,
     ): Promise<CoreOutput> {
-        try { return this.podcastService.deleteEpisode(pcID, epID) } 
-        catch (error) { return { ok: false, error } }
+        return this.podcastService.deleteEpisode(pcID, epID)
     }
 }

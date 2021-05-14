@@ -144,18 +144,28 @@ export class PodcastsService {
     async updateEpisode ( { pcID, epID, data }: UpdateEpisodeDTO ): Promise<CoreOutput> {
         try {
             const { ok, error } = await this.doesEpisodeExist(pcID, epID);
-            if ( !ok )  return { ok, error }  
+            if ( !ok ) throw Error(error.toString())
             await this.episodes.update(epID, {...data})
             return { ok: true }
-        } catch (error) { return { ok: false, error } }
+        } catch (error) { 
+            return { 
+                ok: false, 
+                error: error ? error.message : `Fail to update episode`  
+            } 
+        }
     }
 
     async deleteEpisode (pcID: number, epID: number): Promise<CoreOutput> {
         try {
             const { ok, error } = await this.doesEpisodeExist(pcID, epID)
-            if ( !ok ) return { ok, error}
+            if ( !ok ) throw Error(error.toString())
             await this.episodes.delete(epID)
             return { ok: true }
-        } catch (error) { return { ok: false, error } }
+        } catch (error) {
+            return { 
+                ok: false, 
+                error: error ? error.message : `Fail to delete episode`  
+            } 
+        }
     }
 }
