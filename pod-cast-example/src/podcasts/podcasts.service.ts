@@ -128,17 +128,17 @@ export class PodcastsService {
 
     async doesEpisodeExist (pcID: number, epID: number): Promise<CoreOutput> {
         try {
-            const {ok, error} = await this.getPodCastByID(pcID);
-            if ( !ok )  return { ok, error } 
-            const foundEpisode = await this.episodes.findOne(epID);
-            if ( !foundEpisode ) return {
-                ok: false,
-                error: `Episode id: ${epID} does not exist.`
-            }
-            /* ep id가 존재할 때, 다른 pc 아이디를 넣어도 true를 리턴
-               근데 굳이 pc id 확인이 필요할까... (graphql 에서) */
+            const {ok, error, podcast} = await this.getPodCastByID(pcID);
+            if ( !ok )  throw Error(error.toString())
+            const foundEpisode = podcast.episodes.find(ep => ep.id === epID)            
+            if ( !foundEpisode ) throw Error(`Episode id: ${epID} does not exist.`)            
             return { ok: true }
-        } catch (error) { return { ok: false, error } }
+        } catch (error) { 
+            return { 
+                ok: false, 
+                error: error ? error.message : `Fail to find episode`  
+            } 
+        }
     }
 
     async updateEpisode ( { pcID, epID, data }: UpdateEpisodeDTO ): Promise<CoreOutput> {

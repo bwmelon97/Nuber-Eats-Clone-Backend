@@ -288,7 +288,38 @@ describe('PodcastsService', () => {
         })
     })
 
-    it.todo('doesEpisodeExist');
+    describe('doesEpisodeExist', () => {
+        it('should fail if podcast does not exist', () => {
+            couldNotFindPodcast('doesEpisodeExist', 1, 1)
+        })
+        it('should fail if episode does not exist', async () => {
+            const mockUser = {
+                id: 1,
+                episodes: []
+            }
+            podcasts.findOne.mockResolvedValue(mockUser)
+
+            const result = await service.doesEpisodeExist(1, 1);
+            expect(result).toEqual({
+                ok: false,
+                error: `Episode id: 1 does not exist.`
+            })
+        })
+        it('should return true if episode exist', async () => {
+            const mockUser = {
+                id: 1,
+                episodes: [{id: 1}]
+            }
+            podcasts.findOne.mockResolvedValue(mockUser)
+
+            const result = await service.doesEpisodeExist(1, 1);
+            expect(result).toEqual({
+                ok: true
+            })
+        })
+        it.todo('should failed on exception')
+    })
+
     it.todo('updateEpisode');
     it.todo('deleteEpisode');
 });
