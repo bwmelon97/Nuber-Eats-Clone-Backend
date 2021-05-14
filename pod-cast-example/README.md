@@ -34,8 +34,8 @@ Unit test
 
 아래 테스트 파일들에서 Stmts(statements)가 전부 100%가 나오도록
 ```
-- podcasts.service.spec.ts  [ ]
-- jwt.service.spec.ts       [ ]
+- podcasts.service.spec.ts  [o]
+- jwt.service.spec.ts       [o]
 - users.service.spec.ts     [ ]
 ```
 
