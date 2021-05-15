@@ -5,6 +5,10 @@ import { getConnection } from "typeorm"
 import * as request from 'supertest';
 
 const GRAPHQL_ENDPOINT = '/graphql'
+const testUser = {
+    email: 'test@mail.com',
+    password: 'test'
+}
 
 describe('UserModule (e2e)', () => {
     let app: INestApplication
@@ -23,12 +27,21 @@ describe('UserModule (e2e)', () => {
         await app.close()
     })
 
+    /* Refactor Codes */
+    const graphqlResolver = (query: string) =>  
+        request(app.getHttpServer())
+            .post(GRAPHQL_ENDPOINT)
+            .send({ query })
+
+    const getDataFromRes = (res: request.Response, key: string) => res.body.data[key]
+    /* ************* */
+
     describe('createUser', () => {
         const createUserQuery = `
         mutation {
             createUser(input: {
-                email: "test@mail.com"
-                password: "test"
+                email: "${testUser.email}"
+                password: "${testUser.password}"
                 role: Client
             }) {
                 ok
@@ -37,12 +50,11 @@ describe('UserModule (e2e)', () => {
         }`
 
         it('should return status 200 & create an accout', () => {
-            request(app.getHttpServer())
-                .post(GRAPHQL_ENDPOINT)
-                .send({ query: createUserQuery })
+            graphqlResolver(createUserQuery)
                 .expect(200)
                 .expect( res => {
-                    expect(res.body.data.createUser).toEqual({
+                    const createUser = getDataFromRes(res, 'createUser')
+                    expect(createUser).toEqual({
                         ok: true,
                         error: null
                     })
@@ -50,16 +62,15 @@ describe('UserModule (e2e)', () => {
         })
 
         it('should return status 200 & false if a user exist', () => {
-            request(app.getHttpServer())
-            .post(GRAPHQL_ENDPOINT)
-            .send({ query: createUserQuery })
-            .expect(200)
-            .expect( res => {
-                expect(res.body.data.createUser).toEqual({
-                    ok: false,
-                    error: expect.any(String)
+            graphqlResolver(createUserQuery)
+                .expect(200)
+                .expect( res => {
+                    const createUser = getDataFromRes(res, 'createUser')
+                    expect(createUser).toEqual({
+                        ok: false,
+                        error: expect.any(String)
+                    })
                 })
-            })
         })
     })
     
