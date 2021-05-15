@@ -23,12 +23,13 @@ const mockJwtService = () => ({
 })
 
 type MockRepository<T = any> = Partial< Record< keyof Repository<T>, jest.Mock > >
+type MockService<T> = Partial< Record< keyof T, jest.Mock > >
 
 describe('UsersService', () => {
 
     let service: UsersService
     let users: MockRepository<User>
-    let jwtService: Partial< Record< keyof JwtService, jest.Mock > >
+    let jwtService: MockService<JwtService>
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
