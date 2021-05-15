@@ -16,7 +16,7 @@ import { Verification } from './user/entities/verification.entity';
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'prod',
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod').default('dev'),
+        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').default('dev'),
         DB_HOST: Joi.string().required(),
         DB_PORT: Joi.string().required(),
         DB_USERNAME: Joi.string().required(),
@@ -34,7 +34,7 @@ import { Verification } from './user/entities/verification.entity';
 			database: process.env.DB_NAME,
       entities: [User, Verification],
       synchronize: true,
-      logging: true
+      logging: process.env.NODE_ENV === 'dev'
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
