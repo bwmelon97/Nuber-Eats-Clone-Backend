@@ -11,7 +11,8 @@ const testUser = {
 }
 
 describe('UserModule (e2e)', () => {
-    let app: INestApplication
+    let app: INestApplication;
+    let jwtToken: string;
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -50,7 +51,7 @@ describe('UserModule (e2e)', () => {
         }`
 
         it('should return status 200 & create an accout', () => {
-            graphqlResolver(createUserMutation)
+            return graphqlResolver(createUserMutation)
                 .expect(200)
                 .expect( res => {
                     const createUser = getDataFromRes(res, 'createUser')
@@ -62,7 +63,7 @@ describe('UserModule (e2e)', () => {
         })
 
         it('should return status 200 & false if a user exist', () => {
-            graphqlResolver(createUserMutation)
+            return graphqlResolver(createUserMutation)
                 .expect(200)
                 .expect( res => {
                     const createUser = getDataFromRes(res, 'createUser')
@@ -75,14 +76,11 @@ describe('UserModule (e2e)', () => {
     })
     
     describe('login', () => {
-        const loginMutation = (
-            email:      string = testUser.email,
-            password:   string = testUser.password    
-        ) => `
+        const loginMutation = ( loginInput = testUser ) => `
             mutation {
                 login(input: {
-                    email: "${email}"
-                    password: "${password}"
+                    email: "${loginInput.email}"
+                    password: "${loginInput.password}"
                 }) {
                     ok
                     error
@@ -90,9 +88,9 @@ describe('UserModule (e2e)', () => {
                 }
             }
         `
-
+        
         it('should return signed token with correct credentials', () => {
-            graphqlResolver(loginMutation())
+            return graphqlResolver(loginMutation())
                 .expect(200)
                 .expect( res => {
                     const login = getDataFromRes(res, 'login')
@@ -101,11 +99,37 @@ describe('UserModule (e2e)', () => {
                         error: null,
                         token: expect.any(String)
                     })
+                    jwtToken = login.token
                 })
         })
 
-        it.todo('should failed with wrong email')
-        it.todo('should failed with wrong password')
+        it('should failed with wrong email', () => {
+            const WRONG_MAIL = 'wrong_email'
+            return graphqlResolver(loginMutation({email: WRONG_MAIL, password: testUser.password}))
+                .expect(200)
+                .expect( res => {
+                    const login = res.body.data.login
+                    expect(login).toEqual({
+                        ok: false,
+                        error: `User email: ${WRONG_MAIL} does not exist...`,
+                        token: null
+                    })
+                })
+        })
+
+        it('should failed with wrong password', () => {
+            const WRONG_PASSWORD = 'wrong_password';
+            return graphqlResolver(loginMutation({email: testUser.email, password: WRONG_PASSWORD}))
+                .expect(200)
+                .expect( res => {
+                    const login = getDataFromRes(res, 'login');
+                    expect(login).toEqual({
+                        ok: false,
+                        error: 'Recieve wrong password...',
+                        token: null
+                    })
+                })
+        })
     })
 
     it.todo('users')
