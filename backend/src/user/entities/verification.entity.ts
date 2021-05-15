@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { CoreEntity } from "src/common/entities/core.entity";
 import { BeforeInsert, Column, Entity, JoinColumn, OneToOne } from "typeorm";
-import { uuid } from "uuidv4";
+import { v4 } from "uuid";
 import { User } from "./user.entity";
 
 @ObjectType()
@@ -17,5 +17,5 @@ export class Verification extends CoreEntity {
     user: User
 
     @BeforeInsert()
-    generateCode() { this.code = uuid() }
+    generateCode() { this.code = v4() }
 }
