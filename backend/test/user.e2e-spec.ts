@@ -43,6 +43,15 @@ describe('UserModule (e2e)', () => {
     ) => graphqlResolver(query).set(key, data)
 
     const getDataFromRes = (res: request.Response, key: string) => res.body.data[key]
+
+    const shouldFailedWithoutValidToken = (query: string) => 
+        graphqlResolver(query)
+        .expect(200)
+        .expect( res => {
+            const { body: { data, errors } } = res
+            expect(data).toBe(null)
+            expect(errors[0].message).toBe('Forbidden resource')
+        })
     /* ************* */
 
     describe('createUser', () => {
@@ -159,15 +168,9 @@ describe('UserModule (e2e)', () => {
             }
         })
 
-        it('should failed if does not get verified token', () => {
-            return graphqlResolver(userProfileQuery())
-                .expect(200)
-                .expect( res => {
-                    const { body: { data, errors } } = res
-                    expect(data).toBe(null)
-                    expect(errors[0].message).toBe('Forbidden resource')
-                })
-        })
+        it('should failed if does not get verified token', 
+            () => shouldFailedWithoutValidToken(userProfileQuery())
+        )
 
         it('should failed if recieve user id does not exist in DB', () => {
             const ID_NOT_EXIST = 999;
@@ -198,8 +201,36 @@ describe('UserModule (e2e)', () => {
         })
     })
 
-    it.todo('users')
-    it.todo('me')
-    it.todo('editProfile')
+    
+
+    describe('me', () => {
+        const meQuery = `
+        query {
+            me {
+                email
+            }
+        }`
+        let header: { key: string, data: string }
+        beforeAll(() => {
+            header = { key: 'x-jwt', data: jwtToken }
+        })
+
+        it('should failed if does not get verified token', 
+            () => shouldFailedWithoutValidToken(meQuery)
+        )
+
+        it('should return my profile data if logged in', () => {
+            return graphqlResolverWithHeader(meQuery, header)
+                .expect(200)
+                .expect( res => {
+                    const me = getDataFromRes(res, 'me')
+                    expect(me).toEqual({ email: testUser.email })
+                })
+        })
+    })
+
+    describe('editProfile', () => {
+        it.todo('should failed if does not get verified token')
+    })
     it.todo('verifyEmail')
 })
