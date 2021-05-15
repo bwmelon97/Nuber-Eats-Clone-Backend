@@ -37,7 +37,7 @@ describe('UserModule (e2e)', () => {
     /* ************* */
 
     describe('createUser', () => {
-        const createUserQuery = `
+        const createUserMutation = `
         mutation {
             createUser(input: {
                 email: "${testUser.email}"
@@ -50,7 +50,7 @@ describe('UserModule (e2e)', () => {
         }`
 
         it('should return status 200 & create an accout', () => {
-            graphqlResolver(createUserQuery)
+            graphqlResolver(createUserMutation)
                 .expect(200)
                 .expect( res => {
                     const createUser = getDataFromRes(res, 'createUser')
@@ -62,7 +62,7 @@ describe('UserModule (e2e)', () => {
         })
 
         it('should return status 200 & false if a user exist', () => {
-            graphqlResolver(createUserQuery)
+            graphqlResolver(createUserMutation)
                 .expect(200)
                 .expect( res => {
                     const createUser = getDataFromRes(res, 'createUser')
@@ -74,10 +74,43 @@ describe('UserModule (e2e)', () => {
         })
     })
     
+    describe('login', () => {
+        const loginMutation = (
+            email:      string = testUser.email,
+            password:   string = testUser.password    
+        ) => `
+            mutation {
+                login(input: {
+                    email: "${email}"
+                    password: "${password}"
+                }) {
+                    ok
+                    error
+                    token
+                }
+            }
+        `
+
+        it('should return signed token with correct credentials', () => {
+            graphqlResolver(loginMutation())
+                .expect(200)
+                .expect( res => {
+                    const login = getDataFromRes(res, 'login')
+                    expect(login).toEqual({
+                        ok: true,
+                        error: null,
+                        token: expect.any(String)
+                    })
+                })
+        })
+
+        it.todo('should failed with wrong email')
+        it.todo('should failed with wrong password')
+    })
+
     it.todo('users')
     it.todo('me')
     it.todo('userProfile')
-    it.todo('login')
     it.todo('editProfile')
     it.todo('verifyEmail')
 })
