@@ -1,8 +1,10 @@
 import { INestApplication } from "@nestjs/common"
 import { Test, TestingModule } from "@nestjs/testing"
 import { AppModule } from "src/app.module"
-import { getConnection } from "typeorm"
+import { getConnection, Repository } from "typeorm"
 import * as request from 'supertest';
+import { User } from "src/user/entities/user.entity";
+import { getRepositoryToken } from "@nestjs/typeorm";
 
 const GRAPHQL_ENDPOINT = '/graphql'
 const testUser = {
@@ -13,13 +15,15 @@ const testUser = {
 describe('UserModule (e2e)', () => {
     let app: INestApplication;
     let jwtToken: string;
+    let users: Repository<User>
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            imports: [AppModule]
+            imports: [ AppModule ]
         }).compile()
 
         app = module.createNestApplication()
+        users = module.get(getRepositoryToken(User))
         await app.init()
     })
 
@@ -33,6 +37,10 @@ describe('UserModule (e2e)', () => {
         request(app.getHttpServer())
             .post(GRAPHQL_ENDPOINT)
             .send({ query })
+
+    const graphqlResolverWithHeader = (
+        query: string, {key, data}: {key: string, data: string}
+    ) => graphqlResolver(query).set(key, data)
 
     const getDataFromRes = (res: request.Response, key: string) => res.body.data[key]
     /* ************* */
@@ -132,9 +140,66 @@ describe('UserModule (e2e)', () => {
         })
     })
 
+    describe('userProfile', () => {
+        const userProfileQuery = ( id: number = 1 ) => `
+        query {
+            userProfile(id: ${id}) {
+                ok
+                error
+                user {
+                    id
+                }
+            }
+        }`
+        let header: {key: string, data: string}
+        beforeAll(() => {
+            header = {
+                key: 'x-jwt',
+                data: jwtToken
+            }
+        })
+
+        it('should failed if does not get verified token', () => {
+            return graphqlResolver(userProfileQuery())
+                .expect(200)
+                .expect( res => {
+                    const { body: { data, errors } } = res
+                    expect(data).toBe(null)
+                    expect(errors[0].message).toBe('Forbidden resource')
+                })
+        })
+
+        it('should failed if recieve user id does not exist in DB', () => {
+            const ID_NOT_EXIST = 999;
+            return graphqlResolverWithHeader(userProfileQuery(ID_NOT_EXIST), header)
+                .expect(200)
+                .expect( res => {
+                    const userProfile = getDataFromRes(res, 'userProfile')
+                    expect(userProfile).toEqual({
+                        ok: false,
+                        error: `User id: ${ID_NOT_EXIST} doesn't exist.`,
+                        user: null
+                    })
+                })
+        })
+        it('should return true if user exist', async () => {
+            const [user] = await users.find()
+            const userID = user.id
+            return graphqlResolverWithHeader(userProfileQuery(userID), header)
+                .expect(200)
+                .expect( res => {
+                    const userProfile = getDataFromRes(res, 'userProfile')
+                    expect(userProfile).toEqual({
+                        ok: true,
+                        error: null,
+                        user: { id: userID }
+                    })
+                })
+        })
+    })
+
     it.todo('users')
     it.todo('me')
-    it.todo('userProfile')
     it.todo('editProfile')
     it.todo('verifyEmail')
 })
