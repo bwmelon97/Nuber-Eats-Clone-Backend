@@ -5,10 +5,10 @@ import { CoreEntity } from "src/common/entities/core.entity";
 import { InternalServerErrorException } from "@nestjs/common";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
 
-enum UserRole {
-    Client,
-    Owner,
-    Delivery
+export enum UserRole {
+    Client      = 'Client',
+    Owner       = 'Owner',
+    Delivery    = 'Delivery'
 }
 
 registerEnumType(UserRole, { name: 'UserRole' })
@@ -42,7 +42,6 @@ export class User extends CoreEntity {
         if ( this.password ){
             try { this.password = await bcrypt.hash(this.password, 10) } 
             catch (error) {
-                console.log(error)
                 throw new InternalServerErrorException()
             }
         }
