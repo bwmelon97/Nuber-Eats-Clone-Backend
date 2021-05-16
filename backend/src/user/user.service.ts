@@ -100,7 +100,7 @@ export class UserService {
             const { user } = await this.findUserByID(userID);
             if ( email ) { user.email = email }
             if ( password ) { user.password = password }
-            this.users.save(user)
+            await this.users.save(user)
             return { ok: true }
         }
         catch (error) {

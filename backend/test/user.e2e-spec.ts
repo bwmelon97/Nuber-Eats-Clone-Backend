@@ -40,7 +40,9 @@ describe('UserModule (e2e)', () => {
 
     const graphqlResolverWithHeader = (
         query: string, {key, data}: {key: string, data: string}
-    ) => graphqlResolver(query).set(key, data)
+    ) => {
+    return graphqlResolver(query).set(key, data)
+}
 
     const getDataFromRes = (res: request.Response, key: string) => res.body.data[key]
 
@@ -52,6 +54,27 @@ describe('UserModule (e2e)', () => {
             expect(data).toBe(null)
             expect(errors[0].message).toBe('Forbidden resource')
         })
+        
+    type Header = { key: string, data: string }
+    
+    const testMyProfile = (
+        header: Header, 
+        testMail: string
+    ) => { 
+        const meQuery = `
+        query {
+            me {
+                email
+            }
+        }`
+        return graphqlResolverWithHeader(meQuery, header)
+            .expect(200)
+            .expect( res => {
+                const me = getDataFromRes(res, 'me')
+                expect(me).toEqual({ email: testMail })
+            })
+    }
+
     /* ************* */
 
     describe('createUser', () => {
@@ -93,7 +116,8 @@ describe('UserModule (e2e)', () => {
     })
     
     describe('login', () => {
-        const loginMutation = ( loginInput = testUser ) => `
+        type LoginInput = { email: string, password: string }
+        const loginMutation = ( loginInput: LoginInput ) => `
             mutation {
                 login(input: {
                     email: "${loginInput.email}"
@@ -107,7 +131,7 @@ describe('UserModule (e2e)', () => {
         `
         
         it('should return signed token with correct credentials', () => {
-            return graphqlResolver(loginMutation())
+            return graphqlResolver(loginMutation(testUser))
                 .expect(200)
                 .expect( res => {
                     const login = getDataFromRes(res, 'login')
@@ -160,7 +184,7 @@ describe('UserModule (e2e)', () => {
                 }
             }
         }`
-        let header: {key: string, data: string}
+        let header: Header
         beforeAll(() => {
             header = {
                 key: 'x-jwt',
@@ -210,7 +234,7 @@ describe('UserModule (e2e)', () => {
                 email
             }
         }`
-        let header: { key: string, data: string }
+        let header: Header
         beforeAll(() => {
             header = { key: 'x-jwt', data: jwtToken }
         })
@@ -219,18 +243,92 @@ describe('UserModule (e2e)', () => {
             () => shouldFailedWithoutValidToken(meQuery)
         )
 
-        it('should return my profile data if logged in', () => {
-            return graphqlResolverWithHeader(meQuery, header)
+        it('should return my profile data if logged in', () => 
+            testMyProfile(header, testUser.email)
+        )
+    })
+
+    describe('editProfile', () => {
+        type EditProfileInput = Partial<{ email: string, password: string }>
+        const editProfileMutation = ({email, password}: EditProfileInput) => `
+            mutation {
+                editProfile(input: {
+                    ${email ? `email: "${email}"` : ''}
+                    ${password ? `password: "${password}"` : ''}
+                }) {
+                    ok
+                    error
+                }
+            }
+        `
+        let header: Header
+        beforeAll(() => { header = { key: 'x-jwt', data: jwtToken } })
+        
+        it('should failed if does not get verified token', () => {
+            shouldFailedWithoutValidToken(editProfileMutation({}))
+        })
+        
+        it('should change email', () => {
+            const NEW_EMAIL = 'new@mail.com'
+            return graphqlResolverWithHeader(
+                editProfileMutation({ email: NEW_EMAIL }),
+                header
+            )
                 .expect(200)
                 .expect( res => {
-                    const me = getDataFromRes(res, 'me')
-                    expect(me).toEqual({ email: testUser.email })
+                    const editProfile = getDataFromRes(res, 'editProfile')
+                    expect(editProfile).toEqual({
+                        ok: true,
+                        error: null
+                    })                    
+                })
+                .then(() => {   // 이메일 확인 테스트
+                    return testMyProfile(header, NEW_EMAIL)
+                })
+                
+        })
+
+        it('should success login with new password', () => {
+            const NEW_PASSWORD = 'new_password';
+            return graphqlResolverWithHeader(
+                editProfileMutation({ email: testUser.email, password: NEW_PASSWORD }),
+                header
+            )
+                .expect(200)
+                .expect( res => {
+                    const editProfile = getDataFromRes(res, 'editProfile')
+                    expect(editProfile).toEqual({
+                        ok: true,
+                        error: null
+                    })    
+                })
+                .then(() => {   // 로그인 테스트
+                    type LoginInput = { email: string, password: string }
+                    const loginMutation = ( loginInput: LoginInput ) => `
+                        mutation {
+                            login(input: {
+                                email: "${loginInput.email}"
+                                password: "${loginInput.password}"
+                            }) {
+                                ok
+                                error
+                                token
+                            }
+                        }
+                    `
+                    return graphqlResolver(loginMutation({email: testUser.email, password: NEW_PASSWORD}))
+                        .expect(200)
+                        .expect( res => {
+                            const login = getDataFromRes(res, 'login')
+                            expect(login).toEqual({
+                                ok: true,
+                                error: null,
+                                token: expect.any(String)
+                            })
+                        })
                 })
         })
     })
 
-    describe('editProfile', () => {
-        it.todo('should failed if does not get verified token')
-    })
     it.todo('verifyEmail')
 })
