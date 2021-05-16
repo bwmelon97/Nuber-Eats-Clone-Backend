@@ -8,6 +8,9 @@ import { User } from './user/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { Verification } from './user/entities/verification.entity';
+import { RestaurantModule } from './restaurant/restaurant.module';
+import { Restaurant } from './restaurant/entities/restaurant.entity';
+import { Category } from './restaurant/entities/category.entity';
 
 @Module({
   imports: [
@@ -32,7 +35,7 @@ import { Verification } from './user/entities/verification.entity';
 			username: process.env.DB_USERNAME,
 			password: process.env.DB_PASSWORD,
 			database: process.env.DB_NAME,
-      entities: [User, Verification],
+      entities: [User, Verification, Restaurant, Category],
       synchronize: true,
       logging: process.env.NODE_ENV === 'dev'
     }),
@@ -44,6 +47,7 @@ import { Verification } from './user/entities/verification.entity';
       privateKey: process.env.PRIVATE_KEY
     }),
     UserModule,
+    RestaurantModule,
   ],
 })
 export class AppModule implements NestModule {
