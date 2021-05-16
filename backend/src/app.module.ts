@@ -3,10 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import * as Joi from "joi";
-import { UserModule } from './user/user.module';
-import { User } from './user/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
+import { User } from './user/entities/user.entity';
 import { Verification } from './user/entities/verification.entity';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { Restaurant } from './restaurant/entities/restaurant.entity';
@@ -46,6 +47,7 @@ import { Category } from './restaurant/entities/category.entity';
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
     }),
+    AuthModule,
     UserModule,
     RestaurantModule,
   ],
