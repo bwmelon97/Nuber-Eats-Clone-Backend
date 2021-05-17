@@ -3,6 +3,7 @@ import { CreatePodcastInput } from "src/podcasts/dtos/create-podcast.dto";
 import { UpdatePodcastInput } from "src/podcasts/dtos/update-podcast.dto";
 import { Episode } from "src/podcasts/entities/episode.entity";
 import { Podcast } from "src/podcasts/entities/podcast.entity";
+import { EditProfileInput } from "src/users/dtos/edit-profile.dto";
 import { LoginInput } from "src/users/dtos/login.dto";
 import { UserRole } from "src/users/entities/user.entity";
 
@@ -64,4 +65,9 @@ export const WRONG_PASSWORD = 'WRONG_PASSWORD'
 export const TEST_LOGIN_INPUT: LoginInput = {
     email: TEST,
     password: TEST
+}
+
+export const TEST_EDIT_PROFILE_INPUT: EditProfileInput = {
+    email: UPDATE,
+    password: UPDATE
 }

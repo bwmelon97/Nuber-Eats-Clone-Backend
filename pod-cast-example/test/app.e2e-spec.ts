@@ -4,8 +4,8 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TEST_CREATE_ACCOUNT_INPUT, TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_LOGIN_INPUT, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, TEST_USER, WRONG_EMAIL, WRONG_ID, WRONG_PASSWORD } from './test.constants';
-import { createAccountMutation, createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, loginMutation, meQuery, seeProfileQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
+import { TEST_CREATE_ACCOUNT_INPUT, TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EDIT_PROFILE_INPUT, TEST_EPISODE, TEST_LOGIN_INPUT, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, TEST_USER, WRONG_EMAIL, WRONG_ID, WRONG_PASSWORD } from './test.constants';
+import { createAccountMutation, createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, editProfileMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, loginMutation, meQuery, seeProfileQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
 import { privateTest, publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -435,8 +435,27 @@ describe('App (e2e)', () => {
     });
 
     describe('editProfile', () => {
-      it.todo('should fail with public request')
-      it.todo('should update profile')
+      it('should fail with public request', () => {
+        return publicTest(app, editProfileMutation(TEST_EDIT_PROFILE_INPUT))
+          .expect(200)
+          .expect(res => {
+            const [error] = res.body.errors
+            expect(error.message).toBe('Forbidden resource')
+          })
+      })
+      it('should update profile', () => {
+        return privateTest(app, editProfileMutation(TEST_EDIT_PROFILE_INPUT), jwtToken)
+          .expect(200)
+          .expect(res => {
+            const editProfile = getDataFromRes(res, 'editProfile')
+            expect(editProfile).toEqual({
+              ok: true,
+              error: null,
+            })
+
+            // DB를 직접 확인해보면 좋겠다.
+          })
+      })
     });
   });
 });

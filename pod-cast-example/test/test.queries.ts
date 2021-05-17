@@ -3,6 +3,7 @@ import { CreatePodcastInput } from "src/podcasts/dtos/create-podcast.dto"
 import { UpdateEpisodeInput } from "src/podcasts/dtos/update-episode.dto"
 import { UpdatePodcastInput } from "src/podcasts/dtos/update-podcast.dto"
 import { CreateAccountInput } from "src/users/dtos/create-account.dto"
+import { EditProfileInput } from "src/users/dtos/edit-profile.dto"
 import { LoginInput } from "src/users/dtos/login.dto"
 
 export const getAllPodcastsQuery = `
@@ -185,3 +186,15 @@ query {
         }
     }
 }`
+
+export const editProfileMutation = ({email, password}: EditProfileInput) => `
+mutation {
+    editProfile (input: {
+        ${email ? `email: "${email}"` : ''}
+        ${password ? `password: "${password}"` : ''}
+    }) {
+        ok
+        error
+    }
+}
+`
