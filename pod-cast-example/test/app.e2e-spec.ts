@@ -4,8 +4,8 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TEST_CREATE_PODCAST_INPUT, TEST_PODCAST, TEST_UPDATE_PODCAST_INPUT, WRONG_ID } from './test.constants';
-import { createPodcastMutation, deletePodcastMutation, getAllPodcastsQuery, getPodcastQuery, updatePodcastMutation } from './test.queries';
+import { TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_PODCAST, TEST_UPDATE_PODCAST_INPUT, WRONG_ID } from './test.constants';
+import { createEpisodeMutation, createPodcastMutation, deletePodcastMutation, getAllPodcastsQuery, getPodcastQuery, updatePodcastMutation } from './test.queries';
 import { publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -167,7 +167,34 @@ describe('App (e2e)', () => {
       })
     });
    
-    it.todo('createEpisode');
+    describe('createEpisode', () => {
+      // 시작 전에 DB를 리셋시키면 좋겠다.
+      it('should fail if get pocast id, not in DB', () => {
+        // 리팩토링하면 좋을 듯 (public 테스트에 들어가는 query 또는 mutation만 바뀜)
+        return publicTest(app, createEpisodeMutation(WRONG_ID, TEST_CREATE_EPISODE_INPUT))
+          .expect(200)
+          .expect(res => {
+            const createEpisode = getDataFromRes(res, 'createEpisode')
+            expect(createEpisode).toEqual({
+              ok: false,
+              error: `Podcast id: ${WRONG_ID} doesn't exist.`
+            })
+          })
+      })
+
+      it('should create an episode', () => {
+        publicTest(app, createEpisodeMutation(2, TEST_CREATE_EPISODE_INPUT))
+          .expect(200)
+          .expect(res => {
+            const createEpisode = getDataFromRes(res, 'createEpisode')
+            expect(createEpisode).toEqual({
+              ok: true,
+              error: null
+            })
+          })
+      })
+    });
+
     it.todo('getEpisodes');
     it.todo('updateEpisode');
     it.todo('deleteEpisode');

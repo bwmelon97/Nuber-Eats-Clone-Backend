@@ -1,3 +1,4 @@
+import { CreateEpisodeInput } from "src/podcasts/dtos/create-episode.dto";
 import { CreatePodcastInput } from "src/podcasts/dtos/create-podcast.dto";
 import { UpdatePodcastInput } from "src/podcasts/dtos/update-podcast.dto";
 import { Podcast } from "src/podcasts/entities/podcast.entity";
@@ -24,4 +25,9 @@ export const TEST_CREATE_PODCAST_INPUT: CreatePodcastInput = {
 export const TEST_UPDATE_PODCAST_INPUT: UpdatePodcastInput = {
     title: UPDATE,
     category: UPDATE
+}
+
+export const TEST_CREATE_EPISODE_INPUT: CreateEpisodeInput = {
+    title: TEST,
+    category: TEST
 }

@@ -1,3 +1,4 @@
+import { CreateEpisodeInput } from "src/podcasts/dtos/create-episode.dto"
 import { CreatePodcastInput } from "src/podcasts/dtos/create-podcast.dto"
 import { UpdatePodcastInput } from "src/podcasts/dtos/update-podcast.dto"
 
@@ -75,3 +76,14 @@ mutation {
     }
 }
 `
+
+export const createEpisodeMutation = (pcID: number, { title, category }: CreateEpisodeInput) => `
+mutation {
+    createEpisode(pcID: ${pcID}, data: {
+        title: "${title}",
+        category: "${category}"
+    }) {
+        ok
+        error
+    }
+}`
