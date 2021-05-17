@@ -1,4 +1,5 @@
 import { CreatePodcastInput } from "src/podcasts/dtos/create-podcast.dto"
+import { UpdatePodcastInput } from "src/podcasts/dtos/update-podcast.dto"
 
 export const getAllPodcastsQuery = `
 {
@@ -47,6 +48,18 @@ mutation {
     createPodcast(input: {
         title: "${title}"
         category: "${category}"
+    }) {
+        ok
+        error
+    }
+}
+`
+
+export const updatePodcastMutation = (id: number, { title, category }: UpdatePodcastInput) => `
+mutation {
+    updatePodcast(id: ${id}, data: {
+        ${title ? `title: "${title}"` : ''}
+        ${category ? `category: "${category}"` : ''}
     }) {
         ok
         error
