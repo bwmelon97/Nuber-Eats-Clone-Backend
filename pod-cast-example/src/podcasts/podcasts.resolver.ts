@@ -15,7 +15,7 @@ export class PodcastsResolver {
     constructor(private readonly podcastService: PodcastsService) {}
 
     @Query( returns => PodcastsOutput )
-    podcasts(): Promise<PodcastsOutput> { return this.podcastService.getAllPodCasts() }
+    getAllPodcasts(): Promise<PodcastsOutput> { return this.podcastService.getAllPodCasts() }
 
     @Query( returns => PodcastOutput )
     podcastByID( @Args('id') id: number ): Promise<PodcastOutput> {

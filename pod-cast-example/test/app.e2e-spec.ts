@@ -1,18 +1,25 @@
-import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from './../src/app.module';
 import { INestApplication } from '@nestjs/common';
-import { getConnection } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
+import { Podcast } from 'src/podcasts/entities/podcast.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { TEST_PODCAST } from './test.constants';
+import { getAllPodcastsQuery } from './test.queries';
+import { publicTest } from './libs/resolver-test';
+import { getDataFromRes } from './libs/getDataFromRes';
 
 describe('App (e2e)', () => {
   let app: INestApplication;
+  let podcasts: Repository<Podcast>
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = module.createNestApplication();
+    podcasts = module.get(getRepositoryToken(Podcast))
     await app.init();
   });
 
@@ -22,7 +29,41 @@ describe('App (e2e)', () => {
   })
 
   describe('Podcasts Resolver', () => {
-    it.todo('getAllPodcasts');
+    
+    describe('getAllPodcasts', () => {
+      
+      it('should return empty array', () => {
+        return publicTest(app, getAllPodcastsQuery)
+          .expect(200)
+          .expect( (res) => {
+            const getAllPodcasts = getDataFromRes(res, 'getAllPodcasts')
+            expect(getAllPodcasts).toEqual({
+              ok: true,
+              error: null,
+              podcasts: []
+            })
+          })
+      })
+      
+      it('should return Podcast Array contains TEST_PODCAST', async () => {
+        await podcasts.save(podcasts.create( TEST_PODCAST))
+        return publicTest(app, getAllPodcastsQuery)
+          .expect(200)
+          .expect( (res) => {
+            const getAllPodcasts = getDataFromRes(res, 'getAllPodcasts')
+            expect(getAllPodcasts).toEqual({
+              ok: true,
+              error: null,
+              podcasts: [ {
+                id: 1,
+                ...TEST_PODCAST,
+              } ]
+            })
+          })
+      })
+    });
+    
+    
     it.todo('getPodcast');
     it.todo('getEpisodes');
     it.todo('createPodcast');
