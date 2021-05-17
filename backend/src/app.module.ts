@@ -12,6 +12,7 @@ import { Verification } from './user/entities/verification.entity';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { Restaurant } from './restaurant/entities/restaurant.entity';
 import { Category } from './restaurant/entities/category.entity';
+import { Dish } from './restaurant/entities/dish.entity';
 
 @Module({
   imports: [
@@ -36,7 +37,9 @@ import { Category } from './restaurant/entities/category.entity';
 			username: process.env.DB_USERNAME,
 			password: process.env.DB_PASSWORD,
 			database: process.env.DB_NAME,
-      entities: [User, Verification, Restaurant, Category],
+      entities: [
+        User, Verification, Restaurant, Category, Dish
+      ],
       synchronize: true,
       logging: process.env.NODE_ENV === 'dev'
     }),
