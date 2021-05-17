@@ -36,6 +36,12 @@ export class UsersResolver {
     }
 
     @UseGuards(AuthGuard)
+    @Query(returns => SeeProfileOutput)
+    me( @AuthUser() authUser: User ): Promise<SeeProfileOutput> {
+        return this.usersSerive.findUserById( authUser.id )
+    }
+
+    @UseGuards(AuthGuard)
     @Mutation(returns => CoreOutput)
     editProfile (
         @AuthUser() authUser: User,
@@ -46,7 +52,7 @@ export class UsersResolver {
 
     @UseGuards(AuthGuard)
     @Query(returns => SeeProfileOutput)
-    seeProfile( @AuthUser() authUser: User ): Promise<SeeProfileOutput> {
-        return this.usersSerive.findUserById( authUser.id )
+    seeProfile( @Args('id') id: number ): Promise<SeeProfileOutput> {
+        return this.usersSerive.findUserById( id )
     }
 }
