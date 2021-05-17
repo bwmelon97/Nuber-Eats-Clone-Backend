@@ -4,8 +4,8 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TEST_CREATE_ACCOUNT_INPUT, TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, WRONG_ID } from './test.constants';
-import { createAccountMutation, createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
+import { TEST_CREATE_ACCOUNT_INPUT, TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_LOGIN_INPUT, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, WRONG_EMAIL, WRONG_ID, WRONG_PASSWORD } from './test.constants';
+import { createAccountMutation, createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, loginMutation, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
 import { publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -336,10 +336,44 @@ describe('App (e2e)', () => {
     });
 
     describe('login', () => {
-      it.todo('should fail if get wrong email')
-      it.todo('should fail if get wrong password')
-      it.todo('should return token if login success')
+      it('should fail if get wrong email', () => {
+        return publicTest(app, loginMutation({email: WRONG_EMAIL, password: TEST_LOGIN_INPUT.password}))
+          .expect(200)
+          .expect(res => {
+            const login = getDataFromRes(res, 'login')
+            expect(login).toEqual({
+              ok: false,
+              error: `Couldn't find a user...`,
+              token: null
+            })
+          })
+      })
+      it('should fail if get wrong password', () => {
+        return publicTest(app, loginMutation({email: TEST_LOGIN_INPUT.email, password: WRONG_PASSWORD}))
+          .expect(200)
+          .expect(res => {
+            const login = getDataFromRes(res, 'login')
+            expect(login).toEqual({
+              ok: false,
+              error: `Receive wrong password !!`,
+              token: null
+            })
+          })
+      })
+      it('should return token if login success', () => {
+        return publicTest(app, loginMutation(TEST_LOGIN_INPUT))
+          .expect(200)
+          .expect(res => {
+            const login = getDataFromRes(res, 'login')
+            expect(login).toEqual({
+              ok: true,
+              error: null,
+              token: expect.any(String)
+            })
+          })
+      })
     });
+    
     describe('me', () => {
       it.todo('should fail with public request')
       it.todo('should return my profile')
