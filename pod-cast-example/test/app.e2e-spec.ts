@@ -4,8 +4,8 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_PODCAST, TEST_UPDATE_PODCAST_INPUT, WRONG_ID } from './test.constants';
-import { createEpisodeMutation, createPodcastMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, updatePodcastMutation } from './test.queries';
+import { TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, WRONG_ID } from './test.constants';
+import { createEpisodeMutation, createPodcastMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
 import { publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -228,14 +228,72 @@ describe('App (e2e)', () => {
       })
     });
 
-    it.todo('updateEpisode');
-    it.todo('deleteEpisode');
+    describe('updateEpisode', () => {
+      it('should fail if get podcast id not in DB', () => {
+        return publicTest(app, updateEpisodeMutation(WRONG_ID, 1, TEST_UPDATE_EPISODE_INPUT))
+          .expect(200)
+          .expect(res => {
+            const updateEpisode = getDataFromRes(res, 'updateEpisode')
+            expect(updateEpisode).toEqual({
+              ok: false,
+              error: `Podcast id: ${WRONG_ID} doesn't exist.`
+            })
+          })
+      })
+      it('should fail if get episode id not in DB', () => {
+        return publicTest(app, updateEpisodeMutation(2, WRONG_ID, TEST_UPDATE_EPISODE_INPUT))
+          .expect(200)
+          .expect(res => {
+            const updateEpisode = getDataFromRes(res, 'updateEpisode')
+            expect(updateEpisode).toEqual({
+              ok: false,
+              error: `Episode id: ${WRONG_ID} does not exist.`
+            })
+          })
+      })
+      it('should update episode', () => {
+        return publicTest(app, updateEpisodeMutation(2, 1, TEST_UPDATE_EPISODE_INPUT))
+          .expect(200)
+          .expect(res => {
+            const updateEpisode = getDataFromRes(res, 'updateEpisode')
+            expect(updateEpisode).toEqual({
+              ok: true,
+              error: null
+            })
+
+            // DB 확인 필요
+          })
+      })
+    });
+
+    describe('deleteEpisode', () => {
+      it.todo('should fail if get podcast id not in DB')
+      it.todo('should fail if get episode id not in DB')
+      it.todo('should delete episode')
+    });
   });
   describe('Users Resolver', () => {
-    it.todo('me');
-    it.todo('seeProfile');
-    it.todo('createAccount');
-    it.todo('login');
-    it.todo('editProfile');
+    describe('createAccount', () => {
+      it.todo('should create an account')
+      it.todo('should fail if account exist')
+    });
+    describe('login', () => {
+      it.todo('should fail if get wrong email')
+      it.todo('should fail if get wrong password')
+      it.todo('should return token if login success')
+    });
+    describe('me', () => {
+      it.todo('should fail with public request')
+      it.todo('should return my profile')
+    });
+    describe('seeProfile', () => {
+      it.todo('should fail with public request')
+      it.todo('should fail with user id not in DB')
+      it.todo('should return profile')
+    });
+    describe('editProfile', () => {
+      it.todo('should fail with public request')
+      it.todo('should update profile')
+    });
   });
 });

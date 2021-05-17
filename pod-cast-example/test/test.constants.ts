@@ -38,3 +38,8 @@ export const TEST_CREATE_EPISODE_INPUT: CreateEpisodeInput = {
     title: TEST,
     category: TEST
 }
+
+export const TEST_UPDATE_EPISODE_INPUT: UpdatePodcastInput = {
+    title: UPDATE,
+    category: UPDATE
+}

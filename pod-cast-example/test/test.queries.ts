@@ -1,5 +1,6 @@
 import { CreateEpisodeInput } from "src/podcasts/dtos/create-episode.dto"
 import { CreatePodcastInput } from "src/podcasts/dtos/create-podcast.dto"
+import { UpdateEpisodeInput } from "src/podcasts/dtos/update-episode.dto"
 import { UpdatePodcastInput } from "src/podcasts/dtos/update-podcast.dto"
 
 export const getAllPodcastsQuery = `
@@ -101,4 +102,20 @@ query {
         }
     }
 }
+`
+
+export const updateEpisodeMutation = (
+    pcID: number,
+    epID: number,
+    {title, category}: UpdateEpisodeInput
+) => `
+    mutation {
+        updateEpisode (pcID: ${pcID}, epID: ${epID}, data: {
+            ${title ? `title: "${title}"` : ''}
+            ${category ? `category: "${category}"` : ''}
+        }) {
+            ok
+            error
+        }
+    }
 `

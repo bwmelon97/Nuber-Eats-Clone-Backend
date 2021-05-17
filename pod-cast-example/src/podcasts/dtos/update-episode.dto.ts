@@ -2,8 +2,8 @@ import { ArgsType, Field, InputType, PartialType, PickType } from "@nestjs/graph
 import { Episode } from "../entities/episode.entity";
 
 @InputType()
-class UpdateEpisodeInput extends PartialType( 
-    PickType(Episode, ['title', 'category', 'rating']) 
+export class UpdateEpisodeInput extends PartialType( 
+    PickType(Episode, ['title', 'category']) 
 ) {}
 
 @ArgsType()
