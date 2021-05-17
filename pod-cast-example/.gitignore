@@ -35,6 +35,7 @@ lerna-debug.log*
 
 # DB
 db.sqlite
+db.test.sqlite
 
 # ENV FILES
 .env

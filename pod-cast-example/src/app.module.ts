@@ -16,9 +16,14 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       validationSchema: Joi.object({
-        PRIVATE_KEY: Joi.string().required()
+        NODE_ENV: Joi.string()
+          .required()
+          .valid('prod', 'dev', 'test')
+          .default('dev'),
+        PRIVATE_KEY: Joi.string().required(),
+        DB_NAME: Joi.string().required()
       })
     }),
     GraphQLModule.forRoot({
@@ -27,10 +32,10 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
     }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db.sqlite',
+      database: process.env.DB_NAME,
       entities: [Podcast, Episode, User],
-      logging: true,
-      synchronize: true,
+      logging: process.env.NODE_ENV === 'dev',
+      synchronize: process.env.NODE_ENV !== 'prod',
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
