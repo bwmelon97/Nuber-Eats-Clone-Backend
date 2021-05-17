@@ -4,8 +4,8 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TEST_PODCAST } from './test.constants';
-import { getAllPodcastsQuery } from './test.queries';
+import { TEST_PODCAST, WRONG_ID } from './test.constants';
+import { getAllPodcastsQuery, getPodcastQuery } from './test.queries';
 import { publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -31,7 +31,6 @@ describe('App (e2e)', () => {
   describe('Podcasts Resolver', () => {
     
     describe('getAllPodcasts', () => {
-      
       it('should return empty array', () => {
         return publicTest(app, getAllPodcastsQuery)
           .expect(200)
@@ -46,7 +45,7 @@ describe('App (e2e)', () => {
       })
       
       it('should return Podcast Array contains TEST_PODCAST', async () => {
-        await podcasts.save(podcasts.create( TEST_PODCAST))
+        await podcasts.save(podcasts.create( TEST_PODCAST ))
         return publicTest(app, getAllPodcastsQuery)
           .expect(200)
           .expect( (res) => {
@@ -54,17 +53,46 @@ describe('App (e2e)', () => {
             expect(getAllPodcasts).toEqual({
               ok: true,
               error: null,
-              podcasts: [ {
+              podcasts: [{
                 id: 1,
                 ...TEST_PODCAST,
-              } ]
+              }]
             })
           })
       })
     });
     
-    
-    it.todo('getPodcast');
+    describe('getPodcast', () => {
+      it('should return a podcast if get id in DB', () => {
+        return publicTest(app, getPodcastQuery(1))
+          .expect(200)
+          .expect( res => {
+            const getPodcast = getDataFromRes(res, 'getPodcast')
+            expect(getPodcast).toEqual({
+              ok: true,
+              error: null,
+              podcast: {
+                id: 1,
+                ...TEST_PODCAST
+              }
+            })
+          })
+      })
+
+      it('should fail if get id not in DB', () => {
+        return publicTest(app, getPodcastQuery(WRONG_ID))
+          .expect(200)
+          .expect( res => {
+            const getPodcast = getDataFromRes(res, 'getPodcast')
+            expect(getPodcast).toEqual({
+              ok: false,
+              error: `Podcast id: ${WRONG_ID} doesn't exist.`,
+              podcast: null
+            })
+          })
+      })
+    });
+
     it.todo('getEpisodes');
     it.todo('createPodcast');
     it.todo('deletePodcast');

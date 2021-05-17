@@ -3,6 +3,8 @@ import { Podcast } from "src/podcasts/entities/podcast.entity";
 
 export const GRAPHQL_ENDPOINT = '/graphql'
 
+export const WRONG_ID = 999;
+
 export const TEST_PODCAST: Omit<Podcast, 'id' | 'createdAt' | 'updatedAt'> = {
     title: 'TEST',
     category: 'TEST',
