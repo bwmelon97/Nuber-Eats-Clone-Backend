@@ -47,7 +47,7 @@ export class EpisodeResolver {
     constructor(private readonly podcastService: PodcastsService) {}
 
     @Query ( returns => EpisodesOutput )
-    episodesOfPodcast ( @Args('id') id: number ): Promise<EpisodesOutput> {
+    getEpisodes ( @Args('id') id: number ): Promise<EpisodesOutput> {
         return this.podcastService.getEpisodes(id) 
     }
 
