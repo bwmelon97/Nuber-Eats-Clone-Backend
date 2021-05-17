@@ -66,3 +66,12 @@ mutation {
     }
 }
 `
+
+export const deletePodcastMutation = (id: number) => `
+mutation {
+    deletePodcast(id: ${id}) {
+        ok
+        error
+    }
+}
+`

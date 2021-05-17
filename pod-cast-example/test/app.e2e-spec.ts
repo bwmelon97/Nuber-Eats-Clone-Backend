@@ -5,7 +5,7 @@ import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TEST_CREATE_PODCAST_INPUT, TEST_PODCAST, TEST_UPDATE_PODCAST_INPUT, WRONG_ID } from './test.constants';
-import { createPodcastMutation, getAllPodcastsQuery, getPodcastQuery, updatePodcastMutation } from './test.queries';
+import { createPodcastMutation, deletePodcastMutation, getAllPodcastsQuery, getPodcastQuery, updatePodcastMutation } from './test.queries';
 import { publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -114,8 +114,8 @@ describe('App (e2e)', () => {
         return publicTest(app, updatePodcastMutation(1, TEST_UPDATE_PODCAST_INPUT))
           .expect(200)
           .expect(res => {
-            const updatePodCast = getDataFromRes(res, 'updatePodcast')
-            expect(updatePodCast).toEqual({
+            const updatePodcast = getDataFromRes(res, 'updatePodcast')
+            expect(updatePodcast).toEqual({
               ok: true,
               error: null
             })
@@ -129,8 +129,8 @@ describe('App (e2e)', () => {
         return publicTest(app, updatePodcastMutation(WRONG_ID, TEST_UPDATE_PODCAST_INPUT))
           .expect(200)
           .expect(res => {
-            const updatePodCast = getDataFromRes(res, 'updatePodcast')
-            expect(updatePodCast).toEqual({
+            const updatePodcast = getDataFromRes(res, 'updatePodcast')
+            expect(updatePodcast).toEqual({
               ok: false,
               error: `Podcast id: ${WRONG_ID} doesn't exist.`
             })
@@ -138,7 +138,34 @@ describe('App (e2e)', () => {
       })
     });
 
-    it.todo('deletePodcast');
+    describe('deletePodcast', () => {
+      it('should fail if get id not in DB', () => {
+        return publicTest(app, deletePodcastMutation(WRONG_ID))
+          .expect(200)
+          .expect(res => {
+            const deletePodcast = getDataFromRes(res, 'deletePodcast')
+            expect(deletePodcast).toEqual({
+              ok: false,
+              error: `Podcast id: ${WRONG_ID} doesn't exist.`
+            })
+          })
+      })
+      it('should delete podcast', () => {
+        // Episode 생성하기
+        return publicTest(app, deletePodcastMutation(1))
+          .expect(200)
+          .expect(res => {
+            const deletePodcast = getDataFromRes(res, 'deletePodcast')
+            expect(deletePodcast).toEqual({
+              ok: true,
+              error: null
+            })
+
+            // DB 확인해서 데이터가 정말 사라졌는지 확인해야 함.
+            // Podcast 삭제 시 하위 Episode까지 사라지는 지 확인해야 함.
+          })
+      })
+    });
    
     it.todo('createEpisode');
     it.todo('getEpisodes');
