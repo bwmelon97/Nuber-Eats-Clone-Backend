@@ -1,3 +1,5 @@
+import { CreatePodcastInput } from "src/podcasts/dtos/create-podcast.dto"
+
 export const getAllPodcastsQuery = `
 {
     getAllPodcasts {
@@ -36,6 +38,18 @@ export const getPodcastQuery = (id: number) => `
                 rating
             }
         }
+    }
+}
+`
+
+export const createPodcastMutation = ({title, category}: CreatePodcastInput) => `
+mutation {
+    createPodcast(input: {
+        title: "${title}"
+        category: "${category}"
+    }) {
+        ok
+        error
     }
 }
 `

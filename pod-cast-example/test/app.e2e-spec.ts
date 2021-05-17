@@ -4,8 +4,8 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TEST_PODCAST, WRONG_ID } from './test.constants';
-import { getAllPodcastsQuery, getPodcastQuery } from './test.queries';
+import { TEST_CREATE_PODCAST_INPUT, TEST_PODCAST, WRONG_ID } from './test.constants';
+import { createPodcastMutation, getAllPodcastsQuery, getPodcastQuery } from './test.queries';
 import { publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -93,11 +93,27 @@ describe('App (e2e)', () => {
       })
     });
 
-    it.todo('getEpisodes');
-    it.todo('createPodcast');
+    describe('createPodcast', () => {
+      it('should create a podcast', () => {
+        return publicTest(app, createPodcastMutation(TEST_CREATE_PODCAST_INPUT))
+          .expect(200)
+          .expect( res => {
+            const createPodcast = getDataFromRes(res, 'createPodcast')
+            expect(createPodcast).toEqual({
+              ok: true,
+              error: null
+            })
+          })
+
+          // DB 찾아서 Podcast 만들어진거 확인해야 함
+      })
+    });
+
     it.todo('deletePodcast');
     it.todo('updatePodcast');
+   
     it.todo('createEpisode');
+    it.todo('getEpisodes');
     it.todo('updateEpisode');
     it.todo('deleteEpisode');
   });
