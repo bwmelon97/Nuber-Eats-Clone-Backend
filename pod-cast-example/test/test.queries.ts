@@ -87,3 +87,18 @@ mutation {
         error
     }
 }`
+
+export const getEpisodesQuery = (pcID: number) => `
+query {
+    getEpisodes(id: ${pcID}) {
+        ok
+        error
+        episodes {
+            id
+            title
+            category
+            rating
+        }
+    }
+}
+`
