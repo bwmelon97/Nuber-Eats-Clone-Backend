@@ -119,3 +119,12 @@ export const updateEpisodeMutation = (
         }
     }
 `
+
+export const deleteEpisodeMutation = (pcID: number, epID: number) => `
+mutation {
+    deleteEpisode(pcID: ${pcID}, epID: ${epID}) {
+        ok
+        error
+    }
+}
+`

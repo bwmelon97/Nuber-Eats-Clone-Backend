@@ -5,7 +5,7 @@ import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, WRONG_ID } from './test.constants';
-import { createEpisodeMutation, createPodcastMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
+import { createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
 import { publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -267,9 +267,41 @@ describe('App (e2e)', () => {
     });
 
     describe('deleteEpisode', () => {
-      it.todo('should fail if get podcast id not in DB')
-      it.todo('should fail if get episode id not in DB')
-      it.todo('should delete episode')
+      it('should fail if get podcast id not in DB', () => {
+        return publicTest(app, deleteEpisodeMutation(WRONG_ID, 1))
+          .expect(200)
+          .expect(res => {
+            const deleteEpisode = getDataFromRes(res, 'deleteEpisode')
+            expect(deleteEpisode).toEqual({
+              ok: false,
+              error: `Podcast id: ${WRONG_ID} doesn't exist.`
+            })
+          })
+      })
+      it('should fail if get episode id not in DB', () => {
+        return publicTest(app, deleteEpisodeMutation(2, WRONG_ID))
+          .expect(200)
+          .expect(res => {
+            const deleteEpisode = getDataFromRes(res, 'deleteEpisode')
+            expect(deleteEpisode).toEqual({
+              ok: false,
+              error: `Episode id: ${WRONG_ID} does not exist.`
+            })
+          })
+      })
+      it('should delete episode', () => {
+        return publicTest(app, deleteEpisodeMutation(2, 1))
+          .expect(200)
+          .expect(res => {
+            const deleteEpisode = getDataFromRes(res, 'deleteEpisode')
+            expect(deleteEpisode).toEqual({
+              ok: true,
+              error: null
+            })
+
+            // DB 확인 필요
+          })
+      })
     });
   });
   describe('Users Resolver', () => {
