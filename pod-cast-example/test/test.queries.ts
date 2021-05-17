@@ -2,6 +2,7 @@ import { CreateEpisodeInput } from "src/podcasts/dtos/create-episode.dto"
 import { CreatePodcastInput } from "src/podcasts/dtos/create-podcast.dto"
 import { UpdateEpisodeInput } from "src/podcasts/dtos/update-episode.dto"
 import { UpdatePodcastInput } from "src/podcasts/dtos/update-podcast.dto"
+import { CreateAccountInput } from "src/users/dtos/create-account.dto"
 
 export const getAllPodcastsQuery = `
 {
@@ -128,3 +129,18 @@ mutation {
     }
 }
 `
+
+
+/* *************************************************************************** */
+
+export const createAccountMutation = ({ email, password }: Omit<CreateAccountInput, 'role'>) => `
+mutation {
+    createAccount(input: {
+        email: "${email}"
+        password: "${password}"
+        role: Host
+    }) {
+        ok
+        error
+    }
+}`

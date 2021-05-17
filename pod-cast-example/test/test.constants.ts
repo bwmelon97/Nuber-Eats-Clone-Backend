@@ -43,3 +43,8 @@ export const TEST_UPDATE_EPISODE_INPUT: UpdatePodcastInput = {
     title: UPDATE,
     category: UPDATE
 }
+
+export const TEST_CREATE_ACCOUNT_INPUT = {
+    email: TEST,
+    password: TEST
+}

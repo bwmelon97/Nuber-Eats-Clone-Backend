@@ -4,8 +4,8 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, WRONG_ID } from './test.constants';
-import { createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
+import { TEST_CREATE_ACCOUNT_INPUT, TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, WRONG_ID } from './test.constants';
+import { createAccountMutation, createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
 import { publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -304,11 +304,37 @@ describe('App (e2e)', () => {
       })
     });
   });
+
   describe('Users Resolver', () => {
     describe('createAccount', () => {
-      it.todo('should create an account')
-      it.todo('should fail if account exist')
+      it('should create an account', () => {
+        return publicTest(app, createAccountMutation(TEST_CREATE_ACCOUNT_INPUT))
+          .expect(200)
+          .expect(res => {
+            const createAccount = getDataFromRes(res, 'createAccount')
+            expect(createAccount).toEqual({
+              ok: true,
+              error: null
+            })
+
+            // DB 확인 필요
+          })
+      })
+      it('should fail if account exist', () => {
+        return publicTest(app, createAccountMutation(TEST_CREATE_ACCOUNT_INPUT))
+          .expect(200)
+          .expect(res => {
+            const createAccount = getDataFromRes(res, 'createAccount')
+            expect(createAccount).toEqual({
+              ok: false,
+              error: `User email: ${TEST_CREATE_ACCOUNT_INPUT.email} has already existed...`
+            })
+
+            // DB 확인 필요
+          })
+      })
     });
+
     describe('login', () => {
       it.todo('should fail if get wrong email')
       it.todo('should fail if get wrong password')
