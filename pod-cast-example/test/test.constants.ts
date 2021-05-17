@@ -4,6 +4,7 @@ import { UpdatePodcastInput } from "src/podcasts/dtos/update-podcast.dto";
 import { Episode } from "src/podcasts/entities/episode.entity";
 import { Podcast } from "src/podcasts/entities/podcast.entity";
 import { LoginInput } from "src/users/dtos/login.dto";
+import { UserRole } from "src/users/entities/user.entity";
 
 export const GRAPHQL_ENDPOINT = '/graphql'
 
@@ -43,6 +44,13 @@ export const TEST_CREATE_EPISODE_INPUT: CreateEpisodeInput = {
 export const TEST_UPDATE_EPISODE_INPUT: UpdatePodcastInput = {
     title: UPDATE,
     category: UPDATE
+}
+
+
+export const TEST_USER = {
+    id: 1,
+    email: TEST,
+    role: 'Host'
 }
 
 export const TEST_CREATE_ACCOUNT_INPUT = {

@@ -158,3 +158,17 @@ mutation {
     }
 }
 `
+
+export const meQuery = `
+query {
+    me {
+        ok
+        error
+        user {
+            id
+            email
+            role
+      }
+    }
+}
+`

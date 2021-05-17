@@ -4,14 +4,15 @@ import { INestApplication } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { TEST_CREATE_ACCOUNT_INPUT, TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_LOGIN_INPUT, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, WRONG_EMAIL, WRONG_ID, WRONG_PASSWORD } from './test.constants';
-import { createAccountMutation, createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, loginMutation, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
-import { publicTest } from './libs/resolver-test';
+import { TEST_CREATE_ACCOUNT_INPUT, TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_LOGIN_INPUT, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, TEST_USER, WRONG_EMAIL, WRONG_ID, WRONG_PASSWORD } from './test.constants';
+import { createAccountMutation, createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, loginMutation, meQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
+import { privateTest, publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
 describe('App (e2e)', () => {
   let app: INestApplication;
   let podcasts: Repository<Podcast>
+  let jwtToken: string;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -365,6 +366,7 @@ describe('App (e2e)', () => {
           .expect(200)
           .expect(res => {
             const login = getDataFromRes(res, 'login')
+            jwtToken = login.token
             expect(login).toEqual({
               ok: true,
               error: null,
@@ -375,9 +377,28 @@ describe('App (e2e)', () => {
     });
     
     describe('me', () => {
-      it.todo('should fail with public request')
-      it.todo('should return my profile')
+      it('should fail with public request', () => {
+        return publicTest(app, meQuery)
+          .expect(200)
+          .expect(res => {
+            const [error] = res.body.errors
+            expect(error.message).toBe('Forbidden resource')
+          })
+      })
+      it('should return my profile', () => {
+        return privateTest(app, meQuery, jwtToken)
+          .expect(200)
+          .expect(res => {
+            const me = getDataFromRes(res, 'me')
+            expect(me).toEqual({
+              ok: true,
+              error: null,
+              user: TEST_USER
+            })
+          })
+      })
     });
+    
     describe('seeProfile', () => {
       it.todo('should fail with public request')
       it.todo('should fail with user id not in DB')

@@ -8,3 +8,9 @@ export const publicTest = (
     app: INestApplication,
     query: string
 ) => baseTest(app).send({query})
+
+export const privateTest = (
+    app: INestApplication,
+    query: string,
+    token: string
+) => baseTest(app).set('x-jwt', token).send({query})
