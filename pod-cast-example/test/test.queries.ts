@@ -172,3 +172,16 @@ query {
     }
 }
 `
+
+export const seeProfileQuery = (id: number) => `
+query {
+    seeProfile (id: ${id}) {
+        ok
+        error
+        user {
+            id
+            email
+            role
+        }
+    }
+}`

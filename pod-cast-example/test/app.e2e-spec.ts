@@ -5,7 +5,7 @@ import { getConnection, Repository } from 'typeorm';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TEST_CREATE_ACCOUNT_INPUT, TEST_CREATE_EPISODE_INPUT, TEST_CREATE_PODCAST_INPUT, TEST_EPISODE, TEST_LOGIN_INPUT, TEST_PODCAST, TEST_UPDATE_EPISODE_INPUT, TEST_UPDATE_PODCAST_INPUT, TEST_USER, WRONG_EMAIL, WRONG_ID, WRONG_PASSWORD } from './test.constants';
-import { createAccountMutation, createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, loginMutation, meQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
+import { createAccountMutation, createEpisodeMutation, createPodcastMutation, deleteEpisodeMutation, deletePodcastMutation, getAllPodcastsQuery, getEpisodesQuery, getPodcastQuery, loginMutation, meQuery, seeProfileQuery, updateEpisodeMutation, updatePodcastMutation } from './test.queries';
 import { privateTest, publicTest } from './libs/resolver-test';
 import { getDataFromRes } from './libs/getDataFromRes';
 
@@ -398,12 +398,42 @@ describe('App (e2e)', () => {
           })
       })
     });
-    
+
     describe('seeProfile', () => {
-      it.todo('should fail with public request')
-      it.todo('should fail with user id not in DB')
-      it.todo('should return profile')
+      it('should fail with public request', () => {
+        return publicTest(app, seeProfileQuery(1))
+          .expect(200)
+          .expect(res => {
+            const [error] = res.body.errors
+            expect(error.message).toBe('Forbidden resource')
+          })
+      })
+      it('should fail with user id not in DB', () => {
+        return privateTest(app, seeProfileQuery(WRONG_ID), jwtToken)
+          .expect(200)
+          .expect(res => {
+            const seeProfile = getDataFromRes(res, 'seeProfile')
+            expect(seeProfile).toEqual({
+              ok: false,
+              error: "Couldn't find a user...",
+              user: null
+            })
+          })
+      })
+      it('should return profile', () => {
+        return privateTest(app, seeProfileQuery(1), jwtToken)
+          .expect(200)
+          .expect(res => {
+            const seeProfile = getDataFromRes(res, 'seeProfile')
+            expect(seeProfile).toEqual({
+              ok: true,
+              error: null,
+              user: TEST_USER
+            })
+          })
+      })
     });
+
     describe('editProfile', () => {
       it.todo('should fail with public request')
       it.todo('should update profile')
