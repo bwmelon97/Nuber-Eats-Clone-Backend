@@ -7,6 +7,6 @@ class UserWithoutPW extends OmitType(User, ['password']) {}
 
 @ObjectType()
 export class SeeProfileOutput extends CoreOutput {
-    @Field()
+    @Field({ nullable: true })
     user?: UserWithoutPW;
 }
