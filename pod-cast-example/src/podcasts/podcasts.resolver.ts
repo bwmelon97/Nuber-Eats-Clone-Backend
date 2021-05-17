@@ -18,7 +18,7 @@ export class PodcastsResolver {
     getAllPodcasts(): Promise<PodcastsOutput> { return this.podcastService.getAllPodCasts() }
 
     @Query( returns => PodcastOutput )
-    podcastByID( @Args('id') id: number ): Promise<PodcastOutput> {
+    getPodcast( @Args('id') id: number ): Promise<PodcastOutput> {
         return this.podcastService.getPodCastByID(id); 
     }
 
