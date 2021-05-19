@@ -1,4 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Role } from 'src/auth/role.decorator';
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { CreateEpisodeDTO } from './dtos/create-episode.dto';
 import { CreatePodcastInput } from './dtos/create-podcast.dto';
@@ -14,14 +15,17 @@ import { PodcastsService } from './podcasts.service';
 export class PodcastsResolver {
     constructor(private readonly podcastService: PodcastsService) {}
 
+    @Role(['Any'])
     @Query( returns => PodcastsOutput )
     getAllPodcasts(): Promise<PodcastsOutput> { return this.podcastService.getAllPodCasts() }
 
+    @Role(['Any'])
     @Query( returns => PodcastOutput )
     getPodcast( @Args('id') id: number ): Promise<PodcastOutput> {
         return this.podcastService.getPodCastByID(id); 
     }
 
+    @Role(['Host'])
     @Mutation( returns => CoreOutput )
     createPodcast( 
         @Args('input') createPodcastInput: CreatePodcastInput 
@@ -29,6 +33,7 @@ export class PodcastsResolver {
         return this.podcastService.createPodCast(createPodcastInput)
     }
 
+    @Role(['Host'])
     @Mutation ( returns => CoreOutput )
     updatePodcast (
         @Args() updatePodcastDTO: UpdatePodcastDTO
@@ -36,6 +41,7 @@ export class PodcastsResolver {
         return this.podcastService.updatePodCast(updatePodcastDTO)
     }
  
+    @Role(['Host'])
     @Mutation ( returns => CoreOutput )
     deletePodcast( @Args('id') id: number ): Promise<CoreOutput> { 
         return this.podcastService.deletePodCast(id)
@@ -46,11 +52,13 @@ export class PodcastsResolver {
 export class EpisodeResolver {
     constructor(private readonly podcastService: PodcastsService) {}
 
+    @Role(['Any'])
     @Query ( returns => EpisodesOutput )
     getEpisodes ( @Args('id') id: number ): Promise<EpisodesOutput> {
         return this.podcastService.getEpisodes(id) 
     }
 
+    @Role(['Host'])
     @Mutation ( returns => CoreOutput )
     createEpisode ( 
         @Args() createEpisodeDTO: CreateEpisodeDTO
@@ -58,6 +66,7 @@ export class EpisodeResolver {
         return this.podcastService.createEpisode(createEpisodeDTO)
     }
 
+    @Role(['Host'])
     @Mutation ( returns => CoreOutput )
     updateEpisode ( 
         @Args() updateEpisodeDTO: UpdateEpisodeDTO 
@@ -65,6 +74,7 @@ export class EpisodeResolver {
         return this.podcastService.updateEpisode(updateEpisodeDTO)
     }
 
+    @Role(['Host'])
     @Mutation ( returns => CoreOutput )
     deleteEpisode(
         @Args('pcID') pcID: number,

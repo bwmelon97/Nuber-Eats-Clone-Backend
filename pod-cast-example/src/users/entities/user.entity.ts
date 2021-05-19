@@ -4,8 +4,8 @@ import { BeforeInsert, BeforeUpdate, Column, Entity } from "typeorm";
 import * as bcrypt from 'bcrypt';
 
 export enum UserRole {
-    Host,
-    Listener
+    Host        = 'Host',
+    Listener    = 'Listener'
 }
 registerEnumType(UserRole, { name: 'UserRole' })
 
