@@ -5,7 +5,9 @@ import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
+import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
+import { UpdateDishInput } from './dtos/update-dish.dto';
 import { Category } from './entities/category.entity';
 import { Dish } from './entities/dish.entity';
 import { Restaurant } from './entities/restaurant.entity';
@@ -81,6 +83,62 @@ export class RestaurantService {
             return {
                 ok: false,
                 error: error ? error.message : "Couldn't create a dish."
+            }
+        }
+    }
+
+    async checkDishOwner (dishId: number, owner: User) {
+        try {
+            /* Dish를 못찾으면 fail 리턴 */
+            const dish = await this.dishes.findOne( dishId, { relations: ['restaurant'] } )
+            if ( !dish ) throw Error("Couldn't find a dish.")
+    
+            /* owner와 Dish owner id가 다르면 fail 리턴 */
+            if (owner.id !== dish.restaurant.ownerID)
+                throw Error("You don't allow edit this dish.")
+
+            return { ok: true }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : 'Fail to check dish owner.'
+            }
+        }
+    }
+
+    async updateDish (
+        owner: User,
+        updateDishInput: UpdateDishInput
+    ): Promise<CoreOutput> {
+        try {
+            const { dishId, data } = updateDishInput
+            const { ok, error } = await this.checkDishOwner(dishId, owner);
+            if (!ok) throw Error(error)
+
+            await this.dishes.update(dishId, { ...data })
+            return { ok: true }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : 'Fail to update Dish.'
+            }
+        }
+    }
+
+    async deleteDish (
+        owner: User,
+        { dishId }: DeleteDishInput
+    ): Promise<CoreOutput> {
+        try {
+            const { ok, error } = await this.checkDishOwner(dishId, owner);
+            if (!ok) throw Error(error)
+
+            await this.dishes.delete(dishId)
+            return { ok: true }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : 'Fail to delete Dish.'
             }
         }
     }

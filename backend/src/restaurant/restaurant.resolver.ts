@@ -5,7 +5,9 @@ import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { User } from 'src/user/entities/user.entity';
 import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
+import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
+import { UpdateDishInput } from './dtos/update-dish.dto';
 import { Dish } from './entities/dish.entity';
 import { Restaurant } from './entities/restaurant.entity';
 import { RestaurantService } from './restaurant.service';
@@ -40,5 +42,21 @@ export class DishResolver {
         @Args('input') createDishInput: CreateDishInput
     ): Promise<CoreOutput> {
         return this.restaurantService.createDish(owner, createDishInput)
+    }
+
+    @Mutation(returns => CoreOutput)
+    updateDish (
+        @AuthUser() owner: User,
+        @Args('input') updateDishInput: UpdateDishInput
+    ): Promise<CoreOutput> {
+        return this.restaurantService.updateDish(owner, updateDishInput)
+    }
+
+    @Mutation(returns => CoreOutput)
+    deleteDish (
+        @AuthUser() owner: User,
+        @Args('input') deleteDishInput: DeleteDishInput
+    ): Promise<CoreOutput> {
+        return this.restaurantService.deleteDish(owner, deleteDishInput)
     }
 }
