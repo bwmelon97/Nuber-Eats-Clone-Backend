@@ -1,8 +1,11 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
+import { User } from 'src/users/entities/user.entity';
 import { CreateEpisodeDTO } from './dtos/create-episode.dto';
 import { CreatePodcastInput } from './dtos/create-podcast.dto';
+import { CreateReviewInput, CreateReviewOutput } from './dtos/create-review.dto';
 import { EpisodesOutput } from './dtos/get-episodes.dto';
 import { PodcastOutput, PodcastsOutput, SearchPodcastsInput } from './dtos/get-podcast.dto';
 import { UpdateEpisodeDTO } from './dtos/update-episode.dto';
@@ -55,7 +58,14 @@ export class PodcastsResolver {
         return this.podcastService.searchPodcasts(searchPodcastInput)
     }
 
-    // reviewPodcast
+    @Role(['Listener'])
+    @Mutation( returns => CreateReviewOutput )
+    reviewPodcast (
+        @AuthUser() authuser: User,
+        @Args('input') createReviewInput: CreateReviewInput
+    ) {
+        return this.podcastService.createPodcastReview(authuser, createReviewInput)
+    }
 
     // subscribeToPodcast
 

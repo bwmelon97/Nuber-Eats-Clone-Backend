@@ -10,6 +10,9 @@ import { ILike, Repository } from 'typeorm';
 import { EpisodesOutput } from './dtos/get-episodes.dto';
 import { PodcastOutput, PodcastsOutput, SearchPodcastsInput } from "./dtos/get-podcast.dto";
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
+import { User } from 'src/users/entities/user.entity';
+import { CreateReviewInput, CreateReviewOutput } from './dtos/create-review.dto';
+import { Review } from './entities/review.entity';
 
 
 @Injectable()
@@ -17,18 +20,15 @@ export class PodcastsService {
 
     constructor( 
         @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>,
-        @InjectRepository(Episode) private readonly episodes: Repository<Episode>
+        @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
+        @InjectRepository(Review) private readonly reviews: Repository<Review>,
     ) {}
-
-    private readonly InternalServerErrorOutput = {
-        ok: false,
-        error: 'Internal server error occurred.',
-    };
 
     /* Find => Relation Option */
     async getAllPodCasts (): Promise<PodcastsOutput> {
         try {
-            const podcastList = await this.podcasts.find( {relations: ['episodes']} );   
+            const podcastList = await this.podcasts.find( {relations: ['episodes', 'reviews']} );   
+            // 찾은 Review에게서 Writer를 탐색하려면 어떻게 해야 ?
             return { ok: true, podcasts: podcastList }
         }
         catch {
@@ -42,7 +42,8 @@ export class PodcastsService {
     async searchPodcasts ( { searchInput }: SearchPodcastsInput ): Promise<PodcastsOutput> {
         try {
             const foundPodcasts = await this.podcasts.find({
-                title: ILike(`%${searchInput}%`)
+                title: ILike(`%${searchInput}%`),
+                // relation은 어떻게 추가하지 ?
             })
             return { ok: true, podcasts: foundPodcasts }
         } catch (error) {
@@ -55,7 +56,7 @@ export class PodcastsService {
     
     async getPodCastByID (pcID: number): Promise<PodcastOutput> {
         try {
-            const foundPodcast = await this.podcasts.findOne(pcID, {relations: ['episodes']});
+            const foundPodcast = await this.podcasts.findOne(pcID, {relations: ['episodes', 'reviews']});
             if (!foundPodcast) 
                 return {
                     ok: false,
@@ -69,7 +70,7 @@ export class PodcastsService {
         { title, category }: CreatePodcastInput 
     ): Promise<CoreOutput> {
         try {
-            const initalData = { title, category, rating: 0, episodes: [] }
+            const initalData = { title, category, rating: 0, episodes: [], reviews: [] }
             const newPodcast = this.podcasts.create( initalData )
             await this.podcasts.save(newPodcast)
             return { ok: true }  
@@ -106,6 +107,25 @@ export class PodcastsService {
                 ok: false, 
                 error: error ? error.message : 'Fail to delete podcast' 
             } 
+        }
+    }
+
+    async createPodcastReview (
+        writer: User,
+        { podcastId, description }: CreateReviewInput
+    ): Promise<CreateReviewOutput> {
+        try {
+            const podcast = await this.podcasts.findOne( podcastId );
+            if (!podcast) throw Error("Couldn't find a podcast.")
+
+            const newReivew = this.reviews.create({ description, writer, podcast })
+            await this.reviews.save(newReivew)
+            return { ok: true }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : "Fail to Create Podcast Review."
+            }
         }
     }
         
