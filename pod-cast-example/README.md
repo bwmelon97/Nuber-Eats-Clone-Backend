@@ -30,19 +30,16 @@ $ yarn start:dev
 .
 
 # Today's Objects
-Unit test
+'Listener'를 위한 Resolver를 작성할 차례입니다.
 
-아래 테스트 파일들에서 Stmts(statements)가 전부 100%가 나오도록
 ```
-- podcasts.service.spec.ts  [o]
-- jwt.service.spec.ts       [o]
-- users.service.spec.ts     [o]
+* searchPodcasts (by title)     [ ]
+* reviewPodcast                 [ ]
+* subscribeToPodcast            [ ]
+* seeSubscriptions              [ ]
+* markEpisodeAsPlayed           [ ]
+  (like a Netflix movie that has been watched)
 ```
-
-```bash
-$ npm run test:cov
-```
-
 
 
 ---
