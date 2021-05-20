@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, InputType, ObjectType } from "@nestjs/graphql";
 import { CoreOutput } from "src/common/dtos/core-output.dto";
 import { Podcast } from "../entities/podcast.entity";
 
@@ -12,4 +12,10 @@ export class PodcastOutput extends CoreOutput {
 export class PodcastsOutput extends CoreOutput {
     @Field(type => [Podcast], { nullable: true })
     podcasts?: Podcast[];
+}
+
+@InputType()
+export class SearchPodcastsInput {
+    @Field(type => String)
+    searchInput: string;
 }

@@ -6,9 +6,9 @@ import { UpdatePodcastDTO } from './dtos/update-podcast.dto';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { EpisodesOutput } from './dtos/get-episodes.dto';
-import { PodcastOutput, PodcastsOutput } from "./dtos/get-podcast.dto";
+import { PodcastOutput, PodcastsOutput, SearchPodcastsInput } from "./dtos/get-podcast.dto";
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
 
 
@@ -35,6 +35,20 @@ export class PodcastsService {
             return {
                 ok: false,
                 error: 'Fail to get podcasts'
+            }
+        }
+    }
+
+    async searchPodcasts ( { searchInput }: SearchPodcastsInput ): Promise<PodcastsOutput> {
+        try {
+            const foundPodcasts = await this.podcasts.find({
+                title: ILike(`%${searchInput}%`)
+            })
+            return { ok: true, podcasts: foundPodcasts }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : "Fail to search podcasts."
             }
         }
     }

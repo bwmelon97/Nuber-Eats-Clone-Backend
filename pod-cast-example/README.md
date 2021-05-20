@@ -33,7 +33,7 @@ $ yarn start:dev
 'Listener'를 위한 Resolver를 작성할 차례입니다.
 
 ```
-* searchPodcasts (by title)     [ ]
+* searchPodcasts (by title)     [O]
 * reviewPodcast                 [ ]
 * subscribeToPodcast            [ ]
 * seeSubscriptions              [ ]
