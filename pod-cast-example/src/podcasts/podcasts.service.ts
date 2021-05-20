@@ -229,4 +229,22 @@ export class PodcastsService {
             } 
         }
     }
+
+    async markEpisodeAsPlayed (user: User, episodeId: number): Promise<CoreOutput> {
+        try {
+            const episode = await this.episodes.findOne( episodeId )
+            if (!episode) throw Error("Couldn't find a episode")
+
+            const listener = await this.users.findOne( user.id, { relations: ['playedEpisodes'] })
+            listener.playedEpisodes = listener.playedEpisodes.concat([ episode ])
+            await this.users.save(listener)
+
+            return { ok: true }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : 'Fail to mark episode as played.'
+            }
+        }
+    }
 }

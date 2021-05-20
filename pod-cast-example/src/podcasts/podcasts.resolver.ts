@@ -75,8 +75,6 @@ export class PodcastsResolver {
     ) {
         return this.podcastService.subscribePodcast(authUser, podcastId)
     }
-
-    // markEpisodeAsPlayed
 }
 
 @Resolver(of => Episode)
@@ -112,5 +110,14 @@ export class EpisodeResolver {
         @Args('epID') epID: number,
     ): Promise<CoreOutput> {
         return this.podcastService.deleteEpisode(pcID, epID)
+    }
+
+    @Role(['Listener'])
+    @Mutation( returns => CoreOutput )
+    markEpisodeAsPlayed(
+        @AuthUser() authUser: User,
+        @Args('episodeId') episodeId: number
+    ): Promise<CoreOutput> {
+        return this.podcastService.markEpisodeAsPlayed(authUser, episodeId)
     }
 }

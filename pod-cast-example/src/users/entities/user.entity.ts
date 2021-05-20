@@ -4,6 +4,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, OneT
 import * as bcrypt from 'bcrypt';
 import { Review } from "src/podcasts/entities/review.entity";
 import { Podcast } from "src/podcasts/entities/podcast.entity";
+import { Episode } from "src/podcasts/entities/episode.entity";
 
 export enum UserRole {
     Host        = 'Host',
@@ -38,9 +39,14 @@ export class User extends CoreEntity {
     reviews: Review[]
 
     @Field(type => [Podcast])
-    @ManyToMany( type => Podcast )
+    @ManyToMany(type => Podcast)
     @JoinTable()
     subscriptions: Podcast[]
+
+    @Field(type => [Episode])
+    @ManyToMany(type => Episode)
+    @JoinTable()
+    playedEpisodes: Episode[]
 
     @BeforeInsert()
     @BeforeUpdate()

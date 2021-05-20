@@ -23,7 +23,7 @@ export class UsersService {
 
     async findUserById ( id: number ): Promise<SeeProfileOutput> {
         try {
-            const user = await this.users.findOne(id)
+            const user = await this.users.findOne(id, { relations: ['subscriptions', 'playedEpisodes'] })
             if ( !user ) throw Error
             return { ok: true, user }
         } catch (error) {

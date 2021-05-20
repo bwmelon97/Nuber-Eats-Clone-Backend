@@ -35,9 +35,9 @@ $ yarn start:dev
 ```
 * searchPodcasts (by title)     [O]
 * reviewPodcast                 [O]
-* subscribeToPodcast            [ ]
-* seeSubscriptions              [ ]
-* markEpisodeAsPlayed           [ ]
+* subscribeToPodcast            [O]
+* seeSubscriptions              [O]
+* markEpisodeAsPlayed           [O]
   (like a Netflix movie that has been watched)
 ```
 
