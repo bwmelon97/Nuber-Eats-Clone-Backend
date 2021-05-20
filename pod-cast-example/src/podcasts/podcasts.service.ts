@@ -19,6 +19,7 @@ import { Review } from './entities/review.entity';
 export class PodcastsService {
 
     constructor( 
+        @InjectRepository(User) private readonly users: Repository<User>,
         @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>,
         @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
         @InjectRepository(Review) private readonly reviews: Repository<Review>,
@@ -63,7 +64,12 @@ export class PodcastsService {
                     error: `Podcast id: ${pcID} doesn't exist.`
                 }
             return { ok: true, podcast: foundPodcast }
-        } catch (error) { return { ok: false, error } }
+        } catch (error) { 
+            return { 
+                ok: false, 
+                error: error? error.message : "Fail to find podcast." 
+            } 
+        }
     }
 
     async createPodCast ( 
@@ -115,8 +121,8 @@ export class PodcastsService {
         { podcastId, description }: CreateReviewInput
     ): Promise<CreateReviewOutput> {
         try {
-            const podcast = await this.podcasts.findOne( podcastId );
-            if (!podcast) throw Error("Couldn't find a podcast.")
+            const { ok, error, podcast } = await this.getPodCastByID( podcastId );
+            if (!ok) throw Error(error)
 
             const newReivew = this.reviews.create({ description, writer, podcast })
             await this.reviews.save(newReivew)
@@ -128,6 +134,27 @@ export class PodcastsService {
             }
         }
     }
+
+    async subscribePodcast ( 
+        user: User,
+        podcastId: number 
+    ): Promise<CoreOutput> {
+        try {
+            const { ok, error, podcast } = await this.getPodCastByID( podcastId );
+            if (!ok) throw Error(error)
+            
+            const subscriber = await this.users.findOne( user.id, { relations: ['subscriptions'] } )
+            subscriber.subscriptions = subscriber.subscriptions.concat([podcast])
+            this.users.save(subscriber)
+            return { ok: true }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : "Fail to Create Podcast Review."
+            }
+        }
+    }
+
         
     async getEpisodes (pcID: number): Promise<EpisodesOutput> {
         try {

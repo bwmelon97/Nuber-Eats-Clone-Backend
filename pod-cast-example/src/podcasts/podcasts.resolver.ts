@@ -67,9 +67,14 @@ export class PodcastsResolver {
         return this.podcastService.createPodcastReview(authuser, createReviewInput)
     }
 
-    // subscribeToPodcast
-
-    // seeSubscriptions
+    @Role(['Listener'])
+    @Mutation( returns => CoreOutput )
+    subscribeToPodcast(
+        @AuthUser() authUser: User,
+        @Args('podcastId') podcastId: number
+    ) {
+        return this.podcastService.subscribePodcast(authUser, podcastId)
+    }
 
     // markEpisodeAsPlayed
 }

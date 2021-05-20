@@ -6,7 +6,7 @@ import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
-import { SeeProfileOutput } from './dtos/see-profile.dto';
+import { SeeProfileOutput, SeeSubscriptionsOutput } from './dtos/see-profile.dto';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 
 
@@ -30,6 +30,18 @@ export class UsersService {
             return {
                 ok: false,
                 error: "Couldn't find a user..."
+            }
+        }
+    }
+
+    async seeSubscriptions ( listener: User ): Promise<SeeSubscriptionsOutput> {
+        try {
+            const { subscriptions } = await this.users.findOne( listener.id, { relations: ['subscriptions'] } )
+            return { ok: true, subscriptions: subscriptions }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : 'Fail to load subscriptions.'
             }
         }
     }

@@ -1,6 +1,6 @@
 import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { CoreEntity } from "src/common/entities/core.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import { Review } from "src/podcasts/entities/review.entity";
 import { Podcast } from "src/podcasts/entities/podcast.entity";
@@ -36,6 +36,11 @@ export class User extends CoreEntity {
         review => review.writer
     )
     reviews: Review[]
+
+    @Field(type => [Podcast])
+    @ManyToMany( type => Podcast )
+    @JoinTable()
+    subscriptions: Podcast[]
 
     @BeforeInsert()
     @BeforeUpdate()

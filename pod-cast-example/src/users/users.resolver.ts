@@ -6,7 +6,7 @@ import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { EditProfileInput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
-import { SeeProfileOutput } from './dtos/see-profile.dto';
+import { SeeProfileOutput, SeeSubscriptionsOutput } from './dtos/see-profile.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
@@ -53,5 +53,11 @@ export class UsersResolver {
     @Query(returns => SeeProfileOutput)
     seeProfile( @Args('id') id: number ): Promise<SeeProfileOutput> {
         return this.usersSerive.findUserById( id )
+    }
+
+    @Role(['Listener'])
+    @Query(returns => SeeSubscriptionsOutput)
+    seeSubscriptions( @AuthUser() authUser: User ): Promise<SeeSubscriptionsOutput> {
+        return this.usersSerive.seeSubscriptions(authUser)
     }
 }
