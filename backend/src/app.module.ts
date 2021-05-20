@@ -13,6 +13,8 @@ import { RestaurantModule } from './restaurant/restaurant.module';
 import { Restaurant } from './restaurant/entities/restaurant.entity';
 import { Category } from './restaurant/entities/category.entity';
 import { Dish } from './restaurant/entities/dish.entity';
+import { OrderModule } from './order/order.module';
+import { Order } from './order/entities/order.entity';
 
 @Module({
   imports: [
@@ -38,7 +40,7 @@ import { Dish } from './restaurant/entities/dish.entity';
 			password: process.env.DB_PASSWORD,
 			database: process.env.DB_NAME,
       entities: [
-        User, Verification, Restaurant, Category, Dish
+        User, Verification, Restaurant, Category, Dish, Order
       ],
       synchronize: true,
       logging: process.env.NODE_ENV === 'dev'
@@ -53,6 +55,7 @@ import { Dish } from './restaurant/entities/dish.entity';
     AuthModule,
     UserModule,
     RestaurantModule,
+    OrderModule,
   ],
 })
 export class AppModule implements NestModule {

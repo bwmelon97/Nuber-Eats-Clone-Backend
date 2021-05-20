@@ -1,5 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { CoreEntity } from "src/common/entities/core.entity";
+import { Order } from "src/order/entities/order.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from "typeorm";
 import { Category } from "./category.entity";
@@ -46,4 +47,11 @@ export class Restaurant extends CoreEntity {
         dish => dish.restaurant
     )
     menu: Dish[]
+
+    @Field(type => [Order])
+    @OneToMany(
+        type => Order,
+        order => order.restaurant
+    )
+    orders: Order[]
 }
