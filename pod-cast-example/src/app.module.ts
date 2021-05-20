@@ -11,6 +11,7 @@ import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { AuthModule } from './auth/auth.module';
+import { Review } from './podcasts/entities/review.entity';
 
 
 @Module({
@@ -34,7 +35,7 @@ import { AuthModule } from './auth/auth.module';
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: process.env.DB_NAME,
-      entities: [Podcast, Episode, User],
+      entities: [Podcast, Episode, User, Review],
       logging: process.env.NODE_ENV === 'dev',
       synchronize: process.env.NODE_ENV !== 'prod',
     }),
