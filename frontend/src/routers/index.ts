@@ -1,2 +1,2 @@
-export { default as LoggedIn } from './LoggedIn'
-export { default as LoggedOut } from './LoggedOut'
+export { default as LoggedInRouter } from './logged-in-router'
+export { default as LoggedOutRouter } from './logged-out-router'
