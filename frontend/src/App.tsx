@@ -1,11 +1,11 @@
 import React from 'react';
+import { useReactiveVar } from '@apollo/client';
+import { isLoggedInVar } from './apollo';
+import { LoggedIn, LoggedOut } from './routers';
 
 function App() {
-  return (
-    <div className='bg-red-100' >
-      <h1> Hello World ! </h1>
-    </div>
-  );
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  return isLoggedIn ? <LoggedIn /> : <LoggedOut />
 }
 
 export default App;

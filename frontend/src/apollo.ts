@@ -1,9 +1,19 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloClient, InMemoryCache, makeVar } from '@apollo/client';
+
+export const isLoggedInVar = makeVar(false)
 
 export const client = new ApolloClient({
-    // uri: 'http://localhost:4000',
     uri: 'https://soogeun.loca.lt/graphql',
-    // uri: 'https://1nltu.sse.codesandbox.io/',
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+        // typePolicies: {
+        //     Query: {
+        //         fields: {
+        //             loggedIn: {
+        //                 read: () => isLoggedInVar()
+        //             }
+        //         }
+        //     }
+        // }
+    }),
     connectToDevTools: true
 });
