@@ -1,5 +1,18 @@
 import React from "react";
+import gql from "graphql-tag";
 import { useForm } from "react-hook-form";
+import { useMutation } from "@apollo/client";
+import { loginMutation, loginMutationVariables } from "../__generated__/loginMutation";
+
+const LOGIN_MUTATION = gql`
+    mutation loginMutation($loginInput: LoginInput!) {
+        login(input: $loginInput) {
+            ok
+            error
+            token
+        }
+    }
+`;
 
 type LoginFormInput = {
     email: string;
@@ -8,7 +21,28 @@ type LoginFormInput = {
 
 function Login () {
     const { register, getValues, handleSubmit, formState: { errors } } = useForm<LoginFormInput>()
-    const onSubmit = () => console.log(getValues())
+    
+    const onCompleted = (data: loginMutation) => {
+        const { login: { ok, token } } = data;
+        if (ok) console.log(token)
+    }
+    const [
+        loginMutation, 
+        { loading, data: loginMutationResult }
+    ] = useMutation< loginMutation, loginMutationVariables >(LOGIN_MUTATION, { onCompleted })
+    
+    const onSubmit = () => {
+        if (!loading) {
+            const { email, password } = getValues()
+            loginMutation({
+                variables: {
+                    loginInput: {
+                        email, password
+                    }
+                }
+            })
+        }
+    }
 
     return (
         <div className='h-screen flex justify-center items-center  bg-gray-800' > { /* 배경 */ }
@@ -36,8 +70,9 @@ function Login () {
                     { errors.password?.type === 'minLength' && <span className='err-msg' > Password should longer or same with 5. </span> }
                     { errors.password?.message && <span className='err-msg' > {errors.password.message} </span> }
                     <button className='py-3 px-4 rounded-lg bg-gray-800 text-white text-lg focus:outline-none hover:bg-opacity-90' >
-                        Login
+                        { loading ? 'loading...' : 'Log in' }
                     </button>
+                    { loginMutationResult?.login.error && <span className='err-msg' > {loginMutationResult?.login.error} </span> }
                 </form>
             </div>
         </div>
