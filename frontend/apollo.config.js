@@ -6,6 +6,5 @@ module.exports = {
             name: 'nuber-eats-backend',
             url: 'https://soogeun.loca.lt/graphql',
         },
-        // key: 'My-Graph-8gsbkq'
     },
 };  
