@@ -2,10 +2,10 @@ import React from "react";
 import gql from "graphql-tag";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
-import { loginMutation, loginMutationVariables } from "../__generated__/loginMutation";
+import { LoginMutation, LoginMutationVariables } from "@gql-types/LoginMutation";
 
 const LOGIN_MUTATION = gql`
-    mutation loginMutation($loginInput: LoginInput!) {
+    mutation LoginMutation($loginInput: LoginInput!) {
         login(input: $loginInput) {
             ok
             error
@@ -22,14 +22,14 @@ type LoginFormInput = {
 function Login () {
     const { register, getValues, handleSubmit, formState: { errors } } = useForm<LoginFormInput>()
     
-    const onCompleted = (data: loginMutation) => {
+    const onCompleted = (data: LoginMutation) => {
         const { login: { ok, token } } = data;
         if (ok) console.log(token)
     }
     const [
         loginMutation, 
         { loading, data: loginMutationResult }
-    ] = useMutation< loginMutation, loginMutationVariables >(LOGIN_MUTATION, { onCompleted })
+    ] = useMutation< LoginMutation, LoginMutationVariables >(LOGIN_MUTATION, { onCompleted })
     
     const onSubmit = () => {
         if (!loading) {

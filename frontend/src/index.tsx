@@ -4,7 +4,7 @@ import { ApolloProvider } from '@apollo/client/react';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { client } from './apollo';
+import { client } from '@apollo-client';
 
 ReactDOM.render(
   <React.StrictMode>

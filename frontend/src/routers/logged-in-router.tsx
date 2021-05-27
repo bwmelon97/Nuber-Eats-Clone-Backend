@@ -1,5 +1,5 @@
 import React from "react";
-import { isLoggedInVar } from "../apollo";
+import { isLoggedInVar } from "@apollo-client";
 
 function LoggedIn () {
     const logout = () => isLoggedInVar(false)

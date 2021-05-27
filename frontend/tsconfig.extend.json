@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "paths": {
+            "@apollo-client": ["./apollo.ts"],
+            "@pages": ["./pages/index.ts"],
+            "@routers": ["./routers/index.ts"],
+
+            "@pages/*": ["./pages/*"],
+            "@routers/*": ["./routers/*"],
+            "@components/*": ["./components/*"],
+            "@gql-types/*": ["./__generated__/*"]
+        }
+    }
+}

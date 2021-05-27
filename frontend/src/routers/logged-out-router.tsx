@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { CreateAccount, Login } from "../pages";
+import { CreateAccount, Login } from "@pages";
 
 function LoggedOut () {
     return (
