@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "@gql-types/LoginMutation";
-import { ErrMsg, Form, FormContainer, PageWrapper, StyledButton, StyledInput, SubTitle, Title } from "@components/FormComponents";
+import { ErrMsg, Form, FormContainer, NuberLink, PageWrapper, StyledButton, StyledInput, SubTitle, Title } from "@components/FormComponents";
 import Logo from "@components/Logo";
 
 const LOGIN_MUTATION = gql`
@@ -79,6 +79,10 @@ function Login () {
                     </StyledButton>
                     { loginMutationResult?.login.error && <ErrMsg > {loginMutationResult?.login.error} </ErrMsg> }
                 </Form>
+                <span> 
+                    New to Nuber? &nbsp;
+                    <NuberLink to='/signup' >Create Account</NuberLink> 
+                </span>
             </FormContainer>
         </PageWrapper>
     )

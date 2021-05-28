@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import tw, { styled } from "twin.macro";
 
 
@@ -6,8 +7,9 @@ export const FormContainer = tw.div`mt-8 md:mt-24 px-5 w-full max-w-xl flex flex
 
 export const Title = tw.h1`self-start text-2xl font-normal mb-8 md:text-3xl`
 export const SubTitle = tw.h2`self-start text-base font-light mb-4`
-export const Form = tw.form`grid gap-3 w-full`;
+export const Form = tw.form`grid gap-3 w-full mb-4`;
 export const ErrMsg = tw.span`font-light text-red-500`;
+export const NuberLink = tw(Link)`text-lime-600 hover:underline`
 
 
 /* */
