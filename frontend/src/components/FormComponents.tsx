@@ -1,7 +1,17 @@
 import tw, { styled } from "twin.macro";
 
 
-const baseStyle = `
+export const PageWrapper = tw.div`h-screen flex justify-center bg-white`;
+export const FormContainer = tw.div`mt-8 md:mt-24 px-5 w-full max-w-xl flex flex-col items-center`;
+
+export const Title = tw.h1`self-start text-2xl font-normal mb-8 md:text-3xl`
+export const SubTitle = tw.h2`self-start text-base font-light mb-4`
+export const Form = tw.form`grid gap-3 w-full`;
+export const ErrMsg = tw.span`font-light text-red-500`;
+
+
+/* */
+const baseBoxStyle = `
     py-3 px-4 
     focus:outline-none 
     transition
@@ -9,20 +19,11 @@ const baseStyle = `
 `
 
 const inputStyle = `
-    ${baseStyle}
+    ${baseBoxStyle}
     ring-1 ring-gray-200
 
     focus:ring-1 
     focus:ring-black 
-`
-
-const buttonStyle = `
-    ${baseStyle}
-
-    mt-3
-    bg-lime-600 
-    text-white 
-    hover:bg-lime-700
 `
 
 type InputProps = {
@@ -34,6 +35,16 @@ export const StyledInput = styled.input<InputProps>`
     ${props => props.isDirty && tw`
         ring-black
     `}
+`
+
+/*  */
+const buttonStyle = `
+    ${baseBoxStyle}
+
+    mt-3
+    bg-lime-600 
+    text-white 
+    hover:bg-lime-700
 `
 
 type ButtonProps = {

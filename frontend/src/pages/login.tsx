@@ -3,8 +3,8 @@ import gql from "graphql-tag";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "@gql-types/LoginMutation";
-import { StyledButton, StyledInput } from "@components/FormComponents";
-import { LOGO_IMG_URL } from "@constants";
+import { ErrMsg, Form, FormContainer, PageWrapper, StyledButton, StyledInput, SubTitle, Title } from "@components/FormComponents";
+import Logo from "@components/Logo";
 
 const LOGIN_MUTATION = gql`
     mutation LoginMutation($loginInput: LoginInput!) {
@@ -47,12 +47,12 @@ function Login () {
     }
 
     return (
-        <div className='h-screen flex justify-center bg-white' > { /* 배경 */ }
-            <div className='mt-8 md:mt-24 px-5 w-full max-w-xl flex flex-col items-center' > {/* 로그인 배경 */}
-                <img src={LOGO_IMG_URL} alt='logo' className='w-48 mb-10 md:mb-16' />
-                <h3 className='self-start text-2xl font-normal mb-8 md:text-3xl' > 돌아오신 것을 환영합니다 </h3>
-                <h4 className='self-start text-base font-light mb-4' > 이메일과 비밀번호를 입력하여 로그인하세요. </h4>
-                <form onSubmit={handleSubmit(onSubmit)} className='grid gap-3 w-full' >
+        <PageWrapper > { /* 배경 */ }
+            <FormContainer > {/* 로그인 배경 */}
+                <Logo className='w-48 mb-10 md:mb-16' />
+                <Title > 돌아오신 것을 환영합니다 </Title>
+                <SubTitle> 이메일과 비밀번호를 입력하여 로그인하세요. </SubTitle>
+                <Form onSubmit={handleSubmit(onSubmit)} >
                     <StyledInput 
                         {...register('email', {
                             required: 'Email is required',
@@ -71,16 +71,16 @@ function Login () {
                         placeholder='Password' 
                         isDirty={ false }
                     />
-                    { touchedFields.email && errors.email?.type === 'pattern' && <span className='err-msg' > 이메일 양식에 맞지 않습니다. </span> }
-                    { errors.email?.message && <span className='err-msg' > {errors.email.message} </span> }
-                    { errors.password?.message && <span className='err-msg' > {errors.password.message} </span> }
+                    { touchedFields.email && errors.email?.type === 'pattern' && <ErrMsg > 이메일 양식에 맞지 않습니다. </ErrMsg> }
+                    { errors.email?.message && <ErrMsg > {errors.email.message} </ErrMsg> }
+                    { errors.password?.message && <ErrMsg > {errors.password.message} </ErrMsg> }
                     <StyledButton isVaild={isValid} >
                         { loading ? 'loading...' : 'Log in' }
                     </StyledButton>
-                    { loginMutationResult?.login.error && <span className='err-msg' > {loginMutationResult?.login.error} </span> }
-                </form>
-            </div>
-        </div>
+                    { loginMutationResult?.login.error && <ErrMsg > {loginMutationResult?.login.error} </ErrMsg> }
+                </Form>
+            </FormContainer>
+        </PageWrapper>
     )
 }
 
