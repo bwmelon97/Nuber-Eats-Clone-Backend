@@ -3,6 +3,8 @@ import gql from "graphql-tag";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "@gql-types/LoginMutation";
+import { StyledButton, StyledInput } from "@components/FormComponents";
+import { LOGO_IMG_URL } from "@constants";
 
 const LOGIN_MUTATION = gql`
     mutation LoginMutation($loginInput: LoginInput!) {
@@ -20,7 +22,7 @@ type LoginFormInput = {
 }
 
 function Login () {
-    const { register, getValues, handleSubmit, formState: { errors } } = useForm<LoginFormInput>()
+    const { register, getValues, handleSubmit, formState: { errors, isValid, touchedFields },  } = useForm<LoginFormInput>({ mode: 'onChange' })
     
     const onCompleted = (data: LoginMutation) => {
         const { login: { ok, token } } = data;
@@ -45,33 +47,36 @@ function Login () {
     }
 
     return (
-        <div className='h-screen flex justify-center items-center  bg-gray-800' > { /* 배경 */ }
-            <div className='bg-white w-full max-w-lg py-10 rounded-lg flex flex-col items-center' > {/* 로그인 배경 */}
-                <h1 className='text-2xl text-gray-800 mb-5 select-none' > Login Page </h1>
-                <form onSubmit={handleSubmit(onSubmit)} className='grid gap-3 w-full px-8' >
-                    <input 
+        <div className='h-screen flex justify-center bg-white' > { /* 배경 */ }
+            <div className='mt-8 md:mt-24 px-5 w-full max-w-xl flex flex-col items-center' > {/* 로그인 배경 */}
+                <img src={LOGO_IMG_URL} alt='logo' className='w-48 mb-10 md:mb-16' />
+                <h3 className='self-start text-2xl font-normal mb-8 md:text-3xl' > 돌아오신 것을 환영합니다 </h3>
+                <h4 className='self-start text-base font-light mb-4' > 이메일과 비밀번호를 입력하여 로그인하세요. </h4>
+                <form onSubmit={handleSubmit(onSubmit)} className='grid gap-3 w-full' >
+                    <StyledInput 
                         {...register('email', {
-                            required: 'Email is required'
+                            required: 'Email is required',
+                            pattern: 
+                                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
                         })}
                         type='email'
-                        placeholder='email' 
-                        className='login-input'
+                        placeholder='Email' 
+                        isDirty={ false }
                     />
-                    <input 
+                    <StyledInput 
                         {...register('password', {
                             required: 'Password is required',
-                            minLength: 5
                         })}
                         type='password'
-                        placeholder='password' 
-                        className='login-input'
+                        placeholder='Password' 
+                        isDirty={ false }
                     />
+                    { touchedFields.email && errors.email?.type === 'pattern' && <span className='err-msg' > 이메일 양식에 맞지 않습니다. </span> }
                     { errors.email?.message && <span className='err-msg' > {errors.email.message} </span> }
-                    { errors.password?.type === 'minLength' && <span className='err-msg' > Password should longer or same with 5. </span> }
                     { errors.password?.message && <span className='err-msg' > {errors.password.message} </span> }
-                    <button className='py-3 px-4 rounded-lg bg-gray-800 text-white text-lg focus:outline-none hover:bg-opacity-90' >
+                    <StyledButton isVaild={isValid} >
                         { loading ? 'loading...' : 'Log in' }
-                    </button>
+                    </StyledButton>
                     { loginMutationResult?.login.error && <span className='err-msg' > {loginMutationResult?.login.error} </span> }
                 </form>
             </div>

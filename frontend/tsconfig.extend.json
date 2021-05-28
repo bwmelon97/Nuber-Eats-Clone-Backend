@@ -5,6 +5,7 @@
             "@apollo-client": ["./apollo.ts"],
             "@pages": ["./pages/index.ts"],
             "@routers": ["./routers/index.ts"],
+            "@constants": ["./constants.ts"],
 
             "@styles/*": ["./styles/*"],
             "@pages/*": ["./pages/*"],
