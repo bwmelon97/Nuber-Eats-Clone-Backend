@@ -47,8 +47,8 @@ function Login () {
     }
 
     return (
-        <PageWrapper > { /* 배경 */ }
-            <FormContainer > {/* 로그인 배경 */}
+        <PageWrapper >
+            <FormContainer >
                 <Logo className='w-48 mb-10 md:mb-16' />
                 <Title > 돌아오신 것을 환영합니다 </Title>
                 <SubTitle> 이메일과 비밀번호를 입력하여 로그인하세요. </SubTitle>
