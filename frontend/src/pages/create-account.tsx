@@ -7,6 +7,7 @@ import Logo from "@components/Logo";
 import { CreateAccountMutation, CreateAccountMutationVariables } from "@gql-types/CreateAccountMutation";
 import { UserRole } from "@gql-types/globalTypes";
 import { EMAIL_PATTERN } from "@constants";
+import { Helmet } from "react-helmet-async";
 
 const CREATE_ACCOUNT_MUTATION = gql`
     mutation CreateAccountMutation($createUserInput: CreateUserInput!) {
@@ -53,6 +54,9 @@ function CreateAccount () {
 
     return (
         <PageWrapper >
+            <Helmet>
+                <title> Create Account | Nuber-eats </title>
+            </Helmet>
             <FormContainer >
                 <Logo className='w-48 mb-10 md:mb-16' />
                 <Title > 시작하기 </Title>

@@ -6,6 +6,7 @@ import { LoginMutation, LoginMutationVariables } from "@gql-types/LoginMutation"
 import { ErrMsg, Form, FormContainer, NuberLink, PageWrapper, StyledButton, StyledInput, SubTitle, Title } from "@components/FormComponents";
 import Logo from "@components/Logo";
 import { EMAIL_PATTERN } from "@constants";
+import { Helmet } from "react-helmet-async";
 
 const LOGIN_MUTATION = gql`
     mutation LoginMutation($loginInput: LoginInput!) {
@@ -49,6 +50,9 @@ function Login () {
 
     return (
         <PageWrapper >
+            <Helmet>
+                <title> Login | Nuber-eats </title>
+            </Helmet>
             <FormContainer >
                 <Logo className='w-48 mb-10 md:mb-16' />
                 <Title > 돌아오신 것을 환영합니다 </Title>
