@@ -1,7 +1,9 @@
 import { ApolloClient, InMemoryCache, makeVar } from '@apollo/client';
-import { GQL_ENDPOINT } from '@constants';
+import { AUTH_TOKEN, GQL_ENDPOINT } from '@constants';
 
-export const isLoggedInVar = makeVar(false)
+const storagedToken = localStorage.getItem(AUTH_TOKEN)
+export const authTokenVar = makeVar(storagedToken)
+export const isLoggedInVar = makeVar(Boolean(storagedToken))
 
 export const client = new ApolloClient({
     uri: GQL_ENDPOINT,
