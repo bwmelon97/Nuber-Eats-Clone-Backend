@@ -29,7 +29,10 @@ function CreateAccount () {
     const { 
         register, getValues, handleSubmit, 
         formState: { errors, isValid, touchedFields } 
-    } = useForm<CreateAccountFormInput>({ mode: 'onChange' })
+    } = useForm<CreateAccountFormInput>({ 
+        mode: 'onChange', 
+        defaultValues: { role: UserRole.Client } 
+    })
     
     const onCompleted = (data: CreateAccountMutation) => {
         console.log('create account success')
@@ -88,7 +91,7 @@ function CreateAccount () {
                         placeholder='Confirm Password' 
                         isDirty={ false }
                     />
-                    <StyledSelect {...register('role')} >
+                    <StyledSelect {...register('role', { required: true })} >
                         { Object.keys(UserRole).map( 
                             (role, idx) => <option key={idx} > {role} </option> 
                         ) }
