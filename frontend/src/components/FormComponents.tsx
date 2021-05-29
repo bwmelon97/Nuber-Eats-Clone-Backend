@@ -39,10 +39,11 @@ export const StyledInput = styled.input<InputProps>`
     `}
 `
 
+export const StyledSelect = tw.select`${inputStyle}`
+
 /*  */
 const buttonStyle = `
     ${baseBoxStyle}
-
     mt-3
     bg-lime-600 
     text-white 
