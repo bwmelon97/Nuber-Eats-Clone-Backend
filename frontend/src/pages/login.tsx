@@ -5,6 +5,7 @@ import { useMutation } from "@apollo/client";
 import { LoginMutation, LoginMutationVariables } from "@gql-types/LoginMutation";
 import { ErrMsg, Form, FormContainer, NuberLink, PageWrapper, StyledButton, StyledInput, SubTitle, Title } from "@components/FormComponents";
 import Logo from "@components/Logo";
+import { EMAIL_PATTERN } from "@constants";
 
 const LOGIN_MUTATION = gql`
     mutation LoginMutation($loginInput: LoginInput!) {
@@ -56,8 +57,7 @@ function Login () {
                     <StyledInput 
                         {...register('email', {
                             required: 'Email is required',
-                            pattern: 
-                                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                            pattern: EMAIL_PATTERN
                         })}
                         type='email'
                         placeholder='Email' 

@@ -1,9 +1,10 @@
 import { ApolloClient, InMemoryCache, makeVar } from '@apollo/client';
+import { GQL_ENDPOINT } from '@constants';
 
 export const isLoggedInVar = makeVar(false)
 
 export const client = new ApolloClient({
-    uri: 'https://soogeun.loca.lt/graphql',
+    uri: GQL_ENDPOINT,
     cache: new InMemoryCache({
         // typePolicies: {
         //     Query: {

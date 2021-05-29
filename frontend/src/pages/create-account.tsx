@@ -6,6 +6,7 @@ import { ErrMsg, Form, FormContainer, NuberLink, PageWrapper, StyledButton, Styl
 import Logo from "@components/Logo";
 import { CreateAccountMutation, CreateAccountMutationVariables } from "@gql-types/CreateAccountMutation";
 import { UserRole } from "@gql-types/globalTypes";
+import { EMAIL_PATTERN } from "@constants";
 
 const CREATE_ACCOUNT_MUTATION = gql`
     mutation CreateAccountMutation($createUserInput: CreateUserInput!) {
@@ -60,8 +61,7 @@ function CreateAccount () {
                     <StyledInput 
                         {...register('email', {
                             required: 'Email is required',
-                            pattern: 
-                                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                            pattern: EMAIL_PATTERN
                         })}
                         type='email'
                         placeholder='Email' 
