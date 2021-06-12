@@ -118,7 +118,8 @@ export class UserService {
             );
             if ( !verification ) { throw Error }
             const verifiedUserId = verification.user;
-            this.users.update(verifiedUserId, { verified: true })
+            await this.users.update(verifiedUserId, { verified: true })
+            await this.verifications.delete(verification.id)
             return { ok: true }
         } catch (error) {
             return { 
