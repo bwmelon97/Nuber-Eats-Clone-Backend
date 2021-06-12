@@ -1,8 +1,9 @@
-import { Inject, Injectable, InternalServerErrorException, NestMiddleware } from "@nestjs/common";
+import { Inject, NestMiddleware } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 import * as jwt from 'jsonwebtoken';
+import { CONFIG_OPTIONS } from "src/common/common.constants";
 import { UserService } from "src/user/user.service";
-import { CONFIG_OPTIONS, X_JWT } from "./jwt.constants";
+import { X_JWT } from "./jwt.constants";
 import { JwtOptions } from "./jwt.interfaces";
 
 
