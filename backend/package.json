@@ -32,6 +32,8 @@
     "apollo-server-express": "^2.24.0",
     "bcrypt": "^5.0.1",
     "cross-env": "^7.0.3",
+    "form-data": "^4.0.0",
+    "got": "^11.8.2",
     "graphql": "^15.5.0",
     "graphql-tools": "^7.0.4",
     "joi": "^17.4.0",
