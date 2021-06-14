@@ -15,6 +15,7 @@ import { Category } from './restaurant/entities/category.entity';
 import { Dish } from './restaurant/entities/dish.entity';
 import { OrderModule } from './order/order.module';
 import { Order } from './order/entities/order.entity';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -30,6 +31,8 @@ import { Order } from './order/entities/order.entity';
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
         PRIVATE_KEY: Joi.string().required(),
+        MAILGUN_API_KEY: Joi.string().required(),
+        MAILGUN_DOMAIL: Joi.string().required(),
       }) 
     }),
     TypeOrmModule.forRoot({
@@ -51,6 +54,10 @@ import { Order } from './order/entities/order.entity';
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
+    }),
+    MailModule.forRoot({
+      apiKey: process.env.MAILGUN_API_KEY,
+      domain: process.env.MAILGUN_DOMAIL,
     }),
     AuthModule,
     UserModule,
