@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { CreateAccount, Login, NotFound } from "@pages";
 
-function LoggedOut () {
+function LoggedOutRouter () {
     return (
         <Router>
             <Switch>
@@ -14,4 +14,4 @@ function LoggedOut () {
     )
 }
 
-export default LoggedOut
+export default LoggedOutRouter

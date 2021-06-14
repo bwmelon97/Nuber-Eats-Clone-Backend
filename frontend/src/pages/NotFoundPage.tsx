@@ -2,7 +2,7 @@ import React from 'react'
 import { _404_IMG } from '@constants';
 import { useHistory } from 'react-router';
 
-function NotFound () {
+function NotFoundPage () {
     const history = useHistory();
     const onClick = () => history.push('/')
 
@@ -28,4 +28,4 @@ function NotFound () {
     )
 }
 
-export default NotFound;
+export default NotFoundPage;
