@@ -121,6 +121,10 @@ export class RestaurantService {
         }
     }
 
+    countRestaurantsByCategory(category: Category): Promise<number> {
+        return this.restaurants.count({ category })
+    }
+
 
     async createDish ( 
         owner: User,
