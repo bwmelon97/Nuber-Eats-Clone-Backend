@@ -31,7 +31,7 @@ export class Restaurant extends CoreEntity {
     owner: User
 
     @RelationId((restaurant: Restaurant) => restaurant.owner)
-    ownerID: number
+    ownerId: number
 
     @Field(type => Category)
     @ManyToOne( 

@@ -8,6 +8,7 @@ import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
 import { UpdateDishInput } from './dtos/update-dish.dto';
+import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
 import { Dish } from './entities/dish.entity';
 import { Restaurant } from './entities/restaurant.entity';
 import { RestaurantService } from './restaurant.service';
@@ -30,7 +31,22 @@ export class RestaurantResolver {
     ): Promise<CoreOutput> {
         return this.restaurantService.createRestaurant(authUser, createRestaurantInput)
     }
+
+    @Role(['Owner'])
+    @Mutation(returns => UpdateRestaurantOutput)
+    updateRestaurant (
+        @AuthUser() authUser,
+        @Args('input') updateRestaurantInput: UpdateRestaurantInput
+    ): Promise<UpdateRestaurantOutput> {
+        return this.restaurantService.updateRestaurant(authUser, updateRestaurantInput)
+    }
 }
+
+/**
+ * Notion 정리할 내용
+ * RelationId Decorator
+ * customise Repository
+ */
 
 @Resolver(of => Dish)
 export class DishResolver {
