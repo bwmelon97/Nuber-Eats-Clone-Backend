@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
+import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
 import { GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
 import { UpdateDishInput } from './dtos/update-dish.dto';
 import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
@@ -28,7 +29,7 @@ export class RestaurantService {
 
     async getAllRestaurants (): Promise<GetAllRestaurantsOutput> {
         try {
-            const restaurants = await this.restaurants.find( { relations: ['menu', 'owner'] } )
+            const restaurants = await this.restaurants.find( { relations: ['menu', 'owner', 'category'] } )
             return { ok: true, restaurants }
         } catch (error) {
             return {
@@ -78,7 +79,8 @@ export class RestaurantService {
             if (categoryName)
                 category = await this.categories.getOrCreate(categoryName)
                 
-            await this.restaurants.update(restaurantId, {
+            await this.restaurants.save({
+                id: restaurantId,
                 ...updateRestaurantInput,
                 ...( category && { category } )
             })
@@ -88,6 +90,29 @@ export class RestaurantService {
             return {
                 ok: false,
                 error: error ? error.message : "Fail to update restaurant."
+            }
+        }
+    }
+
+    async deleteRestaurant (
+        authUser: User,
+        { restaurantId }: DeleteRestaurantInput
+    ): Promise<DeleteRestaurantOutput> { 
+        try {
+            /* Restaurant가 없으면 Fail */
+            const restaurant = await this.restaurants.findOne( restaurantId )
+            if (!restaurant) throw Error("Restaurant doesn't exist.")
+
+            /* 로그인된 유저의 id와 restaurant owner의 id가 다르면 Fail */
+            if (authUser.id !== restaurant.ownerId)
+                throw Error("You couldn't update restaurant not yours.")
+
+            await this.restaurants.delete( restaurantId )
+            return { ok: true }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : "Fail to delete restaurant."
             }
         }
     }
