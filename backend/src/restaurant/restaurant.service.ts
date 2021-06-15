@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { GetAllCategoriesOutput } from './dtos/all-categories.dto';
 import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
@@ -104,6 +105,18 @@ export class RestaurantService {
             return {
                 ok: false,
                 error: error ? error.message : "Fail to delete restaurant."
+            }
+        }
+    }
+
+    async getAllCategories(): Promise<GetAllCategoriesOutput> {
+        try {
+            const categories = await this.categories.find()
+            return { ok: true, categories }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : 'Fail to get categories'
             }
         }
     }
