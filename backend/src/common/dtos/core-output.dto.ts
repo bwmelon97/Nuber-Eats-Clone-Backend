@@ -7,5 +7,5 @@ export class CoreOutput {
     ok: boolean;
 
     @Field(types => String, { nullable: true })
-    error?: String;
+    error?: string;
 }

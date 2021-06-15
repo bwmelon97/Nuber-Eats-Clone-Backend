@@ -12,17 +12,14 @@ import { UpdateDishInput } from './dtos/update-dish.dto';
 import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
 import { Category } from './entities/category.entity';
 import { Dish } from './entities/dish.entity';
-import { Restaurant } from './entities/restaurant.entity';
 import { CategoryRepository } from './repositories/category.repository';
+import { RestaurantRepository } from './repositories/restaurant.repository';
 
 @Injectable()
 export class RestaurantService {
     constructor(
-        @InjectRepository(Restaurant)
-        private readonly restaurants: Repository<Restaurant>,
-        
+        private readonly restaurants: RestaurantRepository,
         private readonly categories: CategoryRepository,
-        
         @InjectRepository(Dish)
         private readonly dishes: Repository<Dish>,
     ) {}
@@ -66,13 +63,10 @@ export class RestaurantService {
         try {
             const { restaurantId, categoryName } = updateRestaurantInput
             
-            /* Restaurant가 없으면 Fail */
-            const restaurant = await this.restaurants.findOne( restaurantId )
-            if (!restaurant) throw Error("Restaurant doesn't exist.")
-
-            /* 로그인된 유저의 id와 restaurant owner의 id가 다르면 Fail */
-            if (authUser.id !== restaurant.ownerId)
-                throw Error("You couldn't update restaurant not yours.")
+            const { ok, error } = await this.restaurants.findAndCheckOwner( 
+                restaurantId, authUser.id 
+            )
+            if (!ok) throw Error(error)
 
             /* 카테고리 input이 있는 경우, category Repo에서 getOrCreate 한다. */
             let category: Category = null;
@@ -99,13 +93,10 @@ export class RestaurantService {
         { restaurantId }: DeleteRestaurantInput
     ): Promise<DeleteRestaurantOutput> { 
         try {
-            /* Restaurant가 없으면 Fail */
-            const restaurant = await this.restaurants.findOne( restaurantId )
-            if (!restaurant) throw Error("Restaurant doesn't exist.")
-
-            /* 로그인된 유저의 id와 restaurant owner의 id가 다르면 Fail */
-            if (authUser.id !== restaurant.ownerId)
-                throw Error("You couldn't update restaurant not yours.")
+            const { ok, error } = await this.restaurants.findAndCheckOwner( 
+                restaurantId, authUser.id 
+            )
+            if (!ok) throw Error(error)
 
             await this.restaurants.delete( restaurantId )
             return { ok: true }
