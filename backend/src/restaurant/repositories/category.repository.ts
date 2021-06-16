@@ -5,15 +5,15 @@ import { Category } from "../entities/category.entity";
 @EntityRepository(Category)
 export class CategoryRepository extends Repository<Category> {
 
-    originalNameToNameAndSlug(name: string): [string, string] {
-        const categoryName = name.trim().toLowerCase()
-        const categorySlug = categoryName.replace(/ /g, '-')
-        return [categoryName, categorySlug]
+    nameInputToNameAndSlug(nameInput: string): [string, string] {
+        const name = nameInput.trim().toLowerCase()
+        const slug = name.replace(/ /g, '-')
+        return [name, slug]
     }
 
-    async getByName (originalName: string): Promise<GetCategoryOutput> {
+    async getByName (nameInput: string): Promise<GetCategoryOutput> {
         try {
-            const [ name ] = this.originalNameToNameAndSlug(originalName)
+            const [ name ] = this.nameInputToNameAndSlug(nameInput)
             const category = await this.findOne({ name })
             if (!category) throw Error("Category doesn't exist.")
             return { ok: true, category }
@@ -27,15 +27,13 @@ export class CategoryRepository extends Repository<Category> {
     }
 
     /* Category가 없는 경우 새로 만들고, 있으면 그대로 사용할 수 있음 */
-    async getOrCreate (originalName: string): Promise<Category> {
+    async getOrCreate (nameInput: string): Promise<Category> {
         try {
-            const [categoryName, categorySlug] = this.originalNameToNameAndSlug(originalName)
-            let category = await this.findOne({ name: categoryName })
+            const [name, slug] = this.nameInputToNameAndSlug(nameInput)
+            let category = await this.findOne({ name })
         
             if (!category) {
-                category = await this.save(
-                    this.create({ name: categoryName, slug: categorySlug })
-                )
+                category = await this.save( this.create({ name, slug }) )
             }
             return category;
         } catch (error) { throw Error(error) }
