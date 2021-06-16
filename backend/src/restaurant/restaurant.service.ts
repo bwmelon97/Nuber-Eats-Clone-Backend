@@ -9,7 +9,7 @@ import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
 import { GetCategoryInput, GetCategoryOutput } from './dtos/get-category.dto';
-import { GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
+import { GetAllRestaurantsInput, GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
 import { UpdateDishInput } from './dtos/update-dish.dto';
 import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
 import { Category } from './entities/category.entity';
@@ -28,10 +28,15 @@ export class RestaurantService {
 
     private readonly RESTAURANTS_PER_PAGE = 10;
 
-    async getAllRestaurants (): Promise<GetAllRestaurantsOutput> {
+    async getAllRestaurants ({ page }: GetAllRestaurantsInput): Promise<GetAllRestaurantsOutput> {
         try {
-            const restaurants = await this.restaurants.find( { relations: ['menu', 'owner', 'category'] } )
-            return { ok: true, restaurants }
+            const [restaurants, totalCounts] = await this.restaurants.findAndCount({
+                take: this.RESTAURANTS_PER_PAGE,
+                skip: (page - 1) * this.RESTAURANTS_PER_PAGE
+            })
+            const totalPages = Math.ceil(totalCounts / this.RESTAURANTS_PER_PAGE)
+            if (page > totalPages) throw Error("Page input is bigger than total pages.")
+            return { ok: true, restaurants, totalCounts, totalPages }
         } catch (error) {
             return {
                 ok: false,
