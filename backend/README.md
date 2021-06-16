@@ -16,3 +16,7 @@
 * See Profile
 * Edit Profile
 * Verify Email
+
+
+## Notion에 정리할 것
+* TypeORM - Pagination

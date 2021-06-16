@@ -11,3 +11,6 @@ $ npx localtunnel --port 4000 --subdomain soogeun
 $ sudo service mysql start
 $ mysql -u root -p
 ```
+
+### 추가로 공부할 내용
+ * TypeORM 에서 cursor 기반 Pagination 구현
