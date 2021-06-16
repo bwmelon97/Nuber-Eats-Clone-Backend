@@ -26,6 +26,8 @@ export class RestaurantService {
         private readonly dishes: Repository<Dish>,
     ) {}
 
+    private readonly RESTAURANTS_PER_PAGE = 10;
+
     async getAllRestaurants (): Promise<GetAllRestaurantsOutput> {
         try {
             const restaurants = await this.restaurants.find( { relations: ['menu', 'owner', 'category'] } )
@@ -126,19 +128,31 @@ export class RestaurantService {
         }
     }
 
-    async getCategoryByName( { name }: GetCategoryInput ): Promise<GetCategoryOutput> {
+    async getCategoryByName( { nameInput, page }: GetCategoryInput ): Promise<GetCategoryOutput> {
         try {
-            const { ok, error, category } = await this.categories.getByName(name);
+            const { ok, error, category } = await this.categories.getByName(nameInput);
             if (!ok) throw Error(error)
 
-            const restaurants = await this.restaurants.find({ category })
-            category.restaurants = restaurants
+            const [restaurants, totalCounts] = await this.restaurants.findAndCount({
+                where: { category },
+                take: this.RESTAURANTS_PER_PAGE,
+                skip: (page - 1) * this.RESTAURANTS_PER_PAGE
+            })
+            const totalPages = Math.ceil(totalCounts / this.RESTAURANTS_PER_PAGE)
+            if (page > totalPages)
+                throw Error('Page Input is bigger than total pages.')
 
-            return { ok: true, category }
+            return { 
+                ok: true, 
+                category, 
+                restaurants,
+                totalCounts,
+                totalPages
+            }
         } catch (error) { return { ok: false, error: error.message } }
     }
 
-    
+
     async createDish ( 
         owner: User,
         createDishInput: CreateDishInput
