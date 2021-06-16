@@ -8,6 +8,7 @@ import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
+import { GetCategoryInput, GetCategoryOutput } from './dtos/get-category.dto';
 import { GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
 import { UpdateDishInput } from './dtos/update-dish.dto';
 import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
@@ -108,6 +109,10 @@ export class RestaurantService {
             }
         }
     }
+    
+    countRestaurantsByCategory(category: Category): Promise<number> {
+        return this.restaurants.count({ category })
+    }
 
     async getAllCategories(): Promise<GetAllCategoriesOutput> {
         try {
@@ -121,11 +126,19 @@ export class RestaurantService {
         }
     }
 
-    countRestaurantsByCategory(category: Category): Promise<number> {
-        return this.restaurants.count({ category })
+    async getCategoryByName( { name }: GetCategoryInput ): Promise<GetCategoryOutput> {
+        try {
+            const { ok, error, category } = await this.categories.getByName(name);
+            if (!ok) throw Error(error)
+
+            const restaurants = await this.restaurants.find({ category })
+            category.restaurants = restaurants
+
+            return { ok: true, category }
+        } catch (error) { return { ok: false, error: error.message } }
     }
 
-
+    
     async createDish ( 
         owner: User,
         createDishInput: CreateDishInput

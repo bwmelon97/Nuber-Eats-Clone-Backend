@@ -8,6 +8,7 @@ import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
+import { GetCategoryInput, GetCategoryOutput } from './dtos/get-category.dto';
 import { GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
 import { UpdateDishInput } from './dtos/update-dish.dto';
 import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
@@ -20,6 +21,7 @@ import { RestaurantService } from './restaurant.service';
 export class RestaurantResolver {
     constructor( private readonly restaurantService: RestaurantService ) {}
     
+    /* Pagination으로 구현 */
     @Role(['Any'])
     @Query(returns => GetAllRestaurantsOutput)
     getAllRestaurants(): Promise<GetAllRestaurantsOutput> {
@@ -63,10 +65,19 @@ export class CategoryResolver {
         return this.service.countRestaurantsByCategory(category)
     }
 
+    @Role(['Client', 'Owner'])
     @Query(returns => GetAllCategoriesOutput)
     getAllCategories(): Promise<GetAllCategoriesOutput> {
         return this.service.getAllCategories();
     }
+
+    @Query(returns => GetCategoryOutput)
+    getCategoryByName(
+        @Args('input') getCategoryInput: GetCategoryInput
+    ): Promise<GetCategoryOutput> {
+        return this.service.getCategoryByName(getCategoryInput)
+    }
+
 }
 
 
