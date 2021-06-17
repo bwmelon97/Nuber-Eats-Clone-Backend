@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Raw, Repository } from 'typeorm';
 import { GetAllCategoriesOutput } from './dtos/all-categories.dto';
 import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
@@ -11,6 +11,7 @@ import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-res
 import { GetCategoryInput, GetCategoryOutput } from './dtos/get-category.dto';
 import { GetRestaurantByIdInput, GetRestaurantByIdOutput } from './dtos/get-restaurant.dto';
 import { GetAllRestaurantsInput, GetAllRestaurantsOutput } from './dtos/get-restaurants.dto';
+import { SearchRestaurantsInput, SearchRestaurantsOutput } from './dtos/search-restaurants.dto';
 import { UpdateDishInput } from './dtos/update-dish.dto';
 import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
 import { Category } from './entities/category.entity';
@@ -55,6 +56,25 @@ export class RestaurantService {
             }
         }
     }
+    
+    async searchRestaurantsByName ({ page, query }: SearchRestaurantsInput): Promise<SearchRestaurantsOutput> {
+        try {
+            const [restaurants, totalCounts] = await this.restaurants.findAndCount({
+                // where: { 
+                //     name: Raw(name => `${name} LIKE '%${query}%'`) 
+                // },
+                where: { name: Like(`%${query}%`) },
+                take: this.RESTAURANTS_PER_PAGE,
+                skip: (page - 1) * this.RESTAURANTS_PER_PAGE
+            })
+            const totalPages = Math.ceil(totalCounts / this.RESTAURANTS_PER_PAGE)
+            if (page > totalPages) throw Error("Page input is bigger than total pages.")
+            return { ok: true, restaurants, totalCounts, totalPages }
+        } catch (error) { 
+            return { ok: false, error: error.message } 
+        }
+    }
+
 
     async createRestaurant (
         owner: User,

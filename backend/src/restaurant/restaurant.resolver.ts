@@ -11,6 +11,7 @@ import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-res
 import { GetCategoryInput, GetCategoryOutput } from './dtos/get-category.dto';
 import { GetRestaurantByIdInput, GetRestaurantByIdOutput } from './dtos/get-restaurant.dto';
 import { GetAllRestaurantsInput, GetAllRestaurantsOutput } from './dtos/get-restaurants.dto';
+import { SearchRestaurantsInput, SearchRestaurantsOutput } from './dtos/search-restaurants.dto';
 import { UpdateDishInput } from './dtos/update-dish.dto';
 import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
 import { Category } from './entities/category.entity';
@@ -38,7 +39,13 @@ export class RestaurantResolver {
         return this.restaurantService.getAllRestaurants(getAllRestaurantsInput)
     }
 
-    searchRestaurants
+    @Role(['Any'])
+    @Query(returns => SearchRestaurantsOutput)
+    searchRestaurants(
+        @Args('input') searchRestaurantsInput: SearchRestaurantsInput
+    ): Promise<SearchRestaurantsOutput> {
+        return this.restaurantService.searchRestaurantsByName(searchRestaurantsInput)
+    }
     
     @Role(['Owner'])
     @Mutation(returns => CoreOutput)
