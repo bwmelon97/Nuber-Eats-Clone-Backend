@@ -9,7 +9,8 @@ import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
 import { GetCategoryInput, GetCategoryOutput } from './dtos/get-category.dto';
-import { GetAllRestaurantsInput, GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
+import { GetRestaurantByIdInput, GetRestaurantByIdOutput } from './dtos/get-restaurant.dto';
+import { GetAllRestaurantsInput, GetAllRestaurantsOutput } from './dtos/get-restaurants.dto';
 import { UpdateDishInput } from './dtos/update-dish.dto';
 import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
 import { Category } from './entities/category.entity';
@@ -27,6 +28,16 @@ export class RestaurantService {
     ) {}
 
     private readonly RESTAURANTS_PER_PAGE = 10;
+
+    async getRestaurantById (
+        { restaurantId }: GetRestaurantByIdInput
+    ): Promise<GetRestaurantByIdOutput> {
+        try {
+            const restaurant = await this.restaurants.findOne(restaurantId)
+            if (!restaurant) throw Error("Couldn't find the restaurant.")
+            return { ok: true, restaurant }
+        } catch (error) { return { ok: false, error: error.message } }
+    }
 
     async getAllRestaurants ({ page }: GetAllRestaurantsInput): Promise<GetAllRestaurantsOutput> {
         try {

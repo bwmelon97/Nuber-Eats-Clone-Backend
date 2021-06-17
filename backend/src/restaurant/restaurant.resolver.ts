@@ -9,7 +9,8 @@ import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
 import { GetCategoryInput, GetCategoryOutput } from './dtos/get-category.dto';
-import { GetAllRestaurantsInput, GetAllRestaurantsOutput } from './dtos/get-restaurant.dto';
+import { GetRestaurantByIdInput, GetRestaurantByIdOutput } from './dtos/get-restaurant.dto';
+import { GetAllRestaurantsInput, GetAllRestaurantsOutput } from './dtos/get-restaurants.dto';
 import { UpdateDishInput } from './dtos/update-dish.dto';
 import { UpdateRestaurantInput, UpdateRestaurantOutput } from './dtos/update-restaurant.dto';
 import { Category } from './entities/category.entity';
@@ -21,7 +22,14 @@ import { RestaurantService } from './restaurant.service';
 export class RestaurantResolver {
     constructor( private readonly restaurantService: RestaurantService ) {}
     
-    /* Pagination으로 구현 */
+    @Role(['Any'])
+    @Query(returns => GetRestaurantByIdOutput)
+    getRestaurantById (
+        @Args('input') getRestaurantByIdInput: GetRestaurantByIdInput
+    ): Promise<GetRestaurantByIdOutput> {
+        return this.restaurantService.getRestaurantById(getRestaurantByIdInput)
+    }
+
     @Role(['Any'])
     @Query(returns => GetAllRestaurantsOutput)
     getAllRestaurants(
@@ -29,6 +37,8 @@ export class RestaurantResolver {
     ): Promise<GetAllRestaurantsOutput> {
         return this.restaurantService.getAllRestaurants(getAllRestaurantsInput)
     }
+
+    searchRestaurants
     
     @Role(['Owner'])
     @Mutation(returns => CoreOutput)
