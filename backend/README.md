@@ -19,4 +19,4 @@
 
 
 ## Notion에 정리할 것
-* Custom Repository에 Pagination Refactoring 하기 
+* null
