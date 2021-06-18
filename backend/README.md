@@ -20,5 +20,3 @@
 
 ## Notion에 정리할 것
 * Custom Repository에 Pagination Refactoring 하기 
-* SQL 문법 - Like ( %, _ )
-* TypeORM - Raw (SQL qeury로 직접 명령하는 방법)

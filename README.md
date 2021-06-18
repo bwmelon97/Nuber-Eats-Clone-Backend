@@ -14,3 +14,4 @@ $ mysql -u root -p
 
 ### 추가로 공부할 내용
  * TypeORM 에서 cursor 기반 Pagination 구현
+ * SQL 문법 공부하기
