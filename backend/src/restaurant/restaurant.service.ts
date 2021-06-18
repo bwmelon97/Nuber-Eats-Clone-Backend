@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { User } from 'src/user/entities/user.entity';
-import { Like, Raw, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { GetAllCategoriesOutput } from './dtos/all-categories.dto';
 import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
@@ -42,33 +42,26 @@ export class RestaurantService {
 
     async getAllRestaurants ({ page }: GetAllRestaurantsInput): Promise<GetAllRestaurantsOutput> {
         try {
-            const [restaurants, totalCounts] = await this.restaurants.findAndCount({
-                take: this.RESTAURANTS_PER_PAGE,
-                skip: (page - 1) * this.RESTAURANTS_PER_PAGE
-            })
-            const totalPages = Math.ceil(totalCounts / this.RESTAURANTS_PER_PAGE)
-            if (page > totalPages) throw Error("Page input is bigger than total pages.")
+            const {
+                ok, error, restaurants, totalCounts, totalPages
+            } = await this.restaurants.getWithOffsetPagination(page, this.RESTAURANTS_PER_PAGE)
+            if (!ok) throw Error(error)
+
             return { ok: true, restaurants, totalCounts, totalPages }
-        } catch (error) {
-            return {
-                ok: false,
-                error: error ? error.message : "Couldn't find restaurants..."
-            }
+        } catch (error) { 
+            return { ok: false, error: error.message } 
         }
     }
     
     async searchRestaurantsByName ({ page, query }: SearchRestaurantsInput): Promise<SearchRestaurantsOutput> {
         try {
-            const [restaurants, totalCounts] = await this.restaurants.findAndCount({
-                // where: { 
-                //     name: Raw(name => `${name} LIKE '%${query}%'`) 
-                // },
+            const {
+                ok, error, restaurants, totalCounts, totalPages
+            } = await this.restaurants.getWithOffsetPagination(page, this.RESTAURANTS_PER_PAGE, {
                 where: { name: Like(`%${query}%`) },
-                take: this.RESTAURANTS_PER_PAGE,
-                skip: (page - 1) * this.RESTAURANTS_PER_PAGE
             })
-            const totalPages = Math.ceil(totalCounts / this.RESTAURANTS_PER_PAGE)
-            if (page > totalPages) throw Error("Page input is bigger than total pages.")
+            if (!ok) throw Error(error)
+            
             return { ok: true, restaurants, totalCounts, totalPages }
         } catch (error) { 
             return { ok: false, error: error.message } 
@@ -169,22 +162,14 @@ export class RestaurantService {
             const { ok, error, category } = await this.categories.getByName(nameInput);
             if (!ok) throw Error(error)
 
-            const [restaurants, totalCounts] = await this.restaurants.findAndCount({
-                where: { category },
-                take: this.RESTAURANTS_PER_PAGE,
-                skip: (page - 1) * this.RESTAURANTS_PER_PAGE
+            const {
+                ok: okWithGetRestaurnat, error: errorWithGetRestaurnat, restaurants, totalCounts, totalPages
+            } = await this.restaurants.getWithOffsetPagination(page, this.RESTAURANTS_PER_PAGE, {
+                where: { category }
             })
-            const totalPages = Math.ceil(totalCounts / this.RESTAURANTS_PER_PAGE)
-            if (page > totalPages)
-                throw Error('Page Input is bigger than total pages.')
+            if (!okWithGetRestaurnat) throw Error(errorWithGetRestaurnat)
 
-            return { 
-                ok: true, 
-                category, 
-                restaurants,
-                totalCounts,
-                totalPages
-            }
+            return { ok: true, category, restaurants, totalCounts, totalPages }
         } catch (error) { return { ok: false, error: error.message } }
     }
 

@@ -1,11 +1,12 @@
 import { CoreOutput } from "src/common/dtos/core-output.dto";
-import { EntityRepository, Repository } from "typeorm";
+import { EntityRepository, FindManyOptions, Repository } from "typeorm";
+import { GetRestaurantsOutput } from "../dtos/get-restaurants.dto";
 import { Restaurant } from "../entities/restaurant.entity";
 
 @EntityRepository(Restaurant)
 export class RestaurantRepository extends Repository<Restaurant> {
 
-    async findAndCheckOwner ( restaurantId, userId ): Promise<CoreOutput> {
+    async findAndCheckOwner ( restaurantId: number, userId: number ): Promise<CoreOutput> {
         try {
             /* Restaurant가 없으면 Fail */
             const restaurant = await this.findOne( restaurantId )
@@ -21,6 +22,25 @@ export class RestaurantRepository extends Repository<Restaurant> {
                 ok: false,
                 error: error ? error.message : "Fail to check owner."
             }
+        }
+    }
+
+    async getWithOffsetPagination ( 
+        page: number, 
+        ITEMS_PER_PAGE: number, 
+        findOptions?: FindManyOptions<Restaurant> 
+    ): Promise<GetRestaurantsOutput> {
+        try {
+            const [restaurants, totalCounts] = await this.findAndCount({
+                ...findOptions,
+                take: ITEMS_PER_PAGE,
+                skip: (page - 1) * ITEMS_PER_PAGE
+            })
+            const totalPages = Math.ceil(totalCounts / ITEMS_PER_PAGE)
+            if (page > totalPages) throw Error("Page input is bigger than total pages.")
+            return { ok: true, restaurants, totalCounts, totalPages }
+        } catch (error) {
+            return { ok: false, error: error.message }
         }
     }
 
