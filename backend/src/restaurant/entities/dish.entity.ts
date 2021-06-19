@@ -27,6 +27,7 @@ class DishOption {
     choices?: DishChoice[]
 }
 
+@InputType('DishInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class Dish extends CoreEntity {

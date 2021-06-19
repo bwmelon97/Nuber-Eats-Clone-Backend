@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
+import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { CoreEntity } from "src/common/entities/core.entity";
 import { Dish } from "src/restaurant/entities/dish.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
@@ -14,6 +14,7 @@ export enum OrderStatus {
 
 registerEnumType(OrderStatus, { name: 'OrderStatus' })
 
+@InputType('OrderInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class Order extends CoreEntity {
@@ -49,6 +50,9 @@ export class Order extends CoreEntity {
     total: number;
 
     @Field(type => OrderStatus)
-    @Column({ type: 'enum', enum: OrderStatus })
+    @Column({ 
+        type: 'enum', enum: OrderStatus, 
+        default: OrderStatus.Pending 
+    })
     status: OrderStatus;
 }
