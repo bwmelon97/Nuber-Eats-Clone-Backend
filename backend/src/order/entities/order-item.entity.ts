@@ -3,9 +3,9 @@ import { CoreEntity } from "src/common/entities/core.entity";
 import { Dish } from "src/restaurant/entities/dish.entity";
 import { Column, Entity, ManyToOne } from "typeorm";
 
-@InputType('ItemOptionInput', { isAbstract: true })
+@InputType('OrderItemOptionInput', { isAbstract: true })
 @ObjectType()
-export class ItemOption {
+export class OrderItemOption {
     @Field(type => String)
     name: string;
 
@@ -21,9 +21,9 @@ export class OrderItem extends CoreEntity {
     @ManyToOne(type => Dish, { onDelete: 'CASCADE' })
     dish: Dish
 
-    @Field(type => ItemOption, { nullable: true })
+    @Field(type => OrderItemOption, { nullable: true })
     @Column({type: 'json', nullable: true})
-    chosenOptions?: ItemOption[]
+    chosenOptions?: OrderItemOption[]
 
     @Field(type => Number)
     @Column()
