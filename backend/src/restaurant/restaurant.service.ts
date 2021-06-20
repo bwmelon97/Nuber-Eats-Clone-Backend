@@ -34,7 +34,9 @@ export class RestaurantService {
         { restaurantId }: GetRestaurantByIdInput
     ): Promise<GetRestaurantByIdOutput> {
         try {
-            const restaurant = await this.restaurants.findOne(restaurantId)
+            const restaurant = await this.restaurants.findOne(
+                restaurantId, { relations: ['menu'] }
+            )
             if (!restaurant) throw Error("Couldn't find the restaurant.")
             return { ok: true, restaurant }
         } catch (error) { return { ok: false, error: error.message } }

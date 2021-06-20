@@ -19,8 +19,8 @@
 
 
 ## 작업할 것
-* Order Item Entity 만들기
-* Create Order
+* Create Order 테스트하기
+* (나중에) Create Order: input option이 올바르지 않은 경우 handling 필요
 
 ## Notion에 정리할 것
 * entity에 InputType 데코레이터를 추가하지 않는 경우, input DTO에 사용할 수 없다.
