@@ -2,9 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Dish } from "src/restaurant/entities/dish.entity";
 import { RestaurantRepository } from "src/restaurant/repositories/restaurant.repository";
-import { User } from "src/user/entities/user.entity";
+import { User, UserRole } from "src/user/entities/user.entity";
 import { Repository } from "typeorm";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
+import { GetMyOrdersInput, GetMyOrdersOutput } from "./dtos/get-myorders.dto";
 import { OrderItem } from "./entities/order-item.entity";
 import { Order } from "./entities/order.entity";
 
@@ -19,6 +20,53 @@ export class OrderService {
         @InjectRepository(OrderItem)
         private readonly orderItems: Repository<OrderItem>,
     ) {}
+
+    ORDERS_PER_PAGE = 5;
+
+    async getMyOrders (
+        user: User, { page, status }: GetMyOrdersInput
+    ): Promise<GetMyOrdersOutput> {
+        let findKey: string;
+        switch(user.role) {
+            case UserRole.Client:
+                findKey = 'customer'; break;
+            case UserRole.Delivery:
+                findKey = 'driver'; break;
+            case UserRole.Owner:
+                break;
+        }
+        try {
+            const [orders, totalCounts] = await this.orders.findAndCount({ 
+                where: {
+                    [findKey]: user,
+                    ...(status && { status })
+                },
+                take: this.ORDERS_PER_PAGE,
+                skip: (page - 1) * this.ORDERS_PER_PAGE
+            })
+            const totalPages = Math.ceil(totalCounts / this.ORDERS_PER_PAGE)
+            
+            return { ok: true, orders: orders, totalCounts, totalPages }
+        } catch (error) {
+            return { ok: false, error: error.meesage }
+        }
+    }
+
+    async getMyOrdersForClientAndDelivery (
+        user: User, getmyOrdersInput: GetMyOrdersInput
+    ): Promise<GetMyOrdersOutput> {
+        try {
+            const { 
+                ok, error, orders, totalCounts, totalPages 
+            } = await this.getMyOrders(user, getmyOrdersInput)
+            if (!ok) throw Error(error)
+
+            return { ok: true, orders: orders, totalCounts, totalPages }
+        } catch (error) {
+            return { ok: false, error: error.meesage }
+        }
+    }
+
 
     async createOrder (
         customer: User, { restaurantId, itemInputs }: CreateOrderInput
