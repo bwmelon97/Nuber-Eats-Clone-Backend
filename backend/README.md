@@ -19,8 +19,10 @@
 
 
 ## 작업할 것
-* update order
+* order subscription
 
+* changeOrderStatus의 조건문 코드 리팩터링하기
+* changeOrderStatus 테스팅
 * getCookedOrders: Delivery가 Pickup 할 order 찾기
 * Create Order 테스트하기
 * getMyOrders -> 문제점이 많은 코드
