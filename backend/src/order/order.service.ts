@@ -67,6 +67,24 @@ export class OrderService {
         }
     }
 
+    /* Pagination 구현 X, 클린 코드 X */
+    async getMyOrdersForOwner (
+        owner: User, { page, status }: GetMyOrdersInput
+    ): Promise<GetMyOrdersOutput> {
+        try {
+            const restaurants = await this.restaurants.find({ 
+                where: { owner },  
+                relations: ['orders']
+            })
+            let orders = restaurants.map( r => r.orders ).flat(1)
+            if (status) {
+                orders = orders.filter( o => o.status === status)
+            }
+            return { ok: true, orders }
+        } catch (error) {
+            return { ok: false, error: error.meesage }
+        }
+    }
 
     async createOrder (
         customer: User, { restaurantId, itemInputs }: CreateOrderInput

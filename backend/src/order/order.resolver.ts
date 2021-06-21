@@ -21,6 +21,8 @@ export class OrderResolver {
             case UserRole.Client:
             case UserRole.Delivery:
                 return this.service.getMyOrdersForClientAndDelivery(user, getMyOrdersInput)
+            case UserRole.Owner:
+                return this.service.getMyOrdersForOwner(user, getMyOrdersInput)
         }
     }
 

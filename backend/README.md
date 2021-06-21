@@ -19,10 +19,11 @@
 
 
 ## 작업할 것
-* getMyOrders 구현
 * getOrder 구현
+
 * getPendingOrders 구현
 * Create Order 테스트하기
+* getMyOrders -> 문제점이 많은 코드
 * (나중에) Create Order: input option이 올바르지 않은 경우 handling 필요
 
 ## Notion에 정리할 것
