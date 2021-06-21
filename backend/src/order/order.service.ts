@@ -6,6 +6,7 @@ import { User, UserRole } from "src/user/entities/user.entity";
 import { Repository } from "typeorm";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { GetMyOrdersInput, GetMyOrdersOutput } from "./dtos/get-myorders.dto";
+import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { OrderItem } from "./entities/order-item.entity";
 import { Order } from "./entities/order.entity";
 
@@ -83,6 +84,35 @@ export class OrderService {
             return { ok: true, orders }
         } catch (error) {
             return { ok: false, error: error.meesage }
+        }
+    }
+
+    async getOrder (
+        user: User, { id: orderId }: GetOrderInput
+    ): Promise<GetOrderOutput> {
+        try {
+            const order = await this.orders.findOne(orderId, {
+                relations: ['restaurant']
+            })
+            if (!order) throw Error("Couldn't find a order")
+
+            let id: number;
+
+            switch(user.role) {
+                case UserRole.Client:
+                    id = order.customerId; break;
+                case UserRole.Delivery:
+                    id = order.driverId; break;
+                case UserRole.Owner:
+                    id = order.restaurant.ownerId; break;
+            }
+
+            if ( id !== user.id) 
+                throw Error("You don't have permission to see this order.")
+
+            return { ok: true, order }
+        } catch (error) {
+            return { ok: false, error: error.message }
         }
     }
 

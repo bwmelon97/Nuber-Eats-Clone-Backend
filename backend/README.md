@@ -19,9 +19,8 @@
 
 
 ## 작업할 것
-* getOrder 구현
 
-* getPendingOrders 구현
+* getCookedOrders: Delivery가 Pickup 할 order 찾기
 * Create Order 테스트하기
 * getMyOrders -> 문제점이 많은 코드
 * (나중에) Create Order: input option이 올바르지 않은 경우 handling 필요
