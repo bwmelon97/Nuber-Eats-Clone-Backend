@@ -1,6 +1,5 @@
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { CoreEntity } from "src/common/entities/core.entity";
-import { Dish } from "src/restaurant/entities/dish.entity";
 import { Restaurant } from "src/restaurant/entities/restaurant.entity";
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, RelationId } from "typeorm";
@@ -8,7 +7,10 @@ import { OrderItem } from "./order-item.entity";
 
 export enum OrderStatus {
     Pending = 'Pending',
+    Cancelled = 'Cancelled',
     Cooking = 'Cooking',
+    Cooked = 'Cooked',
+    MatchDriver = 'MatchDriver',
     PickedUp = 'PickedUp',
     Delivered = 'Delivered',
 }

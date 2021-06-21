@@ -4,18 +4,19 @@ import { Dish } from "src/restaurant/entities/dish.entity";
 import { RestaurantRepository } from "src/restaurant/repositories/restaurant.repository";
 import { User, UserRole } from "src/user/entities/user.entity";
 import { Repository } from "typeorm";
+import { ChangeOrderStatusInput, ChangeOrderStatusOutput } from "./dtos/change-order-status.dto";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { GetMyOrdersInput, GetMyOrdersOutput } from "./dtos/get-myorders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { OrderItem } from "./entities/order-item.entity";
-import { Order } from "./entities/order.entity";
+import { OrderStatus } from "./entities/order.entity";
+import { OrderRepository } from "./repositories/order.repository";
 
 @Injectable()
 export class OrderService {
     constructor(    
         private readonly restaurants: RestaurantRepository,
-        @InjectRepository(Order)
-        private readonly orders: Repository<Order>,
+        private readonly orders: OrderRepository,
         @InjectRepository(Dish)
         private readonly dishes: Repository<Dish>,
         @InjectRepository(OrderItem)
@@ -91,24 +92,10 @@ export class OrderService {
         user: User, { id: orderId }: GetOrderInput
     ): Promise<GetOrderOutput> {
         try {
-            const order = await this.orders.findOne(orderId, {
-                relations: ['restaurant']
-            })
-            if (!order) throw Error("Couldn't find a order")
-
-            let id: number;
-
-            switch(user.role) {
-                case UserRole.Client:
-                    id = order.customerId; break;
-                case UserRole.Delivery:
-                    id = order.driverId; break;
-                case UserRole.Owner:
-                    id = order.restaurant.ownerId; break;
-            }
-
-            if ( id !== user.id) 
-                throw Error("You don't have permission to see this order.")
+            const { 
+                ok, error, order 
+            } = await this.orders.getAndCheckValidUser(orderId, user);
+            if (!ok) throw Error(error)
 
             return { ok: true, order }
         } catch (error) {
@@ -178,6 +165,53 @@ export class OrderService {
             return { ok: true }
         } catch (error) {
             return { ok: false, error: error.message }
+        }
+    }
+
+    async changeOrderStatus (
+        user: User, { id: orderId, status }: ChangeOrderStatusInput
+    ): Promise<ChangeOrderStatusOutput> {
+        try {
+            const {
+                ok, error, order
+            } = await this.orders.getAndCheckValidUser(orderId, user)
+            if (!ok) throw Error(error);
+
+            /* 리팩터링 하고 싶다 !! */
+            let canChange: boolean = false;
+            if (user.role === UserRole.Client){
+                if (order.status === OrderStatus.Pending && status === OrderStatus.Cancelled) {
+                    canChange = true;
+                }
+            }
+            if (user.role === UserRole.Owner) {
+                if ( order.status === OrderStatus.Pending ) {
+                    if ( status === OrderStatus.Cancelled || status === OrderStatus.Cooking ) {
+                        canChange = true;
+                    }
+                }
+                if ( order.status === OrderStatus.Cooking && status === OrderStatus.Cooked ) {
+                    canChange = true;
+                }
+            }
+            if (user.role === UserRole.Delivery) {
+                if (order.status === OrderStatus.Cooked && status === OrderStatus.MatchDriver ) {
+                    canChange = true;
+                }
+                if (order.status === OrderStatus.MatchDriver && status === OrderStatus.PickedUp ) {
+                    canChange = true;
+                }
+                if (order.status === OrderStatus.PickedUp && status === OrderStatus.Delivered ) {
+                    canChange = true;
+                }
+            }
+
+            if (!canChange) throw Error("You Can't do that.")
+
+            await this.orders.update(orderId, { status });
+            return { ok: true }
+        } catch (error) {
+            return { ok: false, error: error.message }            
         }
     }
 
