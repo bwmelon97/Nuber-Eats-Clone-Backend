@@ -17,6 +17,7 @@ import { OrderModule } from './order/order.module';
 import { Order } from './order/entities/order.entity';
 import { MailModule } from './mail/mail.module';
 import { OrderItem } from './order/entities/order-item.entity';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { OrderItem } from './order/entities/order-item.entity';
     UserModule,
     RestaurantModule,
     OrderModule,
+    CommonModule,
   ],
 })
 export class AppModule implements NestModule {
