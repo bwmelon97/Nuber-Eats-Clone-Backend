@@ -21,6 +21,10 @@
 ## 작업할 것
 * order subscription (pubsub)
 * subscription autherntication
+* implement Subscription
+  - Client create order -> owner subscribe
+  - change order status -> client, owner, delivery subscribe
+  - cooked order -> delivery subscribe
 
 * changeOrderStatus의 조건문 코드 리팩터링하기
 * changeOrderStatus 테스팅
