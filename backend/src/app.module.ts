@@ -18,6 +18,7 @@ import { Order } from './order/entities/order.entity';
 import { MailModule } from './mail/mail.module';
 import { OrderItem } from './order/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
+import { TOKEN_KEY } from './common/common.constants';
 
 @Module({
   imports: [
@@ -53,13 +54,9 @@ import { CommonModule } from './common/common.module';
     GraphQLModule.forRoot({
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
-      context: ({ req, connection }) => {
-        if (req) {
-          return { user: req['user'] }
-        } else {
-          console.log(connection)
-        }
-      }
+      context: ({ req, connection }) => ({
+        token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY]
+      })
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
@@ -75,11 +72,4 @@ import { CommonModule } from './common/common.module';
     CommonModule,
   ],
 })
-export class AppModule implements NestModule {
-  configure( consumer: MiddlewareConsumer ) {
-    consumer.apply(JwtMiddleware).forRoutes({
-      path: "/graphql",           // Middleware가 실행되는 path
-      method: RequestMethod.ALL,  // Middleware를 실행시킬 req method (GET, POST...)   
-    })
-  }
-}
+export class AppModule {}

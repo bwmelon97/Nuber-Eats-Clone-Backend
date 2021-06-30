@@ -78,6 +78,7 @@ export class OrderResolver {
         return true
     }
 
+    @Role(['Any'])
     @Subscription(returns => Potato)
     listenPotato() {
         return this.pubsub.asyncIterator('potato')

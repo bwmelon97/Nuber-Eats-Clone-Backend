@@ -7,5 +7,9 @@ import { JwtOptions } from './jwt.interfaces';
 export class JwtService {
     constructor( @Inject(CONFIG_OPTIONS) private readonly jwtOptions: JwtOptions ){}
 
-    sign = ( payload: {id: number} ): string => jwt.sign( payload, this.jwtOptions.privateKey )
+    sign = ( payload: {id: number} ): string => 
+        jwt.sign( payload, this.jwtOptions.privateKey )
+    
+    verify = ( token: string ): string | object => 
+        jwt.verify( token, this.jwtOptions.privateKey )
 }
