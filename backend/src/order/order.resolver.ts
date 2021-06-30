@@ -1,5 +1,5 @@
 import { Inject } from "@nestjs/common";
-import { Args, Field, Mutation, ObjectType, Query, Resolver, Subscription } from "@nestjs/graphql";
+import { Args, Field, Int, Mutation, ObjectType, Query, Resolver, Subscription } from "@nestjs/graphql";
 import { PubSub } from "graphql-subscriptions";
 import { AuthUser } from "src/auth/auth-user.decorator";
 import { Role } from "src/auth/role.decorator";
@@ -14,6 +14,9 @@ import { OrderService } from "./order.service";
 
 @ObjectType()
 class Potato {
+    @Field(type => Int)
+    id: number;
+
     @Field(type => String)
     potato: string;
 }
@@ -68,10 +71,11 @@ export class OrderResolver {
     }
 
     @Mutation(returns => Boolean)
-    potatoMutation() {
-        this.pubsub.publish('potato', {
+    async potatoMutation( @Args('id') potatoId: number ) {
+        await this.pubsub.publish('potato', {
             listenPotato: {
-                potato: "I love potato"
+                id: potatoId,
+                potato: `I love potato number ${potatoId}`
             },
             listenPotatoToo: "What a potato !",
         })
@@ -79,8 +83,10 @@ export class OrderResolver {
     }
 
     @Role(['Any'])
-    @Subscription(returns => Potato)
-    listenPotato() {
+    @Subscription(returns => Potato, {
+        filter: ({ listenPotato }, { id }) => listenPotato.id === id
+    })
+    listenPotato( @Args('id') potatoId: number ) {
         return this.pubsub.asyncIterator('potato')
     }
 
