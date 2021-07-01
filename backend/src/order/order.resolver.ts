@@ -73,10 +73,7 @@ export class OrderResolver {
     @Mutation(returns => Boolean)
     async potatoMutation( @Args('id') potatoId: number ) {
         await this.pubsub.publish('potato', {
-            listenPotato: {
-                id: potatoId,
-                potato: `I love potato number ${potatoId}`
-            },
+            listenPotato: potatoId,
             listenPotatoToo: "What a potato !",
         })
         return true
@@ -84,7 +81,11 @@ export class OrderResolver {
 
     @Role(['Any'])
     @Subscription(returns => Potato, {
-        filter: ({ listenPotato }, { id }) => listenPotato.id === id
+        filter: ({ listenPotato }, { id }) => listenPotato === id,
+        resolve: ({ listenPotato }): Potato => ({
+            id: listenPotato,
+            potato: `I love potato ${listenPotato}`
+        })
     })
     listenPotato( @Args('id') potatoId: number ) {
         return this.pubsub.asyncIterator('potato')
