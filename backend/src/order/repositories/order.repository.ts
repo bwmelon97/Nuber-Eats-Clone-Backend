@@ -1,16 +1,14 @@
 import { User, UserRole } from "src/user/entities/user.entity";
-import { EntityRepository, Repository } from "typeorm";
+import { EntityRepository, FindOneOptions, Repository } from "typeorm";
 import { GetOrderOutput } from "../dtos/get-order.dto";
 import { Order } from "../entities/order.entity";
 
 @EntityRepository(Order)
 export class OrderRepository extends Repository<Order> {
 
-    async getAndCheckValidUser (orderId: number, user: User): Promise<GetOrderOutput> {
+    async getAndCheckValidUser (orderId: number, user: User, findOptions?: FindOneOptions): Promise<GetOrderOutput> {
         try {
-            const order = await this.findOne(orderId, {
-                relations: ['restaurant']
-            })
+            const order = await this.findOne(orderId, findOptions)
             if (!order) throw Error("Couldn't find a order")
 
             let id: number;

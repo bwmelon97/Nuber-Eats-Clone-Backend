@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { PubSub } from "graphql-subscriptions";
-import { NEW_PENDING_ORDER, PUB_SUB } from "src/common/common.constants";
+import { NEW_COOKED_ORDER, NEW_PENDING_ORDER, PUB_SUB } from "src/common/common.constants";
 import { Dish } from "src/restaurant/entities/dish.entity";
 import { RestaurantRepository } from "src/restaurant/repositories/restaurant.repository";
 import { User, UserRole } from "src/user/entities/user.entity";
@@ -97,7 +97,9 @@ export class OrderService {
         try {
             const { 
                 ok, error, order 
-            } = await this.orders.getAndCheckValidUser(orderId, user);
+            } = await this.orders.getAndCheckValidUser(orderId, user, {
+                relations: ['restaurant']
+            });
             if (!ok) throw Error(error)
 
             return { ok: true, order }
@@ -178,7 +180,9 @@ export class OrderService {
         try {
             const {
                 ok, error, order
-            } = await this.orders.getAndCheckValidUser(orderId, user)
+            } = await this.orders.getAndCheckValidUser(orderId, user, {
+                relations: ['restaurant', 'customer', 'driver', 'items']
+            })
             if (!ok) throw Error(error);
 
             /* 리팩터링 하고 싶다 !! */
@@ -196,6 +200,9 @@ export class OrderService {
                 }
                 if ( order.status === OrderStatus.Cooking && status === OrderStatus.Cooked ) {
                     canChange = true;
+                    await this.pubsub.publish(NEW_COOKED_ORDER, {
+                        cookedOrder: { ...order, status }
+                    })
                 }
             }
             if (user.role === UserRole.Delivery) {
