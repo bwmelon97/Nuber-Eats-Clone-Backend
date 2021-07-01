@@ -21,7 +21,6 @@
 ## 작업할 것
 * order subscription (pubsub)
 * implement Subscription
-  - Client create order -> owner subscribe
   - change order status -> client, owner, delivery subscribe
   - cooked order -> delivery subscribe
 

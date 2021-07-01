@@ -3,7 +3,7 @@ import { Args, Field, Int, Mutation, ObjectType, Query, Resolver, Subscription }
 import { PubSub } from "graphql-subscriptions";
 import { AuthUser } from "src/auth/auth-user.decorator";
 import { Role } from "src/auth/role.decorator";
-import { PUB_SUB } from "src/common/common.constants";
+import { NEW_PENDING_ORDER, PUB_SUB } from "src/common/common.constants";
 import { User, UserRole } from "src/user/entities/user.entity";
 import { ChangeOrderStatusInput, ChangeOrderStatusOutput } from "./dtos/change-order-status.dto";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
@@ -79,21 +79,15 @@ export class OrderResolver {
         return true
     }
 
-    @Role(['Any'])
-    @Subscription(returns => Potato, {
-        filter: ({ listenPotato }, { id }) => listenPotato === id,
-        resolve: ({ listenPotato }): Potato => ({
-            id: listenPotato,
-            potato: `I love potato ${listenPotato}`
-        })
+    @Subscription(returns => Order, {
+        filter: (payload, _, context) => {
+            const { pendingOrder: { restaurant: { ownerId } } } = payload;
+            const { user: { id } } = context;
+            return ownerId === id
+        },
     })
-    listenPotato( @Args('id') potatoId: number ) {
-        return this.pubsub.asyncIterator('potato')
+    @Role(['Owner'])
+    pendingOrder() {
+        return this.pubsub.asyncIterator(NEW_PENDING_ORDER)
     }
-
-    @Subscription(returns => String)
-    listenPotatoToo() {
-        return this.pubsub.asyncIterator('potato')
-    }
-
 }
