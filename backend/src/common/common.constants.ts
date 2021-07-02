@@ -4,3 +4,4 @@ export const TOKEN_KEY      = 'x-jwt';
 
 export const NEW_PENDING_ORDER  = 'NEW_PENDING_ORDER'
 export const NEW_COOKED_ORDER   = 'NEW_COOKED_ORDER'
+export const NEW_ORDER_UPDATES  = 'NEW_ORDER_UPDATES'

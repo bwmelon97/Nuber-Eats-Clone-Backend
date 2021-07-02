@@ -22,6 +22,7 @@
 * order subscription (pubsub)
 * implement Subscription
   - change order status -> client, owner, delivery subscribe
+* take Order
 
 * changeOrderStatus의 조건문 코드 리팩터링하기
 * changeOrderStatus 테스팅

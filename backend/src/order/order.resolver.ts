@@ -1,25 +1,17 @@
 import { Inject } from "@nestjs/common";
-import { Args, Field, Int, Mutation, ObjectType, Query, Resolver, Subscription } from "@nestjs/graphql";
+import { Args, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
 import { PubSub } from "graphql-subscriptions";
 import { AuthUser } from "src/auth/auth-user.decorator";
 import { Role } from "src/auth/role.decorator";
-import { NEW_COOKED_ORDER, NEW_PENDING_ORDER, PUB_SUB } from "src/common/common.constants";
+import { NEW_COOKED_ORDER, NEW_ORDER_UPDATES, NEW_PENDING_ORDER, PUB_SUB } from "src/common/common.constants";
 import { User, UserRole } from "src/user/entities/user.entity";
 import { ChangeOrderStatusInput, ChangeOrderStatusOutput } from "./dtos/change-order-status.dto";
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { GetMyOrdersInput, GetMyOrdersOutput } from "./dtos/get-myorders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
+import { OrderUpdatesInput } from "./dtos/order-updates.dto";
 import { Order } from "./entities/order.entity";
 import { OrderService } from "./order.service";
-
-@ObjectType()
-class Potato {
-    @Field(type => Int)
-    id: number;
-
-    @Field(type => String)
-    potato: string;
-}
 
 @Resolver(of => Order)
 export class OrderResolver {
@@ -95,5 +87,25 @@ export class OrderResolver {
     @Role(['Delivery'])
     cookedOrder() {
         return this.pubsub.asyncIterator(NEW_COOKED_ORDER)
+    }
+
+    @Subscription(returns => Order, {
+        filter: (
+            { orderUpdates: order }: { orderUpdates: Order }, 
+            { input: { orderIds } }: { input: OrderUpdatesInput },
+            { user }: { user: User },
+        ) => {
+            if (
+                order.customerId !== user.id &&
+                order.driverId !== user.id &&
+                order.restaurant.ownerId !== user.id 
+            ) return false;
+
+            return orderIds.includes(order.id);
+        }
+    })
+    @Role(['Any'])
+    orderUpdates(@Args('input') _: OrderUpdatesInput ) {
+        return this.pubsub.asyncIterator(NEW_ORDER_UPDATES)
     }
 }

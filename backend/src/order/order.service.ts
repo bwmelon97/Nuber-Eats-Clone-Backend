@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { PubSub } from "graphql-subscriptions";
-import { NEW_COOKED_ORDER, NEW_PENDING_ORDER, PUB_SUB } from "src/common/common.constants";
+import { NEW_COOKED_ORDER, NEW_ORDER_UPDATES, NEW_PENDING_ORDER, PUB_SUB } from "src/common/common.constants";
 import { Dish } from "src/restaurant/entities/dish.entity";
 import { RestaurantRepository } from "src/restaurant/repositories/restaurant.repository";
 import { User, UserRole } from "src/user/entities/user.entity";
@@ -11,7 +11,7 @@ import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { GetMyOrdersInput, GetMyOrdersOutput } from "./dtos/get-myorders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { OrderItem } from "./entities/order-item.entity";
-import { OrderStatus } from "./entities/order.entity";
+import { Order, OrderStatus } from "./entities/order.entity";
 import { OrderRepository } from "./repositories/order.repository";
 
 @Injectable()
@@ -187,6 +187,7 @@ export class OrderService {
 
             /* 리팩터링 하고 싶다 !! */
             let canChange: boolean = false;
+            const updatedOrder: Order = { ...order, status }
             if (user.role === UserRole.Client){
                 if (order.status === OrderStatus.Pending && status === OrderStatus.Cancelled) {
                     canChange = true;
@@ -201,7 +202,7 @@ export class OrderService {
                 if ( order.status === OrderStatus.Cooking && status === OrderStatus.Cooked ) {
                     canChange = true;
                     await this.pubsub.publish(NEW_COOKED_ORDER, {
-                        cookedOrder: { ...order, status }
+                        cookedOrder: updatedOrder
                     })
                 }
             }
@@ -220,6 +221,9 @@ export class OrderService {
             if (!canChange) throw Error("You Can't do that.")
 
             await this.orders.update(orderId, { status });
+            await this.pubsub.publish(NEW_ORDER_UPDATES, {
+                orderUpdates: updatedOrder
+            })
             return { ok: true }
         } catch (error) {
             return { ok: false, error: error.message }            
