@@ -10,6 +10,7 @@ import { ChangeOrderStatusInput, ChangeOrderStatusOutput } from "./dtos/change-o
 import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { GetMyOrdersInput, GetMyOrdersOutput } from "./dtos/get-myorders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
+import { TakeOrderInput, TakeOrderOutput } from "./dtos/take-order.dto";
 import { OrderItem } from "./entities/order-item.entity";
 import { Order, OrderStatus } from "./entities/order.entity";
 import { OrderRepository } from "./repositories/order.repository";
@@ -227,6 +228,26 @@ export class OrderService {
             return { ok: true }
         } catch (error) {
             return { ok: false, error: error.message }            
+        }
+    }
+
+    async takeOrder( driver: User, { id: orderId }: TakeOrderInput ): Promise<TakeOrderOutput> {
+        try {
+            const order = await this.orders.findOne( orderId, {
+                relations: ['restaurant', 'customer', 'driver', 'items']
+            } )
+            if (!order) throw Error("Couldn't find a order")
+            if (order.driver) throw Error('This order already has driver')
+
+            const updatedOrder: Order = { ...order, driver, status: OrderStatus.MatchDriver }
+            await this.orders.update(orderId, { driver, status: OrderStatus.MatchDriver })
+            await this.pubsub.publish(NEW_ORDER_UPDATES, {
+                orderUpdates: updatedOrder
+            })
+
+            return { ok: true }
+        } catch (error) {
+            return { ok: false, error: error.message }
         }
     }
 

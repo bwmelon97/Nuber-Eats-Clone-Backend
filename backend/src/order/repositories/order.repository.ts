@@ -21,7 +21,7 @@ export class OrderRepository extends Repository<Order> {
                     id = order.restaurant.ownerId; break;
             }
 
-            if ( id !== user.id) 
+            if ( id !== user.id ) 
                 throw Error("You don't have permission to see this order.")
 
             return { ok: true, order }

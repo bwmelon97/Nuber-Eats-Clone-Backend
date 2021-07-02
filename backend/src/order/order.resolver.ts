@@ -10,6 +10,7 @@ import { CreateOrderInput, CreateOrderOutput } from "./dtos/create-order.dto";
 import { GetMyOrdersInput, GetMyOrdersOutput } from "./dtos/get-myorders.dto";
 import { GetOrderInput, GetOrderOutput } from "./dtos/get-order.dto";
 import { OrderUpdatesInput } from "./dtos/order-updates.dto";
+import { TakeOrderInput, TakeOrderOutput } from "./dtos/take-order.dto";
 import { Order } from "./entities/order.entity";
 import { OrderService } from "./order.service";
 
@@ -62,13 +63,13 @@ export class OrderResolver {
         return this.service.changeOrderStatus(user, changeOrderStatusInput)
     }
 
-    @Mutation(returns => Boolean)
-    async potatoMutation( @Args('id') potatoId: number ) {
-        await this.pubsub.publish('potato', {
-            listenPotato: potatoId,
-            listenPotatoToo: "What a potato !",
-        })
-        return true
+    @Mutation(returns => TakeOrderOutput)
+    @Role(['Delivery'])
+    takeOrder(
+        @AuthUser() user: User,
+        @Args('input') takeOrderInput: TakeOrderInput
+    ): Promise<TakeOrderOutput> {
+        return this.service.takeOrder(user, takeOrderInput)
     }
 
     @Subscription(returns => Order, {
