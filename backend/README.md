@@ -30,6 +30,8 @@
 * Create Order 테스트하기
 * getMyOrders -> 문제점이 많은 코드
 * (나중에) Create Order: input option이 올바르지 않은 경우 handling 필요
+* payment 작업
+* CRON Job (특정 시간 간격으로 자동으로 함수를 실행하도록 하는 것) - payment 강의 안에 있다.
 
 ## Notion에 정리할 것
 * entity에 InputType 데코레이터를 추가하지 않는 경우, input DTO에 사용할 수 없다.
