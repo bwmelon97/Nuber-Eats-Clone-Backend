@@ -68,6 +68,7 @@ import { TOKEN_KEY } from './common/common.constants';
       context: ({ req, connection }) => ({
         token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY]
       }),
+      introspection: true,
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
