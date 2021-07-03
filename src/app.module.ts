@@ -40,7 +40,7 @@ import { TOKEN_KEY } from './common/common.constants';
       }) 
     }),
     TypeOrmModule.forRoot({
-      ...( process.env.NODE_ENV === 'production' ?
+      ...( process.env.DATABASE_URL ?
         {
           type: 'postgres',
           url: process.env.DATABASE_URL
@@ -62,7 +62,7 @@ import { TOKEN_KEY } from './common/common.constants';
       entities: [
         User, Verification, Restaurant, Category, Dish, Order, OrderItem
       ],
-      synchronize: true,
+      synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV === 'dev'
     }),
     GraphQLModule.forRoot({
