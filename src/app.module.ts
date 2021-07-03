@@ -39,7 +39,7 @@ import { TOKEN_KEY } from './common/common.constants';
       }) 
     }),
     TypeOrmModule.forRoot({
-      ...( process.env.DATABASE_URL ?
+      ...( process.env.NODE_ENV === 'production' ?
         {
           type: 'postgres',
           url: process.env.DATABASE_URL
@@ -62,6 +62,7 @@ import { TOKEN_KEY } from './common/common.constants';
     }),
     GraphQLModule.forRoot({
       playground: true,
+      // playground: process.env.NODE_ENV !== 'prodction',
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
       context: ({ req, connection }) => ({
