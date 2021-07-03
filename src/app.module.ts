@@ -66,11 +66,12 @@ import { TOKEN_KEY } from './common/common.constants';
       logging: process.env.NODE_ENV === 'dev'
     }),
     GraphQLModule.forRoot({
+      playground: true,
       installSubscriptionHandlers: true,
       autoSchemaFile: true,
       context: ({ req, connection }) => ({
         token: req ? req.headers[TOKEN_KEY] : connection.context[TOKEN_KEY]
-      })
+      }),
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY
