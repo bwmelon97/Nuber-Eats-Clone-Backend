@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -6,7 +6,6 @@ import * as Joi from "joi";
 import { JwtModule } from './jwt/jwt.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
 import { User } from './user/entities/user.entity';
 import { Verification } from './user/entities/verification.entity';
 import { RestaurantModule } from './restaurant/restaurant.module';
@@ -62,7 +61,8 @@ import { TOKEN_KEY } from './common/common.constants';
       entities: [
         User, Verification, Restaurant, Category, Dish, Order, OrderItem
       ],
-      synchronize: process.env.NODE_ENV !== 'prod',
+      // synchronize: process.env.NODE_ENV !== 'prodction',
+      synchronize: true,
       logging: process.env.NODE_ENV === 'dev'
     }),
     GraphQLModule.forRoot({
