@@ -41,17 +41,14 @@ export class UserService {
     }
 
     async createUser( 
-        { email, password, role }: CreateUserInput 
+        createUserInput: CreateUserInput 
     ): Promise<CreateUserOutput> {
         try {
-            const existUser = await this.users.findOne( { email } );
+            const existUser = await this.users.findOne( { email: createUserInput.email } );
             if ( existUser ) throw Error('There is a user with that email already')
 
-            const createdUser = this.users.create({email, password, role})
-            const user = await this.users.save(createdUser);
-            await this.verifications.save(
-                this.verifications.create({ user: createdUser })
-            )
+            const user = await this.users.save( this.users.create(createUserInput) );
+            await this.verifications.save( this.verifications.create({ user }) )
             const token = this.jwtService.sign({ id: user.id })
 
             return { ok: true, token };
@@ -96,12 +93,13 @@ export class UserService {
     }
 
     async editProfile ( 
-        userID: number, { email, password }: EditProfileInput     
+        userID: number, { email, password, profileImg }: EditProfileInput     
     ): Promise<CoreOutput> {
         try {
             const { user } = await this.findUserByID(userID);
             if ( email ) { user.email = email }
             if ( password ) { user.password = password }
+            if ( profileImg ) { user.profileImg = profileImg }
             await this.users.save(user)
             return { ok: true }
         }

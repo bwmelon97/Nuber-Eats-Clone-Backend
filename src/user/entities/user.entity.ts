@@ -30,6 +30,10 @@ export class User extends CoreEntity {
     @Column({ type: 'enum', enum: UserRole })
     role: UserRole
 
+    @Field(type => String, { nullable: true })
+    @Column({ nullable: true })
+    profileImg?: string;
+
     @Field(type => Boolean)
     @Column({ default: false })
     verified: boolean;
