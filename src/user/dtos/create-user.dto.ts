@@ -8,4 +8,7 @@ export class CreateUserInput extends PickType (
 ) { }
 
 @ObjectType()
-export class CreateUserOutput extends CoreOutput {}
+export class CreateUserOutput extends CoreOutput {
+    @Field(type => String, { nullable: true })
+    token?: string;
+}

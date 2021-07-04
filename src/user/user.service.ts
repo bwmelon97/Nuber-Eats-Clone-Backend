@@ -48,11 +48,13 @@ export class UserService {
             if ( existUser ) throw Error('There is a user with that email already')
 
             const createdUser = this.users.create({email, password, role})
-            await this.users.save(createdUser);
+            const user = await this.users.save(createdUser);
             await this.verifications.save(
                 this.verifications.create({ user: createdUser })
             )
-            return { ok: true };
+            const token = this.jwtService.sign({ id: user.id })
+
+            return { ok: true, token };
         } catch (error) { 
             return { 
                 ok: false, 
