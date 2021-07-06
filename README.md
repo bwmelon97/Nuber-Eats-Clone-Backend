@@ -3,7 +3,7 @@ Nuber Eats Clone Coding Project
 
 ### Local Tunnel로 Backend Server 접근하기
 ```bash
-$ npx localtunnel --port 4000 --subdomain soogeun 
+$ npx localtunnel --port 3000 --subdomain soogeun 
 ```
 
 ### mysql server start
@@ -36,6 +36,11 @@ $ mysql -u root -p
 
 
 ## 작업할 것
+* create Category 뮤테이션 작성
+* category는 admin 계정만이 추가할 수 있도록 함 (createRestaurant에서 임의의 카테고리 생성을 제어)
+* admin role의 유저 만들기
+* restaurant의 category는 nullable true하도록 설정
+* restaurant를 생성할 때 원하는 카테고리가 없는 경우 admin에게 요청하는 뮤테이션 제공
 
 * changeOrderStatus의 조건문 코드 리팩터링하기
 * changeOrderStatus 테스팅
