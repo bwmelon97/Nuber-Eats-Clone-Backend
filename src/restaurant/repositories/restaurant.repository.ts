@@ -37,7 +37,8 @@ export class RestaurantRepository extends Repository<Restaurant> {
                 skip: (page - 1) * ITEMS_PER_PAGE
             })
             const totalPages = Math.ceil(totalCounts / ITEMS_PER_PAGE)
-            if (page > totalPages) throw Error("Page input is bigger than total pages.")
+            if ( totalCounts !== 0 && page > totalPages ) 
+                throw Error("Page input is bigger than total pages.")
             return { ok: true, restaurants, totalCounts, totalPages }
         } catch (error) {
             return { ok: false, error: error.message }

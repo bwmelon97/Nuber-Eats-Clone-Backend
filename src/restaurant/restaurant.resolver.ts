@@ -4,6 +4,7 @@ import { Role } from 'src/auth/role.decorator';
 import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { User } from 'src/user/entities/user.entity';
 import { GetAllCategoriesOutput } from './dtos/all-categories.dto';
+import { CreateCategoryInput, CretaeCategoryOutput } from './dtos/create-category.dto';
 import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
@@ -97,6 +98,12 @@ export class CategoryResolver {
         return this.service.getCategoryByName(getCategoryInput)
     }
 
+    @Mutation(returns => CretaeCategoryOutput)
+    createCategory(
+        @Args('input') createCategoryInput: CreateCategoryInput
+    ): Promise<CretaeCategoryOutput> {
+        return this.service.createCategory(createCategoryInput)
+    }
 }
 
 

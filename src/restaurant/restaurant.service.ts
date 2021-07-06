@@ -4,6 +4,7 @@ import { CoreOutput } from 'src/common/dtos/core-output.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Like, Repository } from 'typeorm';
 import { GetAllCategoriesOutput } from './dtos/all-categories.dto';
+import { CreateCategoryInput, CretaeCategoryOutput } from './dtos/create-category.dto';
 import { CreateDishInput } from './dtos/create-dish.dto';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
@@ -175,6 +176,16 @@ export class RestaurantService {
         } catch (error) { return { ok: false, error: error.message } }
     }
 
+    async createCategory( { name: nameInput, coverImg }: CreateCategoryInput ): Promise<CretaeCategoryOutput> {
+        try {
+            const [name, slug] = this.categories.nameInputToNameAndSlug(nameInput)
+            const newCategory = this.categories.create({ name, slug, coverImg })
+            await this.categories.save(newCategory);
+            return { ok: true }
+        } catch (error) {
+            return { ok: false, error: error.message }
+        }
+    }
 
     async createDish ( 
         owner: User,

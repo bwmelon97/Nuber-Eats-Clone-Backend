@@ -36,7 +36,7 @@ $ mysql -u root -p
 
 
 ## 작업할 것
-* create Category 뮤테이션 작성
+
 * category는 admin 계정만이 추가할 수 있도록 함 (createRestaurant에서 임의의 카테고리 생성을 제어)
 * admin role의 유저 만들기
 * restaurant의 category는 nullable true하도록 설정
