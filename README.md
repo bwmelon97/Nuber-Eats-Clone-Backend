@@ -40,6 +40,7 @@ $ mysql -u root -p
 * category는 admin 계정만이 추가할 수 있도록 함 (createRestaurant에서 임의의 카테고리 생성을 제어)
 * admin role의 유저 만들기
 * restaurant의 category는 nullable true하도록 설정
+* restaurant의 category가 여러 개 담길 수 있도록 하기 (ManyToMany)
 * restaurant를 생성할 때 원하는 카테고리가 없는 경우 admin에게 요청하는 뮤테이션 제공
 * update Category, delete Category도 만들기
 
