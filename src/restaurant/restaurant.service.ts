@@ -79,9 +79,11 @@ export class RestaurantService {
         try {
             const newRestaurant = this.restaurants.create(createRestaurantInput)
             newRestaurant.owner = owner
-            newRestaurant.category = await this.categories.getOrCreate(
+            const { ok, error, category } = await this.categories.getByName(
                 createRestaurantInput.categoryName
             )
+            if (!ok) throw Error(error)
+            newRestaurant.category = category;
             await this.restaurants.save(newRestaurant)
             return { ok: true }
         } catch (error) {
@@ -104,11 +106,18 @@ export class RestaurantService {
             )
             if (!ok) throw Error(error)
 
-            /* 카테고리 input이 있는 경우, category Repo에서 getOrCreate 한다. */
-            let category: Category = null;
-            if (categoryName)
-                category = await this.categories.getOrCreate(categoryName)
+            let category: Category = null;                
+            if (categoryName) {
+                const { 
+                    ok: getCategoryOk, 
+                    error: getCategoryError, 
+                    category: foundCategory
+                } = await this.categories.getByName( updateRestaurantInput.categoryName )
                 
+                if (!getCategoryOk) throw Error(getCategoryError)
+                category = foundCategory;
+            }
+
             await this.restaurants.save({
                 id: restaurantId,
                 ...updateRestaurantInput,
