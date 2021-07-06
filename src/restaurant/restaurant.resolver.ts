@@ -92,6 +92,7 @@ export class CategoryResolver {
     }
 
     @Query(returns => GetCategoryOutput)
+    @Role(['Client', 'Owner'])
     getCategoryByName(
         @Args('input') getCategoryInput: GetCategoryInput
     ): Promise<GetCategoryOutput> {
@@ -99,6 +100,7 @@ export class CategoryResolver {
     }
 
     @Mutation(returns => CretaeCategoryOutput)
+    @Role(['Any'])          // Admin으로 변경할 것
     createCategory(
         @Args('input') createCategoryInput: CreateCategoryInput
     ): Promise<CretaeCategoryOutput> {

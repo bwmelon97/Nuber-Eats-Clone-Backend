@@ -6,8 +6,8 @@ import { Category } from "../entities/category.entity";
 export class CategoryRepository extends Repository<Category> {
 
     nameInputToNameAndSlug(nameInput: string): [string, string] {
-        const name = nameInput.trim().toLowerCase()
-        const slug = name.replace(/ /g, '-')
+        const name = nameInput.trim()
+        const slug = name.toLowerCase().replace(/ /g, '-')
         return [name, slug]
     }
 
