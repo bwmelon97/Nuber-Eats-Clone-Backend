@@ -41,6 +41,7 @@ $ mysql -u root -p
 * admin role의 유저 만들기
 * restaurant의 category는 nullable true하도록 설정
 * restaurant를 생성할 때 원하는 카테고리가 없는 경우 admin에게 요청하는 뮤테이션 제공
+* update Category, delete Category도 만들기
 
 * changeOrderStatus의 조건문 코드 리팩터링하기
 * changeOrderStatus 테스팅
