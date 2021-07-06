@@ -47,7 +47,11 @@ export class RestaurantService {
         try {
             const {
                 ok, error, restaurants, totalCounts, totalPages
-            } = await this.restaurants.getWithOffsetPagination(page, this.RESTAURANTS_PER_PAGE)
+            } = await this.restaurants.getWithOffsetPagination(
+                page, 
+                this.RESTAURANTS_PER_PAGE,
+                { relations: ['category'] }
+            )
             if (!ok) throw Error(error)
 
             return { ok: true, restaurants, totalCounts, totalPages }
