@@ -62,10 +62,15 @@ export class RestaurantService {
     
     async searchRestaurantsByName ({ page, query }: SearchRestaurantsInput): Promise<SearchRestaurantsOutput> {
         try {
+            const { category } = await this.categories.getByName(query);
             const {
                 ok, error, restaurants, totalCounts, totalPages
             } = await this.restaurants.getWithOffsetPagination(page, this.RESTAURANTS_PER_PAGE, {
-                where: { name: Like(`%${query}%`) },
+                where: [
+                    { name: Like(`%${query}%`) },
+                    { category }
+                ],
+                relations: ['category']
             })
             if (!ok) throw Error(error)
             
