@@ -62,7 +62,7 @@ export class RestaurantService {
     
     async searchRestaurantsByName ({ page, query }: SearchRestaurantsInput): Promise<SearchRestaurantsOutput> {
         try {
-            const { category } = await this.categories.getByName(query);
+            const { category } = await this.categories.getBySlug(query);
             const {
                 ok, error, restaurants, totalCounts, totalPages
             } = await this.restaurants.getWithOffsetPagination(page, this.RESTAURANTS_PER_PAGE, {

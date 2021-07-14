@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from "typeorm";
+import { EntityRepository, Like, Repository } from "typeorm";
 import { GetCategoryOutput } from "../dtos/get-category.dto";
 import { Category } from "../entities/category.entity";
 
@@ -23,7 +23,21 @@ export class CategoryRepository extends Repository<Category> {
                 error: error ? error.message : "Fail to find category."
             }
         }
+    }
 
+    async getBySlug (slug: string): Promise<GetCategoryOutput> {
+        try {
+            const category = await this.findOne({ 
+                where: { slug: Like(`%${slug}%`) }
+            })
+            if (!category) throw Error("Category doesn't exist.")
+            return { ok: true, category }
+        } catch (error) {
+            return {
+                ok: false,
+                error: error ? error.message : "Fail to find category."
+            }
+        }
     }
 
     /* Category가 없는 경우 새로 만들고, 있으면 그대로 사용할 수 있음 */
