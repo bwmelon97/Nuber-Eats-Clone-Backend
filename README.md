@@ -16,31 +16,15 @@ $ mysql -u root -p
  * TypeORM 에서 cursor 기반 Pagination 구현
  * SQL 문법 공부하기
 
- 
-## User Module
-### Entity
-* id
-* createdAt
-* updatedAt
-
-* email
-* password
-* role
-
-### funcs
-* Create Account
-* Log In
-* See Profile
-* Edit Profile
-* Verify Email
-
 
 ## 작업할 것
 * Search Restaurant는 첫 번째로 Name 기준으로 검색한 뒤, 두 번째는 Category의 Name을 찾기
 * category name 기반으로 검색하는 부분에서 문제가 있음. 
-  fast food / Coffee / Bakery가 제 기능 못하는 것으로 보아 slug 문제인듯? (사이 띄어쓰기, 대문자 오류)
+  fast food / Coffee / Bakery가 제 기능 못하는 것으로 보아 slug 문제인듯? (사이 띄어쓰기, 대문자 오류) `[O]`
   -> slug 기반으로 찾는 것으로 변경 but 아직 불완전하다고 볼 수 있음
   -> Test가 필요한 이유 !
+* myRestaurants query 만들기
+* create uploads module -> AWS 저장 후 file url 리턴
 
 * category는 admin 계정만이 추가할 수 있도록 함 (createRestaurant에서 임의의 카테고리 생성을 제어)
 * admin role의 유저 만들기
