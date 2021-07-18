@@ -10,6 +10,7 @@ import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
 import { GetCategoryInput, GetCategoryOutput } from './dtos/get-category.dto';
+import { GetMyRestaurantsInput, GetMyRestaurantsOutput } from './dtos/get-my-restaurants.dto';
 import { GetRestaurantByIdInput, GetRestaurantByIdOutput } from './dtos/get-restaurant.dto';
 import { GetAllRestaurantsInput, GetAllRestaurantsOutput } from './dtos/get-restaurants.dto';
 import { SearchRestaurantsInput, SearchRestaurantsOutput } from './dtos/search-restaurants.dto';
@@ -46,6 +47,15 @@ export class RestaurantResolver {
         @Args('input') searchRestaurantsInput: SearchRestaurantsInput
     ): Promise<SearchRestaurantsOutput> {
         return this.restaurantService.searchRestaurantsByName(searchRestaurantsInput)
+    }
+
+    @Role(['Owner'])
+    @Query(returns => GetMyRestaurantsOutput)
+    getMyRestaurants(
+        @AuthUser() owner: User,
+        @Args('input') getMyRestaurantsInput: GetMyRestaurantsInput
+    ): Promise<GetMyRestaurantsOutput> {
+        return this.restaurantService.getMyRestaurants(owner, getMyRestaurantsInput)
     }
     
     @Role(['Owner'])

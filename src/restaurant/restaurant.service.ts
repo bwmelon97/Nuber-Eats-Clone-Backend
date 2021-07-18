@@ -10,6 +10,7 @@ import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
 import { GetCategoryInput, GetCategoryOutput } from './dtos/get-category.dto';
+import { GetMyRestaurantsInput, GetMyRestaurantsOutput } from './dtos/get-my-restaurants.dto';
 import { GetRestaurantByIdInput, GetRestaurantByIdOutput } from './dtos/get-restaurant.dto';
 import { GetAllRestaurantsInput, GetAllRestaurantsOutput } from './dtos/get-restaurants.dto';
 import { SearchRestaurantsInput, SearchRestaurantsOutput } from './dtos/search-restaurants.dto';
@@ -29,7 +30,7 @@ export class RestaurantService {
         private readonly dishes: Repository<Dish>,
     ) {}
 
-    private readonly RESTAURANTS_PER_PAGE = 10;
+    private readonly RESTAURANTS_PER_PAGE = 12;
 
     async getRestaurantById (
         { restaurantId }: GetRestaurantByIdInput
@@ -80,6 +81,25 @@ export class RestaurantService {
         }
     }
 
+    async getMyRestaurants (
+        owner: User, 
+        { page }: GetMyRestaurantsInput
+    ): Promise<GetMyRestaurantsOutput> {
+        try {
+            const {
+                restaurants, ok, error, totalCounts, totalPages
+            } = await this.restaurants.getWithOffsetPagination(
+                page, this.RESTAURANTS_PER_PAGE, { 
+                    where: { owner }    
+                }
+            )
+            if (!ok) throw Error(error)
+
+            return { ok: true, restaurants, totalCounts, totalPages }
+        } catch (error) {
+            return { ok: false, error: error.message }
+        }
+    }
 
     async createRestaurant (
         owner: User,
