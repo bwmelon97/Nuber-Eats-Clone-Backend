@@ -18,6 +18,7 @@ import { MailModule } from './mail/mail.module';
 import { OrderItem } from './order/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
 import { TOKEN_KEY } from './common/common.constants';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { TOKEN_KEY } from './common/common.constants';
     RestaurantModule,
     OrderModule,
     CommonModule,
+    UploadModule,
   ],
 })
 export class AppModule {}
