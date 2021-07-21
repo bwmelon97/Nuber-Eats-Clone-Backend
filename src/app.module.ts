@@ -37,6 +37,9 @@ import { UploadModule } from './upload/upload.module';
         PRIVATE_KEY: Joi.string().required(),
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIL: Joi.string().required(),
+        AWS_KEY: Joi.string().required(),
+        AWS_SECRET: Joi.string().required(),
+        BUCKET_NAME: Joi.string().required(),
       }) 
     }),
     TypeOrmModule.forRoot({
